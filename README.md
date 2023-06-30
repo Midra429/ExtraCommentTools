@@ -1,4 +1,4 @@
-# <img src="./extensions/images/icon32.png" height="25px"> 引用コメントツール
+# <img src="./assets/logo.png" height="25px"> 引用コメントツール
 
 [<img src="./assets/chrome.png" height="50px">](https://chrome.google.com/webstore/detail/anlpocdpfdpcldkfchppmahpgpjaffan)
 <!-- [<img src="./assets/firefox.png" height="50px">](https://addons.mozilla.org/ja/firefox/) -->
@@ -15,14 +15,11 @@
   - [Chrome ウェブストア](https://chrome.google.com/webstore/detail/anlpocdpfdpcldkfchppmahpgpjaffan)
   <!-- - [Firefox Add-ons](https://addons.mozilla.org/ja/firefox/) -->
 
-## バグ報告・機能提案・その他
+## 不具合報告・機能提案など
 
-- [GitHub (Issues)](https://github.com/Midra429/ExtraCommentTools/issues)
-- [Greasy Fork (フィードバック)](https://greasyfork.org/ja/scripts/446824/feedback)
-- [Chrome ウェブストア (サポート)](https://chrome.google.com/webstore/detail/anlpocdpfdpcldkfchppmahpgpjaffan)
-- [Twitter (@Midra429)](https://twitter.com/Midra429)に[メンション](https://twitter.com/intent/tweet?screen_name=Midra429)や[DM](https://twitter.com/messages/compose?recipient_id=1052566817279864837)
-
-※バグ報告の際は、該当動画のIDやURLと共に報告してください。
+- [GitHub](https://github.com/Midra429/ExtraCommentTools/issues) (推奨)
+- [Chrome ウェブストア](https://chrome.google.com/webstore/detail/anlpocdpfdpcldkfchppmahpgpjaffan) > サポート
+- [Twitter (@Midra429)](https://twitter.com/Midra429) に [メンション](https://twitter.com/intent/tweet?screen_name=Midra429) や [DM](https://twitter.com/messages/compose?recipient_id=1052566817279864837)
 
 ---
 

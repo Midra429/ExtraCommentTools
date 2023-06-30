@@ -1,0 +1,26 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": ["extensions/manifest.json"],
+      "url": "https://json.schemastore.org/chrome-manifest"
+    },
+    {
+      "fileMatch": ["env.json"],
+      "schema": {
+        "required": ["VERSION", "HOMEPAGE"],
+        "properties": {
+          "VERSION": {
+            "type": "string",
+            "pattern": "^(?:\\d{1,5}\\.){0,3}\\d{1,5}$"
+          },
+          "HOMEPAGE": {
+            "type": "string"
+          }
+        },
+        "patternProperties": {
+          "[a-z-]": false
+        }
+      }
+    }
+  ]
+}
