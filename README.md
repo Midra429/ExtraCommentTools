@@ -1,5 +1,6 @@
 # <img src="./assets/logo.png" height="25px"> 引用コメントツール
 
+[<img src="./assets/greasyfork_badge.png" height="60px">](https://greasyfork.org/ja/scripts/446824)
 [<img src="./assets/chrome_badge.png" height="60px">](https://chrome.google.com/webstore/detail/anlpocdpfdpcldkfchppmahpgpjaffan)
 <img src="./assets/firefox_badge.png" height="60px">
 <!-- [<img src="./assets/firefox_badge.png" height="60px">](https://addons.mozilla.org/ja/firefox/) -->
@@ -13,14 +14,14 @@
 - UserScript
   - [Greasy Fork](https://greasyfork.org/ja/scripts/446824)
 - 拡張機能
-  - [Chrome ウェブストア](https://chrome.google.com/webstore/detail/anlpocdpfdpcldkfchppmahpgpjaffan)
+  - [Chrome Web Store](https://chrome.google.com/webstore/detail/anlpocdpfdpcldkfchppmahpgpjaffan)
   - Firefox Add-ons (予定)
   <!-- - [Firefox Add-ons](https://addons.mozilla.org/ja/firefox/) -->
 
 ## 不具合報告・機能提案など
 
 - [GitHub](https://github.com/Midra429/ExtraCommentTools/issues) (推奨)
-- [Chrome ウェブストア](https://chrome.google.com/webstore/detail/anlpocdpfdpcldkfchppmahpgpjaffan) > サポート
+- [Chrome Web Store](https://chrome.google.com/webstore/detail/anlpocdpfdpcldkfchppmahpgpjaffan) > サポート
 - [Twitter (@Midra429)](https://twitter.com/Midra429) に [メンション](https://twitter.com/intent/tweet?screen_name=Midra429) や [DM](https://twitter.com/messages/compose?recipient_id=1052566817279864837)
 
 ---
