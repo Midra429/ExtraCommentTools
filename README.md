@@ -62,7 +62,7 @@ dist/
 
 #### 環境変数
 
-```json
+```jsonc
 // ./env.json
 {
   "VERSION": "4.0.0",
