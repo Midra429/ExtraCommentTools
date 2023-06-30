@@ -1,8 +1,8 @@
 # <img src="./assets/logo.png" height="25px"> 引用コメントツール
 
-[<img src="./assets/chrome_badge.png" height="50px">](https://chrome.google.com/webstore/detail/anlpocdpfdpcldkfchppmahpgpjaffan)
-<img src="./assets/firefox_badge.png" height="50px">
-<!-- [<img src="./assets/firefox_badge.png" height="50px">](https://addons.mozilla.org/ja/firefox/) -->
+[<img src="./assets/chrome_badge.png" height="60px">](https://chrome.google.com/webstore/detail/anlpocdpfdpcldkfchppmahpgpjaffan)
+<img src="./assets/firefox_badge.png" height="60px">
+<!-- [<img src="./assets/firefox_badge.png" height="60px">](https://addons.mozilla.org/ja/firefox/) -->
 
 ## 概要
 
