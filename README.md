@@ -20,9 +20,12 @@
 
 ## 不具合報告・機能提案など
 
-- [GitHub](https://github.com/Midra429/ExtraCommentTools/issues) (推奨)
-- [Chrome Web Store](https://chrome.google.com/webstore/detail/anlpocdpfdpcldkfchppmahpgpjaffan) > サポート
-- [Twitter (@Midra429)](https://twitter.com/Midra429) に [メンション](https://twitter.com/intent/tweet?screen_name=Midra429) や [DM](https://twitter.com/messages/compose?recipient_id=1052566817279864837)
+- Misskey ([@Midra@submarin.online](https://submarin.online/@Midra))にメンションやDM
+- X ([@Midra429](https://x.com/Midra429))にメンションやDM
+- GitHub > [Issues](https://github.com/Midra429/NCOverlay/issues)
+- [Midraの掲示板](https://midra.me/board)
+- ~~[Chrome Web Store](https://chromewebstore.google.com/detail/ofhffkmglkibpkgcfhbgajghlkgplafe) > サポート~~<br>
+  気付けない可能性高いので非推奨
 
 ---
 
