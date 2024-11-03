@@ -1,0 +1,10 @@
+name: 機能提案
+description: 欲しい機能、改善してほしい部分などの提案
+labels: ['機能提案']
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: 詳細
+    validations:
+      required: true

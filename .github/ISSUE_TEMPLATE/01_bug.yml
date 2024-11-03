@@ -1,0 +1,45 @@
+name: 不具合報告
+description: コメントが引用されない、機能が正しく動作していないなどの問題を報告
+labels: ['不具合']
+body:
+  - type: input
+    id: version
+    attributes:
+      label: バージョン
+      description: |
+        引用コメントツールのバージョン
+        ポップアップの `設定 > 情報` の `引用コメントツール` の右側に記載されています
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: OS
+      options:
+        - Windows
+        - macOS
+        - Linux
+        - ChromeOS
+        - Android
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: ブラウザ
+      options:
+        - Chrome
+        - Firefox
+
+  - type: textarea
+    id: video
+    attributes:
+      label: 該当の動画
+      description: タイトルやエピソード、URLなど
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 詳細
+    validations:
+      required: true

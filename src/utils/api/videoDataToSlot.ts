@@ -1,0 +1,34 @@
+import type { VideoData } from '@midra/nco-api/types/niconico/video'
+import type { ExtSlot } from '@/core/slots'
+
+import { DANIME_CHANNEL_ID } from '@midra/nco-api/constants'
+
+export const videoDataToSlot = (
+  data: VideoData,
+  slot?: Partial<ExtSlot>
+): ExtSlot => {
+  const isDAnime = data.channel?.id === `ch${DANIME_CHANNEL_ID}`
+  const isOfficialAnime = !!data.channel?.isOfficialAnime
+
+  return {
+    id: data.video.id,
+    type: (isDAnime && 'danime') || (isOfficialAnime && 'official') || 'normal',
+    isStock: false,
+    isAuto: false,
+    isManual: false,
+    info: {
+      title: data.video.title,
+      duration: data.video.duration,
+      date: new Date(data.video.registeredAt).getTime(),
+      count: {
+        view: data.video.count.view,
+        comment: data.video.count.comment,
+      },
+      thumbnail:
+        data.video.thumbnail.largeUrl ||
+        data.video.thumbnail.middleUrl ||
+        data.video.thumbnail.url,
+    },
+    ...slot,
+  }
+}
