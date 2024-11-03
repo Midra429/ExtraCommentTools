@@ -1,10 +1,10 @@
 # <sub><img src="assets/icon.png" width="30px" height="30px"></sub> 引用コメントツール
 [![GitHub Release](https://img.shields.io/github/v/release/Midra429/ExtraCommentTools?label=Releases)](https://github.com/Midra429/ExtraCommentTools/releases/latest)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/anlpocdpfdpcldkfchppmahpgpjaffan?label=Chrome%20Web%20Store)](https://chromewebstore.google.com/detail/anlpocdpfdpcldkfchppmahpgpjaffan)
-<!-- [![Firefox Add-ons](https://img.shields.io/amo/v/ncoverlay?label=Firefox%20Add-ons)](https://addons.mozilla.org/ja/firefox/addon/ncoverlay/) -->
+[![Firefox Add-ons](https://img.shields.io/amo/v/引用コメントツール?label=Firefox%20Add-ons)](https://addons.mozilla.org/ja/firefox/addon/引用コメントツール/)
 
 [<img src="assets/badges/chrome.png" height="60px">](https://chromewebstore.google.com/detail/anlpocdpfdpcldkfchppmahpgpjaffan)
-<!-- [<img src="assets/badges/firefox.png" height="60px">](https://addons.mozilla.org/ja/firefox/addon/ncoverlay/) -->
+[<img src="assets/badges/firefox.png" height="60px">](https://addons.mozilla.org/ja/firefox/addon/引用コメントツール/)
 
 ## 概要
 ニコニコ動画の引用コメント関連のツールです。
@@ -17,8 +17,7 @@
 https://chromewebstore.google.com/detail/anlpocdpfdpcldkfchppmahpgpjaffan
 
 ### Firefox Add-ons
-準備中...
-<!-- https://addons.mozilla.org/ja/firefox/addon/ncoverlay/ -->
+https://addons.mozilla.org/ja/firefox/addon/引用コメントツール/
 
 ## 不具合報告・機能提案など
 - [Google フォーム](https://docs.google.com/forms/d/e/1FAIpQLSdKaAMiPx0T-kiM49g9X0Knu9JGR77VBtSU2BCE6xBwELkP8g/viewform)<br>
