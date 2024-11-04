@@ -36,7 +36,7 @@ export const StorageSizes: React.FC = () => {
       <Divider className="h-4" orientation="vertical" />
 
       <span className="text-tiny">
-        その他: {filesize(storageBytes - settingsBytes)}
+        キャッシュ: {filesize(storageBytes - settingsBytes)}
       </span>
     </div>
   )

@@ -77,14 +77,13 @@ export const hookWatch = async (
 
   const { slotsManager } = hooksSharedData
 
+  await slotsManager?.remove({ isManual: false })
+
   // 設定
   const showExtra = await settings.get('settings:comment:showExtra')
   const mergeExtra = await settings.get('settings:comment:mergeExtra')
   const showEasy = await settings.get('settings:comment:showEasy')
   const searchTargets = await settings.get('settings:autoLoad:searchTargets')
-
-  const searchOfficialEnabled = searchTargets.includes('official')
-  const searchDAnimeEnabled = searchTargets.includes('danime')
 
   try {
     const res = await Reflect.apply(...args)
@@ -95,6 +94,11 @@ export const hookWatch = async (
     if (json.meta.status === 200) {
       const videoData = json.data.response as VideoData
       const { channel, comment, video } = videoData
+
+      // かんたんコメントを非表示
+      if (!showEasy) {
+        filterEasyComment(videoData)
+      }
 
       // スレッド (メイン)
       const mainThread = extractMainThread(videoData)
@@ -128,20 +132,18 @@ export const hookWatch = async (
         })
       }
 
-      await slotsManager?.remove({ isManual: false })
-
-      const slots = await slotsManager?.get()
-      const manualVideoIds = new Set(slots?.map((slot) => slot.id))
-
       // 引用コメントを表示
       if (showExtra) {
+        const slots = await slotsManager?.get()
+        const manualVideoIds = new Set(slots?.map((slot) => slot.id))
+
         const isDAnime = channel?.id === `ch${DANIME_CHANNEL_ID}`
         const isOfficial = !isDAnime && !!channel?.isOfficialAnime
 
         const searchedVideoIds = new Set<string>()
 
         // dアニメ
-        if (isDAnime && searchOfficialEnabled) {
+        if (isDAnime && searchTargets.includes('official')) {
           // 検索 (公式)
           const searchResults = await ncoApiProxy.search({
             input: buildSearchQueryInput(video.title, video.duration),
@@ -161,7 +163,7 @@ export const hookWatch = async (
           })
         }
         // 公式
-        else if (isOfficial && searchDAnimeEnabled) {
+        else if (isOfficial && searchTargets.includes('danime')) {
           // 関連付けられたdアニメの動画
           const dAnimeLink = await ncoApiProxy.niconico.channelVideoDAnimeLinks(
             video.id
@@ -192,13 +194,13 @@ export const hookWatch = async (
           }
         }
 
-        // 追加する動画情報の検索
+        // 追加する動画情報を取得
         const videoDataList = (
           await ncoApiProxy.niconico.multipleVideo([
             ...new Set([
               ...extraThread.videoIds,
-              ...manualVideoIds,
               ...searchedVideoIds,
+              ...manualVideoIds,
             ]),
           ])
         ).filter((v) => v !== null)
@@ -279,11 +281,6 @@ export const hookWatch = async (
           comment.nvComment.params.targets.filter((val) => {
             return !extraThread.forkIds.includes(`${val.fork}:${val.id}`)
           })
-      }
-
-      // かんたんコメントを非表示
-      if (!showEasy) {
-        filterEasyComment(videoData)
       }
 
       // 空のレイヤーを削除
