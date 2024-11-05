@@ -1,4 +1,5 @@
 import type { AccordionItemProps } from '@nextui-org/react'
+import type { StorageKey } from '@/types/storage'
 
 import { memo } from 'react'
 import {
@@ -130,7 +131,6 @@ const accordionItemStorage = (
     <div className="flex flex-col gap-2 py-2">
       <ItemButton
         title="設定をリセット"
-        description="設定を初期値に戻します。"
         button={{
           variant: 'flat',
           color: 'danger',
@@ -146,8 +146,33 @@ const accordionItemStorage = (
       />
 
       <ItemButton
+        title="キャッシュを削除"
+        button={{
+          variant: 'flat',
+          color: 'danger',
+          startContent: <Trash2Icon />,
+          text: '削除',
+          onPress: async () => {
+            const values = await storage.get()
+            const cacheKeys = Object.keys(values).filter((v) =>
+              v.startsWith('slots:')
+            ) as StorageKey[]
+
+            if (cacheKeys.length) {
+              await storage.remove(...cacheKeys)
+            }
+          },
+        }}
+        confirm={{
+          placement: 'top-end',
+          title: 'キャッシュを削除しますか？',
+          description:
+            '手動で引用したコメントや\n変更したオフセットの値が全て削除されます。',
+        }}
+      />
+
+      <ItemButton
         title="ストレージを初期化"
-        description="データを全て消去します。"
         button={{
           variant: 'flat',
           color: 'danger',
