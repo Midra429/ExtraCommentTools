@@ -7,6 +7,7 @@ import type { FetchProxyApplyArguments } from '..'
 
 import { logger } from '@/utils/logger'
 import { videoDataToSlot } from '@/utils/api/videoDataToSlot'
+import { utilsMessagingPage } from '@/utils/messaging/page'
 import { ncoApiProxy } from '@/proxy/nco-api/page'
 
 import { hooksSharedData } from '.'
@@ -110,6 +111,18 @@ export const hookThreads = async (
           await slotsManager.add(newSlot)
         }
       }
+
+      // バッジを設定
+      const loadedCount = loadedVideoDataList.length
+
+      await utilsMessagingPage.sendMessage('setBadge', {
+        text: loadedCount ? loadedCount.toString() : null,
+        color: 'green',
+      })
+    } else {
+      await utilsMessagingPage.sendMessage('setBadge', {
+        text: null,
+      })
     }
 
     return new Response(JSON.stringify(json), {

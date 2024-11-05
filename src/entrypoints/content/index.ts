@@ -9,6 +9,7 @@ import { extMessaging } from '@/core/messaging'
 import { ncoApiProxy } from '@/proxy/nco-api/extension'
 
 import registerStorageMessage from './registerStorageMessage'
+import registerUtilsMessage from './registerUtilsMessage'
 
 export default defineContentScript({
   matches: MATCHES,
@@ -23,7 +24,9 @@ const main = () => {
   })
 
   registerProxy('ncoApi', ncoApiProxy, proxyMessaging.onMessage)
+
   registerStorageMessage()
+  registerUtilsMessage()
 
   extMessaging.onMessage('getVideoId', () => {
     return extractVideoId(location.href)

@@ -1,7 +1,6 @@
 import { webext } from '@/utils/webext'
 
 const COLORS = {
-  primary: '#3b61de',
   red: '#f31260',
   green: '#0dac52',
   blue: '#006fee',
@@ -17,7 +16,7 @@ export const setBadge = async ({
   color?: keyof typeof COLORS
   tabId?: number
 }) => {
-  const bgColor = COLORS[color ?? 'primary']
+  const bgColor = COLORS[color ?? 'blue']
   const textColor = '#ffffff'
 
   await Promise.allSettled([

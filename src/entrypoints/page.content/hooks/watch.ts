@@ -13,6 +13,7 @@ import { logger } from '@/utils/logger'
 import { settings } from '@/utils/settings/page'
 import { extractMainThread } from '@/utils/api/extractMainThread'
 import { extractExtraThread } from '@/utils/api/extractExtraThread'
+import { utilsMessagingPage } from '@/utils/messaging/page'
 import { ncoApiProxy } from '@/proxy/nco-api/page'
 
 import { hooksSharedData } from '.'
@@ -78,6 +79,10 @@ export const hookWatch = async (
   const { slotsManager } = hooksSharedData
 
   await slotsManager?.remove({ isManual: false })
+
+  await utilsMessagingPage.sendMessage('setBadge', {
+    text: null,
+  })
 
   // 設定
   const showExtra = await settings.get('settings:comment:showExtra')
@@ -194,7 +199,7 @@ export const hookWatch = async (
           }
         }
 
-        // 追加する動画情報を取得
+        // 引用動画情報を取得
         const videoDataList = (
           await ncoApiProxy.niconico.multipleVideo([
             ...new Set([
@@ -205,7 +210,7 @@ export const hookWatch = async (
           ])
         ).filter((v) => v !== null)
 
-        // 動画情報を追加
+        // 引用動画情報を追加
         videoDataList.forEach((videoData) => {
           // かんたんコメントを非表示
           if (!showEasy) {
@@ -263,6 +268,16 @@ export const hookWatch = async (
             )
             comment.layers.splice(extraLayerIdx, 1)
           }
+        }
+
+        // バッジを設定
+        const extraCount = videoDataList.length
+
+        if (extraCount) {
+          await utilsMessagingPage.sendMessage('setBadge', {
+            text: extraCount.toString(),
+            color: 'yellow',
+          })
         }
       }
       // 引用コメントを非表示
