@@ -107,7 +107,8 @@ export const Popconfirm: React.FC<PopconfirmProps> = (props) => {
           <span
             className={cn(
               'text-tiny',
-              'text-foreground-500 dark:text-foreground-600'
+              'text-foreground-500 dark:text-foreground-600',
+              'whitespace-pre-wrap'
             )}
           >
             {props.description}

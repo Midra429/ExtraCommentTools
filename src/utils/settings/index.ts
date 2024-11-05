@@ -112,7 +112,9 @@ export class WebExtSettings {
   }
 
   readonly get: SettingsGetFunction = async (...keys: SettingsKey[]) => {
-    const values = await this.#storage.get(...keys)
+    const values = await this.#storage.get(
+      ...(keys.length ? keys : (Object.keys(SETTINGS_DEFAULT) as SettingsKey[]))
+    )
 
     if (keys.length === 1) {
       return (values ?? SETTINGS_DEFAULT[keys[0]]) as any

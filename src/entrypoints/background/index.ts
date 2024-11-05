@@ -5,8 +5,8 @@ import { GITHUB_URL } from '@/constants'
 
 import { logger } from '@/utils/logger'
 import { webext } from '@/utils/webext'
+import { getFormsUrl } from '@/utils/getFormsUrl'
 import { settings } from '@/utils/settings/extension'
-import { getFormsUrl } from '@/utils/extension/getFormsUrl'
 import { registerProxy } from '@/utils/proxy-service/register'
 import { proxyMessaging } from '@/utils/proxy-service/messaging/extension'
 
@@ -23,6 +23,7 @@ const main = async () => {
   logger.log('background.js')
 
   registerProxy('ncoApi', ncoApi, proxyMessaging.onMessage)
+
   registerUtilsMessage()
 
   // インストール・アップデート時
@@ -78,6 +79,4 @@ const main = async () => {
       }
     })
   })
-
-  logger.log('settings:', await settings.get())
 }

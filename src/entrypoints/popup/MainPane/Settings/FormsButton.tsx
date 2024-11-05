@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { ClipboardPenIcon } from 'lucide-react'
 
 import { webext } from '@/utils/webext'
-import { getFormsUrl } from '@/utils/extension/getFormsUrl'
+import { getFormsUrl } from '@/utils/getFormsUrl'
 
 import { IconLink } from '@/components/IconLink'
 import { extractVideoId } from '@/utils/api/extractVideoId'

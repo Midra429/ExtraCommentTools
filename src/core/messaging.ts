@@ -1,5 +1,4 @@
 import type { GetDataType, GetReturnType } from '@webext-core/messaging'
-import type { StorageItems } from '@/types/storage'
 
 import { defineExtensionMessaging } from '@webext-core/messaging'
 
@@ -7,11 +6,6 @@ import { webext } from '@/utils/webext'
 
 type ProtocolMap = {
   getVideoId: (args?: null) => string | null
-
-  capture: (format: StorageItems['settings:capture:format']) => {
-    format: 'jpeg' | 'png'
-    data?: number[]
-  }
 }
 
 export const extMessaging = defineExtensionMessaging<ProtocolMap>()
