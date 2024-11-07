@@ -69,6 +69,10 @@ export const hookWatch = async (
   logger.log('---------------------------------------')
   logger.log('hookWatch()')
 
+  await utilsMessagingPage.sendMessage('setBadge', {
+    text: null,
+  })
+
   const [url, init] = args[2]
   const apiLogName = `${init.method} ${url.pathname}`
 
@@ -76,17 +80,12 @@ export const hookWatch = async (
 
   await hooksSharedData.initialize(videoId)
 
-  const { slotsManager } = hooksSharedData
-
-  await slotsManager?.remove({ isManual: false })
-
-  await utilsMessagingPage.sendMessage('setBadge', {
-    text: null,
-  })
-
   // 設定
   const showExtra = await settings.get('settings:comment:showExtra')
   const mergeExtra = await settings.get('settings:comment:mergeExtra')
+  const translucentExtra = await settings.get(
+    'settings:comment:translucentExtra'
+  )
   const showEasy = await settings.get('settings:comment:showEasy')
   const searchTargets = await settings.get('settings:autoLoad:searchTargets')
 
@@ -105,28 +104,40 @@ export const hookWatch = async (
         filterEasyComment(videoData)
       }
 
-      // スレッド (メイン)
+      // メインスレッド
       const mainThread = extractMainThread(videoData)
-      // スレッド (引用)
+      // 引用スレッド
       const extraThread = extractExtraThread(videoData)
 
       const stockVideoIds = new Set(
         videoData.comment.threads.map((v) => v.videoId)
       )
 
-      // レイヤー (メイン)
-      const mainLayerIdx = comment.layers.findIndex((layer) => {
+      // メインレイヤー
+      let mainLayerIdx = comment.layers.findIndex((layer) => {
         return layer.threadIds.some((val) => {
           return mainThread.forkIds.includes(`${val.forkLabel}:${val.id}`)
         })
       })
-      // レイヤー (引用)
+
+      if (mainLayerIdx === -1) {
+        mainLayerIdx = comment.layers.length
+
+        comment.layers.push({
+          index: mainLayerIdx,
+          isTranslucent: true,
+          threadIds: [],
+        })
+      }
+
+      // 引用レイヤー
       let extraLayerIdx = comment.layers.findIndex((layer) => {
         return layer.threadIds.some((val) => {
           return extraThread.forkIds.includes(`${val.forkLabel}:${val.id}`)
         })
       })
 
+      // 引用レイヤーがなければ作る
       if (extraLayerIdx === -1) {
         extraLayerIdx = comment.layers.length
 
@@ -137,9 +148,12 @@ export const hookWatch = async (
         })
       }
 
+      // 引用レイヤーを半透明化
+      comment.layers[extraLayerIdx].isTranslucent = translucentExtra
+
       // 引用コメントを表示
       if (showExtra) {
-        const slots = await slotsManager?.get()
+        const slots = await hooksSharedData.slotsManager?.get()
         const manualVideoIds = new Set(slots?.map((slot) => slot.id))
 
         const isDAnime = channel?.id === `ch${DANIME_CHANNEL_ID}`
@@ -200,7 +214,7 @@ export const hookWatch = async (
         }
 
         // 引用動画情報を取得
-        const videoDataList = (
+        const extraVideoDataList = (
           await ncoApiProxy.niconico.multipleVideo([
             ...new Set([
               ...extraThread.videoIds,
@@ -211,7 +225,7 @@ export const hookWatch = async (
         ).filter((v) => v !== null)
 
         // 引用動画情報を追加
-        videoDataList.forEach((videoData) => {
+        extraVideoDataList.forEach((videoData) => {
           // かんたんコメントを非表示
           if (!showEasy) {
             filterEasyComment(videoData)
@@ -224,9 +238,9 @@ export const hookWatch = async (
           const isManual = manualVideoIds.has(videoId)
 
           if (!isStock) {
-            const { threads, forkIds } = extractMainThread(videoData)
+            const mainThread = extractMainThread(videoData)
 
-            threads.forEach((val) => {
+            mainThread.threads.forEach((val) => {
               if (!val.label.startsWith('extra-')) {
                 val.label = `extra-${val.label}` as any
               }
@@ -235,10 +249,10 @@ export const hookWatch = async (
               val.postkeyStatus = 0
             })
 
-            comment.threads.push(...threads)
+            comment.threads.push(...mainThread.threads)
 
             comment.layers[extraLayerIdx].threadIds.push(
-              ...threads.map<ThreadId>((val) => {
+              ...mainThread.threads.map<ThreadId>((val) => {
                 return {
                   id: val.id,
                   fork: val.fork,
@@ -250,7 +264,7 @@ export const hookWatch = async (
             // メインのスレッドのみ
             videoData.comment.nvComment.params.targets =
               videoData.comment.nvComment.params.targets.filter((val) => {
-                return forkIds.includes(`${val.fork}:${val.id}`)
+                return mainThread.forkIds.includes(`${val.fork}:${val.id}`)
               })
           }
 
@@ -266,12 +280,13 @@ export const hookWatch = async (
             comment.layers[mainLayerIdx].threadIds.push(
               ...comment.layers[extraLayerIdx].threadIds
             )
-            comment.layers.splice(extraLayerIdx, 1)
+
+            delete comment.layers[extraLayerIdx]
           }
         }
 
         // バッジを設定
-        const extraCount = videoDataList.length
+        const extraCount = extraVideoDataList.length
 
         if (extraCount) {
           await utilsMessagingPage.sendMessage('setBadge', {
@@ -298,8 +313,10 @@ export const hookWatch = async (
           })
       }
 
-      // 空のレイヤーを削除
-      comment.layers = comment.layers.filter((v) => v.threadIds.length)
+      // 空のレイヤーを削除 & 一応並び替え
+      comment.layers = comment.layers
+        .filter((v) => v.threadIds.length)
+        .sort((a, b) => a.index - b.index)
 
       hooksSharedData.videoData = videoData
     }

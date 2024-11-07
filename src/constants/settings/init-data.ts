@@ -64,8 +64,12 @@ export const SETTINGS_INIT_DATA: SettingsInitData = [
       {
         settingsKey: 'settings:comment:mergeExtra',
         inputType: 'toggle',
-        label: '引用コメントを統合',
-        description: '引用コメントの半透明を解除します。',
+        label: '引用コメントを重ならないように表示',
+      },
+      {
+        settingsKey: 'settings:comment:translucentExtra',
+        inputType: 'toggle',
+        label: '引用コメントを半透明化',
       },
       {
         settingsKey: 'settings:comment:showEasy',

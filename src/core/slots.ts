@@ -14,6 +14,7 @@ export type ExtSlot = {
   isAuto: boolean
   isManual: boolean
   offsetMs?: number
+  commands?: string[]
   info: {
     title: string
     duration: number

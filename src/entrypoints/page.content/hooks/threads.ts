@@ -5,7 +5,10 @@ import type {
 import type { ThreadsRequestBody } from '@midra/nco-api/niconico/threads'
 import type { FetchProxyApplyArguments } from '..'
 
+import { NICONICO_COLOR_COMMANDS } from '@/constants'
+
 import { logger } from '@/utils/logger'
+import { settings } from '@/utils/settings/page'
 import { videoDataToSlot } from '@/utils/api/videoDataToSlot'
 import { utilsMessagingPage } from '@/utils/messaging/page'
 import { ncoApiProxy } from '@/proxy/nco-api/page'
@@ -34,6 +37,12 @@ export const hookThreads = async (
   if (!body) {
     return null
   }
+
+  // 設定
+  const mergeExtra = await settings.get('settings:comment:mergeExtra')
+  const translucentExtra = await settings.get(
+    'settings:comment:translucentExtra'
+  )
 
   try {
     const res = await Reflect.apply(...args)
@@ -65,23 +74,41 @@ export const hookThreads = async (
 
       const slots = await slotsManager?.get()
 
-      // オフセット適用
-      slots?.forEach((slot) => {
-        const offsetMs = slot.offsetMs
+      // オフセット・コマンド適用
+      threads.forEach((thread) => {
+        const forkId = `${thread.fork}:${thread.id}`
+        const videoId = videoData.comment.threads.find(
+          (v) => `${v.forkLabel}:${v.id}` === forkId
+        )?.videoId
 
-        if (!offsetMs) return
+        const slot = slots?.find((v) => v.id === videoId)
 
-        const forkIds = videoData.comment.threads
-          .filter((v) => v.videoId === slot.id)
-          .map((v) => `${v.forkLabel}:${v.id}`)
+        const offsetMs = slot?.offsetMs ?? 0
+        const commands = slot?.commands ?? []
 
-        threads
-          .filter((v) => forkIds.includes(`${v.fork}:${v.id}`))
-          .forEach((thread) => {
-            thread.comments.forEach((cmt) => {
-              cmt.vposMs += offsetMs
-            })
+        const isExtra = extraVideoDataList.some((v) => v.video.id === videoId)
+
+        // 統合済みだと半透明レイヤーじゃないので
+        if (isExtra && mergeExtra && translucentExtra) {
+          commands.push('_live')
+        }
+
+        if (!offsetMs && !commands.length) return
+
+        thread.comments.forEach((cmt) => {
+          cmt.vposMs += offsetMs
+
+          const hasColorCommand = cmt.commands.some((command) => {
+            return NICONICO_COLOR_COMMANDS.includes(command)
           })
+          const filteredCommands = hasColorCommand
+            ? commands.filter((command) => {
+                return !NICONICO_COLOR_COMMANDS.includes(command)
+              })
+            : commands
+
+          cmt.commands = [...new Set([...cmt.commands, ...filteredCommands])]
+        })
       })
 
       // 読み込み済みの動画情報
@@ -95,12 +122,8 @@ export const hookThreads = async (
 
       // スロットに追加
       for (const data of loadedVideoDataList) {
-        const oldSlot = slots?.find((v) => v.id === data.video.id)
-        const newSlot = videoDataToSlot(data, {
-          isStock: !!data._ect.isStock,
-          isAuto: !!data._ect.isAuto,
-          isManual: !!data._ect.isManual,
-        })
+        const newSlot = videoDataToSlot(data)
+        const oldSlot = slots?.find((v) => v.id === newSlot.id)
 
         if (oldSlot) {
           await slotsManager.update({

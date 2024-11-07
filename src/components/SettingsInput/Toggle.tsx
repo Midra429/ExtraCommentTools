@@ -20,7 +20,10 @@ export const Input: React.FC<Props> = (props) => {
   const [isDisabled, setIsDisabled] = useState(false)
 
   useEffect(() => {
-    if (props.settingsKey === 'settings:comment:mergeExtra') {
+    if (
+      props.settingsKey === 'settings:comment:mergeExtra' ||
+      props.settingsKey === 'settings:comment:translucentExtra'
+    ) {
       return settings.watch('settings:comment:showExtra', (val) => {
         setIsDisabled(!val)
       })

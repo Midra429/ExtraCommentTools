@@ -37,6 +37,12 @@ export type StorageItems_v1 = {
   'settings:comment:mergeExtra': boolean
 
   /**
+   * 設定: コメント > 引用コメントを半透明化
+   * @default true
+   */
+  'settings:comment:translucentExtra': boolean
+
+  /**
    * 設定: コメント > かんたんコメントを表示
    * @default true
    */

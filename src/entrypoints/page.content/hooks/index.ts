@@ -3,15 +3,15 @@ import type { VideoData } from '@midra/nco-api/types/niconico/video'
 import { storage } from '@/utils/storage/page'
 import { ExtSlotsManager } from '@/core/slots'
 
-type ExtraVideoData = VideoData & {
+export type ExtraVideoData = VideoData & {
   _ect: {
-    isStock?: boolean
-    isAuto?: boolean
-    isManual?: boolean
+    isStock: boolean
+    isAuto: boolean
+    isManual: boolean
   }
 }
 
-class HooksSharedData {
+export const hooksSharedData = new (class HooksSharedData {
   #videoId: string | null = null
   #videoData: VideoData | null = null
   #extraVideoDataList: ExtraVideoData[] = []
@@ -26,6 +26,7 @@ class HooksSharedData {
     this.#slotsManager = new ExtSlotsManager(videoId, storage)
 
     await this.#slotsManager.initialize()
+    await this.#slotsManager.remove({ isManual: false })
   }
 
   clear() {
@@ -56,6 +57,4 @@ class HooksSharedData {
   set extraVideoDataList(value) {
     this.#extraVideoDataList = value
   }
-}
-
-export const hooksSharedData = new HooksSharedData()
+})()
