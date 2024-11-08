@@ -96,7 +96,11 @@ export const hookThreads = async (
         }
 
         // 引用コメントの色
-        if (isExtra && extraColor && !/^#f{6}$/i.test(extraColor)) {
+        if (
+          isExtra &&
+          COLOR_CODE_REGEXP.test(extraColor) &&
+          !/^#f{6}$/i.test(extraColor)
+        ) {
           commands.push(extraColor)
 
           hasCustomColor = true
