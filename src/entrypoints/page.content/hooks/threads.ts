@@ -5,7 +5,7 @@ import type {
 import type { ThreadsRequestBody } from '@midra/nco-api/niconico/threads'
 import type { FetchProxyApplyArguments } from '..'
 
-import { NICONICO_COLOR_COMMANDS } from '@/constants'
+import { NICONICO_COLOR_COMMANDS, COLOR_CODE_REGEXP } from '@/constants'
 
 import { logger } from '@/utils/logger'
 import { settings } from '@/utils/settings/page'
@@ -43,6 +43,7 @@ export const hookThreads = async (
   const translucentExtra = await settings.get(
     'settings:comment:translucentExtra'
   )
+  const extraColor = await settings.get('settings:comment:extraColor')
 
   try {
     const res = await Reflect.apply(...args)
@@ -87,10 +88,18 @@ export const hookThreads = async (
         const commands = slot?.commands ?? []
 
         const isExtra = extraVideoDataList.some((v) => v.video.id === videoId)
+        let hasCustomColor = false
 
         // 統合済みだと半透明レイヤーじゃないので
         if (isExtra && mergeExtra && translucentExtra) {
           commands.push('_live')
+        }
+
+        // 引用コメントの色
+        if (isExtra && extraColor && !/^#f{6}$/i.test(extraColor)) {
+          commands.push(extraColor)
+
+          hasCustomColor = true
         }
 
         if (!offsetMs && !commands.length) return
@@ -98,16 +107,25 @@ export const hookThreads = async (
         thread.comments.forEach((cmt) => {
           cmt.vposMs += offsetMs
 
+          // デフォルトのカラーコマンド優先
           const hasColorCommand = cmt.commands.some((command) => {
-            return NICONICO_COLOR_COMMANDS.includes(command)
+            return (
+              NICONICO_COLOR_COMMANDS.includes(command) ||
+              COLOR_CODE_REGEXP.test(command)
+            )
           })
           const filteredCommands = hasColorCommand
             ? commands.filter((command) => {
-                return !NICONICO_COLOR_COMMANDS.includes(command)
+                return (
+                  !NICONICO_COLOR_COMMANDS.includes(command) &&
+                  !COLOR_CODE_REGEXP.test(command)
+                )
               })
             : commands
 
           cmt.commands = [...new Set([...cmt.commands, ...filteredCommands])]
+
+          cmt.isPremium ||= hasCustomColor
         })
       })
 

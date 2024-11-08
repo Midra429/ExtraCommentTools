@@ -6,6 +6,7 @@ import * as Text from './Text'
 import * as Range from './Range'
 import * as Checkbox from './Checkbox'
 import * as Checkcard from './Checkcard'
+import * as ColorPicker from './ColorPicker'
 
 export type SettingsInputBaseProps<
   K extends SettingsKey,
@@ -27,12 +28,14 @@ export type SettingsInputProps<K extends SettingsKey> =
   | (K extends Range.Key ? Range.Props<K> : never)
   | (K extends Checkbox.Key ? Checkbox.Props<K> : never)
   | (K extends Checkcard.Key ? Checkcard.Props<K> : never)
+  | (K extends ColorPicker.Key ? ColorPicker.Props<K> : never)
 
 export const SettingsInput = {
-  select: Select.Input,
-  toggle: Toggle.Input,
-  text: Text.Input,
-  range: Range.Input,
-  checkbox: Checkbox.Input,
-  checkcard: Checkcard.Input,
+  'select': Select.Input,
+  'toggle': Toggle.Input,
+  'text': Text.Input,
+  'range': Range.Input,
+  'checkbox': Checkbox.Input,
+  'checkcard': Checkcard.Input,
+  'color-picker': ColorPicker.Input,
 }

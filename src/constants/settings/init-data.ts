@@ -72,6 +72,12 @@ export const SETTINGS_INIT_DATA: SettingsInitData = [
         label: '引用コメントを半透明化',
       },
       {
+        settingsKey: 'settings:comment:extraColor',
+        inputType: 'color-picker',
+        label: '引用コメントの色',
+        description: '※デフォルトのカラーコマンド優先',
+      },
+      {
         settingsKey: 'settings:comment:showEasy',
         inputType: 'toggle',
         label: 'かんたんコメントを表示',
