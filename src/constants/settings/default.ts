@@ -12,6 +12,7 @@ export const SETTINGS_DEFAULT: SettingItems = {
   'settings:comment:mergeExtra': true,
   'settings:comment:translucentExtra': false,
   'settings:comment:extraColor': '#ffffff',
+  'settings:comment:forceExtraColor': false,
   'settings:comment:showEasy': true,
 
   // 自動引用

@@ -44,6 +44,7 @@ export const hookThreads = async (
     'settings:comment:translucentExtra'
   )
   const extraColor = await settings.get('settings:comment:extraColor')
+  const forceExtraColor = await settings.get('settings:comment:forceExtraColor')
 
   try {
     const res = await Reflect.apply(...args)
@@ -85,7 +86,7 @@ export const hookThreads = async (
         const slot = slots?.find((v) => v.id === videoId)
 
         const offsetMs = slot?.offsetMs ?? 0
-        const commands = slot?.commands ?? []
+        let commands = slot?.commands ?? []
 
         const isExtra = extraVideoDataList.some((v) => v.video.id === videoId)
         let hasCustomColor = false
@@ -111,23 +112,36 @@ export const hookThreads = async (
         thread.comments.forEach((cmt) => {
           cmt.vposMs += offsetMs
 
-          // デフォルトのカラーコマンド優先
           const hasColorCommand = cmt.commands.some((command) => {
             return (
               NICONICO_COLOR_COMMANDS.includes(command) ||
               COLOR_CODE_REGEXP.test(command)
             )
           })
-          const filteredCommands = hasColorCommand
-            ? commands.filter((command) => {
+
+          let tmpCommands = commands
+
+          if (hasCustomColor) {
+            if (forceExtraColor) {
+              // 引用コメントの色を強制
+              cmt.commands = cmt.commands.filter((command) => {
                 return (
                   !NICONICO_COLOR_COMMANDS.includes(command) &&
                   !COLOR_CODE_REGEXP.test(command)
                 )
               })
-            : commands
+            } else if (hasColorCommand) {
+              // カラーコマンド優先
+              tmpCommands = commands.filter((command) => {
+                return (
+                  !NICONICO_COLOR_COMMANDS.includes(command) &&
+                  !COLOR_CODE_REGEXP.test(command)
+                )
+              })
+            }
+          }
 
-          cmt.commands = [...new Set([...cmt.commands, ...filteredCommands])]
+          cmt.commands = [...new Set([...cmt.commands, ...tmpCommands])]
 
           cmt.isPremium ||= hasCustomColor
         })

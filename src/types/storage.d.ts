@@ -49,6 +49,12 @@ export type StorageItems_v1 = {
   'settings:comment:extraColor': string
 
   /**
+   * 設定: コメント > 引用コメントの色を強制
+   * @default false
+   */
+  'settings:comment:forceExtraColor': boolean
+
+  /**
    * 設定: コメント > かんたんコメントを表示
    * @default true
    */

@@ -75,7 +75,12 @@ export const SETTINGS_INIT_DATA: SettingsInitData = [
         settingsKey: 'settings:comment:extraColor',
         inputType: 'color-picker',
         label: '引用コメントの色',
-        description: '※デフォルトのカラーコマンド優先',
+      },
+      {
+        settingsKey: 'settings:comment:forceExtraColor',
+        inputType: 'toggle',
+        label: '引用コメントの色を強制',
+        description: 'コマンドによる色変更を上書きします。',
       },
       {
         settingsKey: 'settings:comment:showEasy',
