@@ -26,6 +26,9 @@ const PRESET_COLORS = [
   ...new Set(['#FFFFFF', ...Object.values(NICONICO_COLORS)]),
 ]
 
+const TRANSPARENT_BACKGROUND_IMAGE =
+  'data:image/svg+xml;utf8,%3Csvg%20width%3D%222%22%20height%3D%222%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M0%200h1v2h1V1H0%22%20fill-rule%3D%22nonzero%22%20fill%3D%22%23e1e1e1%22/%3E%3C/svg%3E'
+
 type ColorPickerProps = {
   hex: string
   onChange: (hex: string) => void
@@ -48,7 +51,6 @@ const ColorPicker: React.FC<ColorPickerProps> = (props) => {
       radius="sm"
       placement="left"
       backdrop="opaque"
-      showArrow
       isTriggerDisabled={props.isDisabled}
       isOpen={isOpen}
       onOpenChange={setIsOpen}
@@ -67,10 +69,9 @@ const ColorPicker: React.FC<ColorPickerProps> = (props) => {
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage:
-                "url('data:image/svg+xml;utf8,%3Csvg%20width%3D%222%22%20height%3D%222%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M0%200h1v2h1V1H0%22%20fill-rule%3D%22nonzero%22%20fill%3D%22%23e1e1e1%22/%3E%3C/svg%3E')",
+              backgroundImage: `url('${TRANSPARENT_BACKGROUND_IMAGE}')`,
               backgroundSize: 'auto 50%',
-              backgroundColor: '#ffffff',
+              backgroundColor: 'rgb(255, 255, 255)',
             }}
           />
           <div
@@ -104,15 +105,15 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
   const [value, setValue] = useState(100)
   const [alpha, setAlpha] = useState(1)
 
+  const [readableColor, setReadableColor] = useState('rgb(0, 0, 0)')
   const [rgb, setRgb] = useState('rgb(255, 255, 255)')
-  const [text, setText] = useState('')
 
-  const [readableColor, setReadableColor] = useState('black')
+  const [text, setText] = useState('')
 
   const onTextChange = useCallback((val: string) => {
     const text = val.startsWith('#') ? val.slice(1) : val
 
-    setText(text)
+    setText(text.toUpperCase())
 
     const color = colord(`#${text}`)
 
@@ -226,14 +227,14 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
     })
 
     if (color.isLight()) {
-      setReadableColor('black')
+      setReadableColor('rgb(0, 0, 0)')
     } else {
-      setReadableColor('white')
+      setReadableColor('rgb(255, 255, 255)')
     }
 
     setRgb(color.alpha(1).toRgbString())
 
-    const hex = color.toHex()
+    const hex = color.toHex().toUpperCase()
 
     if (document.activeElement !== inputRef.current) {
       setText(hex.slice(1))
@@ -277,11 +278,11 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
           >
             <div
               className={cn(
-                'size-[10px]',
+                'size-[11px]',
                 '-translate-x-1/2 translate-y-1/2',
                 'border-1',
                 'rounded-full',
-                'shadow-[0_0_2px_rgb(0,0,0,50%)]'
+                'shadow-[0_0_2px_rgb(0,0,0,0.5)]'
               )}
               style={{
                 borderColor: readableColor,
@@ -318,18 +319,18 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
           />
 
           <div
-            className="absolute"
+            className="absolute top-[1px]"
             style={{
               left: `${(hue / 360) * 100}%`,
             }}
           >
             <div
               className={cn(
-                'size-[13px]',
+                'size-[11px]',
                 '-translate-x-1/2',
                 'bg-white',
                 'rounded-full',
-                'shadow-[0_0_2px_rgb(0,0,0,50%)]'
+                'shadow-[0_0_2px_rgb(0,0,0,0.75)]'
               )}
             />
           </div>
@@ -351,35 +352,31 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
             <div
               className="absolute inset-0"
               style={{
-                backgroundImage:
-                  "url('data:image/svg+xml;utf8,%3Csvg%20width%3D%222%22%20height%3D%222%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M0%200h1v2h1V1H0%22%20fill-rule%3D%22nonzero%22%20fill%3D%22%23e1e1e1%22/%3E%3C/svg%3E')",
+                backgroundImage: `url('${TRANSPARENT_BACKGROUND_IMAGE}')`,
                 backgroundSize: 'auto 100%',
-                backgroundColor: '#ffffff',
+                backgroundColor: 'rgb(255, 255, 255)',
               }}
             />
             <div
               className="absolute inset-0"
               style={{
-                background: `linear-gradient(to right,
-                  transparent 0%,
-                  ${rgb} 100%
-                )`,
+                background: `linear-gradient(to right, transparent, ${rgb})`,
               }}
             />
 
             <div
-              className="absolute"
+              className="absolute top-[1px]"
               style={{
                 left: `${alpha * 100}%`,
               }}
             >
               <div
                 className={cn(
-                  'size-[13px]',
+                  'size-[11px]',
                   '-translate-x-1/2',
                   'bg-white',
                   'rounded-full',
-                  'shadow-[0_0_2px_rgb(0,0,0,50%)]'
+                  'shadow-[0_0_2px_rgb(0,0,0,0.75)]'
                 )}
               />
             </div>
@@ -435,7 +432,7 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
           size="sm"
           label="HEX"
           labelPlacement="outside-left"
-          placeholder="ffffff"
+          placeholder="FFFFFF"
           startContent="#"
           value={text}
           onValueChange={onTextChange}

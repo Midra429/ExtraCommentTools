@@ -11,7 +11,7 @@ export const SETTINGS_DEFAULT: SettingItems = {
   'settings:comment:showExtra': true,
   'settings:comment:mergeExtra': true,
   'settings:comment:translucentExtra': false,
-  'settings:comment:extraColor': '#ffffff',
+  'settings:comment:extraColor': '#FFFFFF',
   'settings:comment:forceExtraColor': false,
   'settings:comment:showEasy': true,
 

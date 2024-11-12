@@ -44,7 +44,7 @@ export type StorageItems_v1 = {
 
   /**
    * 設定: コメント > 引用コメントの色
-   * @default '#ffffff'
+   * @default '#FFFFFF'
    */
   'settings:comment:extraColor': string
 
