@@ -15,6 +15,7 @@ import {
   DatabaseIcon,
   CircleEllipsisIcon,
   ClipboardListIcon,
+  BookTextIcon,
   RotateCcwIcon,
   Trash2Icon,
 } from 'lucide-react'
@@ -66,12 +67,24 @@ const accordionItemInfo = (
         </div>
 
         <div className="flex flex-row gap-0.5">
+          {/* 利用者アンケート */}
           {/* <IconLink
             icon={ClipboardListIcon}
             title="利用者アンケート ①"
             href=""
           /> */}
+
+          {/* 不具合報告・機能提案 */}
           <FormsButton />
+
+          {/* Wiki */}
+          {/* <IconLink
+            icon={BookTextIcon}
+            title="Wiki"
+            href={`${GITHUB_URL}/wiki`}
+          /> */}
+
+          {/* GitHub */}
           <IconLink icon={SiGithub} href={GITHUB_URL} />
         </div>
       </div>
