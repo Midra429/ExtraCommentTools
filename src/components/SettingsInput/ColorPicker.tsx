@@ -1,7 +1,7 @@
 import type { StorageItems, SettingsKey } from '@/types/storage'
 import type { SettingsInputBaseProps } from '.'
 
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import {
   Popover,
   PopoverTrigger,
@@ -11,16 +11,15 @@ import {
   Divider,
   Button,
 } from '@nextui-org/react'
+import { RotateCcwIcon } from 'lucide-react'
 import { colord } from 'colord'
 
 import { NICONICO_COLORS } from '@/constants'
 import { SETTINGS_DEFAULT } from '@/constants/settings/default'
 
-import { settings } from '@/utils/settings/extension'
 import { useSettings } from '@/hooks/useSettings'
 
 import { ItemLabel } from '@/components/ItemLabel'
-import { RotateCcwIcon } from 'lucide-react'
 
 const PRESET_COLORS = [
   ...new Set(['#FFFFFF', ...Object.values(NICONICO_COLORS)]),
@@ -460,20 +459,23 @@ export type Key = {
 export type Props<K extends Key = Key> = SettingsInputBaseProps<
   K,
   'color-picker',
-  {}
+  {
+    alpha?: boolean
+  }
 >
 
 export const Input: React.FC<Props> = (props) => {
   const [value, setValue] = useSettings(props.settingsKey)
-  const [isDisabled, setIsDisabled] = useState(false)
 
-  useEffect(() => {
+  const [showExtra] = useSettings('settings:comment:showExtra')
+
+  const isDisabled = useMemo<boolean>(() => {
     if (props.settingsKey === 'settings:comment:extraColor') {
-      return settings.watch('settings:comment:showExtra', (val) => {
-        setIsDisabled(!val)
-      })
+      return !showExtra
     }
-  }, [])
+
+    return false
+  }, [showExtra])
 
   return (
     <div
@@ -489,6 +491,7 @@ export const Input: React.FC<Props> = (props) => {
 
       <ColorPicker
         hex={value}
+        alpha={props.alpha}
         presets={PRESET_COLORS}
         isDisabled={isDisabled}
         onChange={setValue}

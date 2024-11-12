@@ -6,6 +6,7 @@ import type { ThreadsRequestBody } from '@midra/nco-api/niconico/threads'
 import type { FetchProxyApplyArguments } from '..'
 
 import { NICONICO_COLOR_COMMANDS, COLOR_CODE_REGEXP } from '@/constants'
+import { SETTINGS_DEFAULT } from '@/constants/settings/default'
 
 import { logger } from '@/utils/logger'
 import { settings } from '@/utils/settings/page'
@@ -100,7 +101,7 @@ export const hookThreads = async (
         if (
           isExtra &&
           COLOR_CODE_REGEXP.test(extraColor) &&
-          !/^#f{6}$/i.test(extraColor)
+          extraColor !== SETTINGS_DEFAULT['settings:comment:extraColor']
         ) {
           commands.push(extraColor)
 
