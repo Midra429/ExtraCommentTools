@@ -37,7 +37,7 @@ const main = async () => {
         if (import.meta.env.PROD) {
           // README
           webext.tabs.create({
-            url: `${GITHUB_URL}/blob/v${version}/README.md`,
+            url: `${GITHUB_URL}/blob/main/README.md`,
           })
         }
 
