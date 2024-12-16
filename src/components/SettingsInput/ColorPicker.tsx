@@ -308,13 +308,13 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
             className="absolute inset-0"
             style={{
               background: `linear-gradient(to right,
-                rgb(255, 0, 0) 0%,
-                rgb(255, 255, 0) 17%,
-                rgb(0, 255, 0) 33%,
-                rgb(0, 255, 255) 50%,
-                rgb(0, 0, 255) 67%,
-                rgb(255, 0, 255) 83%,
-                rgb(255, 0, 0) 100%
+                rgb(255, 0, 0),
+                rgb(255, 255, 0),
+                rgb(0, 255, 0),
+                rgb(0, 255, 255),
+                rgb(0, 0, 255),
+                rgb(255, 0, 255),
+                rgb(255, 0, 0)
               )`,
             }}
           />
