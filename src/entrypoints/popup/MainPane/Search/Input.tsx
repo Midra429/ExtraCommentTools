@@ -1,5 +1,5 @@
 import { useState, useImperativeHandle, forwardRef } from 'react'
-import { Button, Input, cn } from '@nextui-org/react'
+import { Button, Input, cn } from '@heroui/react'
 import { SearchIcon, ChevronDownIcon } from 'lucide-react'
 
 import { Options } from './Options'

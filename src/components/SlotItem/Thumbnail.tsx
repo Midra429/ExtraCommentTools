@@ -1,6 +1,6 @@
 import type { ExtSlot } from '@/core/slots'
 
-import { Image, cn } from '@nextui-org/react'
+import { Image, cn } from '@heroui/react'
 
 import { SourceBadge } from './SourceBadge'
 import { ManualLoadedBadge } from './ManualLoadedBadge'

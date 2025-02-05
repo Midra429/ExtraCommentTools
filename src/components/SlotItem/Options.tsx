@@ -2,8 +2,8 @@ import type { Variants } from 'framer-motion'
 import type { ExtSlot } from '@/core/slots'
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
-import { Button } from '@nextui-org/react'
-import { TRANSITION_VARIANTS } from '@nextui-org/framer-utils'
+import { Button } from '@heroui/react'
+import { TRANSITION_VARIANTS } from '@heroui/framer-utils'
 import {
   AnimatePresence,
   LazyMotion,

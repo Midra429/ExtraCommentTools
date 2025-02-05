@@ -6,11 +6,11 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-  Input as NextUIInput,
+  Input as HeroUIInput,
   cn,
   Divider,
   Button,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import { RotateCcwIcon } from 'lucide-react'
 import { colord } from 'colord'
 
@@ -416,7 +416,7 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
       <Divider />
 
       <div className="flex w-full flex-row gap-1" style={{ width }}>
-        <NextUIInput
+        <HeroUIInput
           classNames={{
             label: 'pe-1.5 ps-0',
             mainWrapper: 'w-full',

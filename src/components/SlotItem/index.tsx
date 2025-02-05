@@ -2,7 +2,7 @@ import type { ExtSlot } from '@/core/slots'
 import type { PanelItemProps } from '@/components/PanelItem'
 
 import { useCallback, useState } from 'react'
-import { cn } from '@nextui-org/react'
+import { cn } from '@heroui/react'
 
 import { slotsManager } from '@/hooks/useExtSlots'
 

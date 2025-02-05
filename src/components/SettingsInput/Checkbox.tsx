@@ -1,11 +1,10 @@
 import type { StorageItems, SettingsKey } from '@/types/storage'
 import type { SettingsInputBaseProps } from '.'
 
-import { useEffect, useState } from 'react'
-import { CheckboxGroup, Checkbox } from '@nextui-org/react'
+import { useMemo } from 'react'
+import { CheckboxGroup, Checkbox } from '@heroui/react'
 import { CircleHelpIcon } from 'lucide-react'
 
-import { settings } from '@/utils/settings/extension'
 import { useSettings } from '@/hooks/useSettings'
 
 import { Tooltip } from '@/components/Tooltip'
@@ -29,15 +28,16 @@ export type Props<K extends Key = Key> = SettingsInputBaseProps<
 
 export const Input: React.FC<Props> = (props) => {
   const [value, setValue] = useSettings(props.settingsKey)
-  const [isDisabled, setIsDisabled] = useState(false)
 
-  useEffect(() => {
+  const [showExtra] = useSettings('settings:comment:showExtra')
+
+  const isDisabled = useMemo(() => {
     if (props.settingsKey === 'settings:autoLoad:searchTargets') {
-      return settings.watch('settings:comment:showExtra', (val) => {
-        setIsDisabled(!val)
-      })
+      return showExtra === false
     }
-  }, [])
+
+    return false
+  }, [showExtra])
 
   return (
     <CheckboxGroup

@@ -1,6 +1,6 @@
 import type { ExtSlot } from '@/core/slots'
 
-import { cn } from '@nextui-org/react'
+import { cn } from '@heroui/react'
 
 export type SourceTagProps = {
   className?: string

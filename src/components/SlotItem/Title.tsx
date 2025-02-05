@@ -1,6 +1,6 @@
 import type { ExtSlot } from '@/core/slots'
 
-import { Link, cn } from '@nextui-org/react'
+import { Link, cn } from '@heroui/react'
 import { useOverflowDetector } from 'react-detectable-overflow'
 
 export type TitleProps = {

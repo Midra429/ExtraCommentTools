@@ -1,4 +1,4 @@
-import type { AccordionItemProps } from '@nextui-org/react'
+import type { AccordionItemProps } from '@heroui/react'
 import type { StorageKey } from '@/types/storage'
 
 import { memo } from 'react'
@@ -10,7 +10,7 @@ import {
   Code,
   Image,
   cn,
-} from '@nextui-org/react'
+} from '@heroui/react'
 import {
   InfoIcon,
   DatabaseIcon,

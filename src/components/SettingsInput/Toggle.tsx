@@ -2,7 +2,7 @@ import type { StorageItems, SettingsKey } from '@/types/storage'
 import type { SettingsInputBaseProps } from '.'
 
 import { useMemo } from 'react'
-import { Switch } from '@nextui-org/react'
+import { Switch } from '@heroui/react'
 
 import { SETTINGS_DEFAULT } from '@/constants/settings/default'
 
@@ -27,12 +27,12 @@ export const Input: React.FC<Props> = (props) => {
       props.settingsKey === 'settings:comment:mergeExtra' ||
       props.settingsKey === 'settings:comment:translucentExtra'
     ) {
-      return !showExtra
+      return showExtra === false
     }
 
     if (props.settingsKey === 'settings:comment:forceExtraColor') {
       return (
-        !showExtra ||
+        showExtra === false ||
         extraColor === SETTINGS_DEFAULT['settings:comment:extraColor']
       )
     }

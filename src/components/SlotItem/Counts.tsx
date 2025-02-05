@@ -1,7 +1,7 @@
 import type { ExtSlot } from '@/core/slots'
 
 import { useMemo } from 'react'
-import { cn } from '@nextui-org/react'
+import { cn } from '@heroui/react'
 import { PlayIcon, MessageSquareTextIcon, HeartIcon } from 'lucide-react'
 
 import { useSettings } from '@/hooks/useSettings'

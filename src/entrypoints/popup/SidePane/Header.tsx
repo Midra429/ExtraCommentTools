@@ -1,4 +1,4 @@
-import { cn } from '@nextui-org/react'
+import { cn } from '@heroui/react'
 
 export const Header: React.FC = () => {
   return (

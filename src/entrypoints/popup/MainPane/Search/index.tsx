@@ -3,7 +3,7 @@ import type { ExtSlot } from '@/core/slots'
 import type { SearchInputHandle } from './Input'
 
 import { memo, useMemo, useState, useCallback, useEffect, useRef } from 'react'
-import { Spinner, cn } from '@nextui-org/react'
+import { Spinner, cn } from '@heroui/react'
 
 import { extractVideoId } from '@/utils/api/extractVideoId'
 import {

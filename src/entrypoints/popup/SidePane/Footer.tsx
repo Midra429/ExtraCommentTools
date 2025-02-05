@@ -1,4 +1,4 @@
-import { Button, cn } from '@nextui-org/react'
+import { Button, cn } from '@heroui/react'
 import { RotateCwIcon } from 'lucide-react'
 
 import { webext } from '@/utils/webext'
