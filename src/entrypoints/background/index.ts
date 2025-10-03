@@ -1,4 +1,4 @@
-import { defineBackground } from 'wxt/sandbox'
+import { defineBackground } from '#imports'
 import { ncoApi } from '@midra/nco-api'
 
 import { GITHUB_URL } from '@/constants'
