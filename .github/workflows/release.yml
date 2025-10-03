@@ -38,9 +38,6 @@ jobs:
       - name: Bunをインストール
         uses: oven-sh/setup-bun@v2
 
-      - name: Install Dependencies
-        run: pnpm install
-
       - name: Gitのユーザーを設定
         run: |
           git config --local user.name "github-actions[bot]"
