@@ -1,7 +1,7 @@
 import { utilsMessagingExtension } from '@/utils/messaging/extension'
 import { setBadge } from '@/utils/extension/setBadge'
 
-export default () => {
+export default function () {
   utilsMessagingExtension.onMessage('getCurrentTab', ({ sender }) => {
     return sender.tab
   })

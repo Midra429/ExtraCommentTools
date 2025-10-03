@@ -1,4 +1,4 @@
-import type { SearchQuerySort } from '@midra/nco-api/types/niconico/search'
+import type { SearchQuerySort } from '@midra/nco-utils/types/api/niconico/search'
 
 import { ArrowDownUpIcon } from 'lucide-react'
 
@@ -48,7 +48,7 @@ export type SortProps = {
   isDisabled?: boolean
 }
 
-export const Sort: React.FC<SortProps> = ({ isDisabled }) => {
+export function Sort({ isDisabled }: SortProps) {
   const [value, setValue] = useSettings('settings:searchOptions:sort')
 
   return (
@@ -69,7 +69,7 @@ export const Sort: React.FC<SortProps> = ({ isDisabled }) => {
           <SelectItem
             key={JSON.stringify(value)}
             classNames={{
-              base: 'gap-1 rounded-md px-1.5 py-1',
+              base: 'gap-1 rounded-md px-1.5 py-1 outline-none',
               title: 'text-tiny',
               selectedIcon: '!size-mini',
             }}

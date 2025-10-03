@@ -9,7 +9,7 @@ import { sendExtMessage } from '@/core/messaging'
 
 export let slotsManager: ExtSlotsManager | undefined
 
-export const initializeExtSlots = async (tabId?: number) => {
+export async function initializeExtSlots(tabId?: number) {
   const videoId = await sendExtMessage('getVideoId', null, tabId)
 
   if (videoId) {
@@ -17,7 +17,7 @@ export const initializeExtSlots = async (tabId?: number) => {
   }
 }
 
-export const useExtSlotsReady = (tabId?: number) => {
+export function useExtSlotsReady(tabId?: number) {
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export const useExtSlotsReady = (tabId?: number) => {
   return ready
 }
 
-export const useExtSlots = (): ExtSlot[] | null => {
+export function useExtSlots(): ExtSlot[] | null {
   const [slots, setSlots] = useState<ExtSlot[] | null>(null)
 
   useEffect(() => {

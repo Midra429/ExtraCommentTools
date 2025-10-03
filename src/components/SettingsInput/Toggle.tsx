@@ -16,29 +16,20 @@ export type Key = {
 
 export type Props<K extends Key = Key> = SettingsInputBaseProps<K, 'toggle', {}>
 
-export const Input: React.FC<Props> = (props) => {
+export function Input(props: Props) {
   const [value, setValue] = useSettings(props.settingsKey)
 
   const [showExtra] = useSettings('settings:comment:showExtra')
   const [extraColor] = useSettings('settings:comment:extraColor')
 
-  const isDisabled = useMemo<boolean>(() => {
-    if (
-      props.settingsKey === 'settings:comment:mergeExtra' ||
-      props.settingsKey === 'settings:comment:translucentExtra'
-    ) {
-      return showExtra === false
-    }
-
-    if (props.settingsKey === 'settings:comment:forceExtraColor') {
-      return (
-        showExtra === false ||
-        extraColor === SETTINGS_DEFAULT['settings:comment:extraColor']
-      )
-    }
-
-    return false
-  }, [showExtra, extraColor])
+  const isDisabled =
+    ((props.settingsKey === 'settings:comment:mergeExtra' ||
+      props.settingsKey === 'settings:comment:translucentExtra') &&
+      !showExtra) ||
+    (props.settingsKey === 'settings:comment:forceExtraColor' &&
+      (!showExtra ||
+        extraColor === SETTINGS_DEFAULT['settings:comment:extraColor'])) ||
+    false
 
   return (
     <Switch

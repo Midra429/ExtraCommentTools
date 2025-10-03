@@ -1,14 +1,14 @@
-import type { SearchQueryFilters } from '@midra/nco-api/types/niconico/search'
+import type { SearchQueryFilters } from '@midra/nco-utils/types/api/niconico/search'
 import type { SettingItems } from '@/types/storage'
 
 import { now, getLocalTimeZone } from '@internationalized/date'
 
-import { ncoApiProxy } from '@/proxy/nco-api/extension'
+import { ncoApiProxy } from '@/proxy/nco-utils/api/extension'
 
 import { videoDataToSlot } from './videoDataToSlot'
 import { searchDataToSlot } from './searchDataToSlot'
 
-export const searchNiconicoByIds = async (...ids: string[]) => {
+export async function searchNiconicoByIds(...ids: string[]) {
   const videoDataList = await ncoApiProxy.niconico.multipleVideo(ids)
   const filtered = videoDataList.filter((v) => v !== null)
 
@@ -29,11 +29,11 @@ export type SearchNiconicoOptions = {
   lengthRange?: SettingItems['settings:searchOptions:lengthRange']
 }
 
-export const searchNiconicoByKeyword = async (
+export async function searchNiconicoByKeyword(
   keyword: string,
   page: number,
   options?: SearchNiconicoOptions
-) => {
+) {
   const limit = 20
   const offset = limit * (page - 1)
 

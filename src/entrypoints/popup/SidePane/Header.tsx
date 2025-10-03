@@ -1,12 +1,12 @@
 import { cn } from '@heroui/react'
 
-export const Header: React.FC = () => {
+export function Header() {
   return (
     <div
       className={cn(
         'flex flex-row items-center justify-between',
         'p-2',
-        'border-b-1 border-foreground-200',
+        'border-foreground-200 border-b-1',
         'bg-content1',
         'text-medium font-semibold'
       )}

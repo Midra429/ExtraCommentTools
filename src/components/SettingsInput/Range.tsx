@@ -24,15 +24,14 @@ export type Props<K extends Key = Key> = SettingsInputBaseProps<
   }
 >
 
-export const Input: React.FC<Props> = (props) => {
+export function Input(props: Props) {
   const [state, setState] = useState<number>(
     SETTINGS_DEFAULT[props.settingsKey]
   )
   const [value, setValue] = useSettings(props.settingsKey)
 
   useEffect(() => {
-    // @ts-ignore
-    setState(value ?? 0)
+    setState(value as any)
   }, [value])
 
   return (
@@ -60,7 +59,7 @@ export const Input: React.FC<Props> = (props) => {
       {props.description && (
         <span
           className={cn(
-            'mb-2 whitespace-pre-wrap text-tiny',
+            'text-tiny mb-2 whitespace-pre-wrap',
             'text-foreground-500 dark:text-foreground-600'
           )}
         >

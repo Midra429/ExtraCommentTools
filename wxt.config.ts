@@ -40,6 +40,7 @@ export default defineConfig({
     return {
       name: displayName,
       description,
+      default_locale: 'ja',
       homepage_url: GITHUB_URL,
       permissions,
       host_permissions: ['*://*.nicovideo.jp/*'],
@@ -60,7 +61,7 @@ export default defineConfig({
       EXT_USER_AGENT,
     },
     build: {
-      chunkSizeWarningLimit: 1024,
+      chunkSizeWarningLimit: 2048,
     },
     ssr: {
       noExternal: ['@webext-core/messaging'],
@@ -73,5 +74,9 @@ export default defineConfig({
       },
     },
   },
-  modules: ['@wxt-dev/auto-icons', '@wxt-dev/module-react'],
+  modules: [
+    '@wxt-dev/webextension-polyfill',
+    '@wxt-dev/auto-icons',
+    '@wxt-dev/module-react',
+  ],
 })

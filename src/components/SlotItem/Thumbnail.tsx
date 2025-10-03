@@ -15,18 +15,18 @@ export type ThumbnailProps = {
   isSearch?: boolean
 }
 
-export const Thumbnail: React.FC<ThumbnailProps> = ({
+export function Thumbnail({
   type,
   offsetMs,
   isManual,
   info,
   isSearch,
-}) => {
+}: ThumbnailProps) {
   return (
     <>
       <Image
         classNames={{
-          wrapper: 'h-full rounded-lg bg-foreground-300 p-[1px]',
+          wrapper: 'bg-foreground-300 h-full rounded-lg p-[1px]',
           img: 'aspect-video h-full rounded-lg object-cover',
         }}
         src={info.thumbnail}
@@ -35,7 +35,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
 
       <div
         className={cn(
-          'absolute left-[2px] top-[2px] z-10',
+          'absolute top-[2px] left-[2px] z-10',
           'flex flex-col items-start gap-[1px]'
         )}
       >
@@ -54,7 +54,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
 
       {/* 長さ */}
       <Duration
-        className="absolute bottom-[2px] right-[2px] z-10"
+        className="absolute right-[2px] bottom-[2px] z-10"
         duration={info.duration}
       />
     </>

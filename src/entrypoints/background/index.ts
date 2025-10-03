@@ -1,5 +1,6 @@
 import { defineBackground } from '#imports'
-import { ncoApi } from '@midra/nco-api'
+import { ncoApi } from '@midra/nco-utils/api'
+import { ncoSearch } from '@midra/nco-utils/search'
 
 import { GITHUB_URL } from '@/constants'
 
@@ -8,7 +9,7 @@ import { webext } from '@/utils/webext'
 import { getFormsUrl } from '@/utils/getFormsUrl'
 import { settings } from '@/utils/settings/extension'
 import { registerProxy } from '@/utils/proxy-service/register'
-import { proxyMessaging } from '@/utils/proxy-service/messaging/extension'
+import { onMessage } from '@/utils/proxy-service/messaging/extension'
 
 import migration from './migration'
 import requestPermissions from './requestPermissions'
@@ -19,10 +20,11 @@ export default defineBackground({
   main: () => void main(),
 })
 
-const main = async () => {
+async function main() {
   logger.log('background.js')
 
-  registerProxy('ncoApi', ncoApi, proxyMessaging.onMessage)
+  registerProxy('ncoApi', ncoApi, onMessage)
+  registerProxy('ncoSearch', ncoSearch, onMessage)
 
   registerUtilsMessage()
 

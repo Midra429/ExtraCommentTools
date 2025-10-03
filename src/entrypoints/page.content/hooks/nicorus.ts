@@ -12,9 +12,9 @@ type ThreadsNicorusRequestBody = {
   nicoruKey: string
 }
 
-export const hookNicorus = async (
+export async function hookNicorus(
   args: FetchProxyApplyArguments<true>
-): Promise<Response | null> => {
+): Promise<Response | null> {
   const { videoId, videoData, slotsManager } = hooksSharedData
 
   if (!videoId || !videoData || !slotsManager) {

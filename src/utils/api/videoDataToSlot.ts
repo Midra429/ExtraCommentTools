@@ -1,13 +1,13 @@
-import type { VideoData } from '@midra/nco-api/types/niconico/video'
+import type { VideoData } from '@midra/nco-utils/types/api/niconico/video'
 import type { ExtSlot } from '@/core/slots'
 import type { ExtraVideoData } from '@/entrypoints/page.content/hooks'
 
-import { DANIME_CHANNEL_ID } from '@midra/nco-api/constants'
+import { DANIME_CHANNEL_ID } from '@midra/nco-utils/search/constants'
 
-export const videoDataToSlot = (
+export function videoDataToSlot(
   data: VideoData | ExtraVideoData,
   slot?: Partial<ExtSlot>
-): ExtSlot => {
+): ExtSlot {
   const isDAnime = data.channel?.id === `ch${DANIME_CHANNEL_ID}`
   const isOfficialAnime = !!data.channel?.isOfficialAnime
 

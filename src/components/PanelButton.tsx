@@ -8,7 +8,7 @@ export type PanelButtonProps = ButtonProps & {
   label?: string
 }
 
-export const PanelButton: React.FC<PanelButtonProps> = (props) => {
+export function PanelButton(props: PanelButtonProps) {
   return (
     <Tooltip content={props.label}>
       <Button

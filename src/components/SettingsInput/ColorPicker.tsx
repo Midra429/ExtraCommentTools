@@ -1,7 +1,7 @@
 import type { StorageItems, SettingsKey } from '@/types/storage'
 import type { SettingsInputBaseProps } from '.'
 
-import { useEffect, useState, useMemo, useCallback, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import {
   Popover,
   PopoverTrigger,
@@ -37,7 +37,7 @@ type ColorPickerProps = {
   isDisabled?: boolean
 }
 
-const ColorPicker: React.FC<ColorPickerProps> = (props) => {
+function ColorPicker(props: ColorPickerProps) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
@@ -45,7 +45,7 @@ const ColorPicker: React.FC<ColorPickerProps> = (props) => {
       classNames={{
         backdrop: 'bg-transparent',
         trigger: '!scale-100 !opacity-100',
-        content: 'border-1 border-foreground-100 p-0',
+        content: 'border-foreground-100 border-1 p-0',
       }}
       radius="sm"
       placement="left"
@@ -58,7 +58,7 @@ const ColorPicker: React.FC<ColorPickerProps> = (props) => {
         <div
           className={cn(
             'relative h-8 w-20',
-            'border-1 border-foreground-200 hover:border-default-400',
+            'border-foreground-200 hover:border-default-400 border-1',
             'rounded-small',
             'overflow-hidden',
             'transition-[border-color] !duration-150',
@@ -92,7 +92,7 @@ const ColorPicker: React.FC<ColorPickerProps> = (props) => {
   )
 }
 
-const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
+function ColorPickerPopover(props: ColorPickerProps) {
   const width = 200
   const height = 150
 
@@ -111,7 +111,7 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
 
   const [text, setText] = useState('')
 
-  const onTextChange = useCallback((val: string) => {
+  function onTextChange(val: string) {
     const text = val.startsWith('#') ? val.slice(1) : val
 
     setText(text.toUpperCase())
@@ -126,7 +126,7 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
       setValue(hsv.v)
       setAlpha(props.alpha ? hsv.a : 1)
     }
-  }, [])
+  }
 
   useEffect(() => {
     const hsv = colord(props.hex).toHsv()
@@ -140,7 +140,7 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
     let isHue = false
     let isAlpha = false
 
-    const onMouseDown = (evt: MouseEvent) => {
+    function onMouseDown(evt: MouseEvent) {
       if (evt.button !== 0) return
 
       isSV = evt.target === svAreaRef.current
@@ -150,7 +150,7 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
       onMouseMove(evt)
     }
 
-    const onMouseMove = (evt: MouseEvent) => {
+    function onMouseMove(evt: MouseEvent) {
       if (evt.button !== 0) return
 
       if (isSV) {
@@ -200,7 +200,7 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
       }
     }
 
-    const onMouseUp = (evt: MouseEvent) => {
+    function onMouseUp(evt: MouseEvent) {
       if (evt.button !== 0) return
 
       isSV = false
@@ -246,12 +246,12 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
 
   return (
     <div className="flex flex-col gap-2 p-2">
-      <div className="flex select-none flex-col gap-1">
+      <div className="flex flex-col gap-1 select-none">
         {/* Saturation, Value */}
         <div
           className={cn(
             'relative',
-            'border-1 border-divider',
+            'border-divider border-1',
             'rounded-md',
             'overflow-hidden'
           )}
@@ -298,7 +298,7 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
         <div
           className={cn(
             'relative',
-            'border-1 border-divider',
+            'border-divider border-1',
             'rounded-md',
             'overflow-hidden'
           )}
@@ -344,7 +344,7 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
           <div
             className={cn(
               'relative',
-              'border-1 border-divider',
+              'border-divider border-1',
               'rounded-md',
               'overflow-hidden'
             )}
@@ -397,7 +397,7 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
                 key={idx}
                 className={cn(
                   'aspect-square',
-                  'border-1 border-divider',
+                  'border-divider border-1',
                   'rounded-sm',
                   'cursor-pointer'
                 )}
@@ -418,17 +418,17 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
       <div className="flex w-full flex-row gap-1" style={{ width }}>
         <HeroUIInput
           classNames={{
-            label: 'pe-1.5 ps-0',
+            label: 'ps-0 pe-1.5',
             mainWrapper: 'w-full',
             inputWrapper: [
               'h-6 min-h-6',
               'px-1.5',
-              'border-1 border-divider',
+              'border-divider border-1',
               'rounded-md',
               'shadow-none',
               'text-small',
             ],
-            input: '!ps-1 text-small',
+            input: 'text-small !ps-1',
           }}
           size="sm"
           label="HEX"
@@ -447,7 +447,7 @@ const ColorPickerPopover: React.FC<ColorPickerProps> = (props) => {
           isIconOnly
           onPress={() => onTextChange(props.onReset())}
         >
-          <RotateCcwIcon className="size-3.5 text-foreground-700" />
+          <RotateCcwIcon className="text-foreground-700 size-3.5" />
         </Button>
       </div>
     </div>
@@ -466,18 +466,13 @@ export type Props<K extends Key = Key> = SettingsInputBaseProps<
   }
 >
 
-export const Input: React.FC<Props> = (props) => {
+export function Input(props: Props) {
   const [value, setValue] = useSettings(props.settingsKey)
 
   const [showExtra] = useSettings('settings:comment:showExtra')
 
-  const isDisabled = useMemo<boolean>(() => {
-    if (props.settingsKey === 'settings:comment:extraColor') {
-      return !showExtra
-    }
-
-    return false
-  }, [showExtra])
+  const isDisabled =
+    (props.settingsKey === 'settings:comment:extraColor' && !showExtra) || false
 
   return (
     <div

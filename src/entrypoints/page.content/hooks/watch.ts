@@ -2,50 +2,22 @@ import type {
   VideoResponse,
   VideoData,
   ThreadId,
-} from '@midra/nco-api/types/niconico/video'
-import type { BuildSearchQueryInput } from '@midra/nco-api/search/lib/buildSearchQuery'
+} from '@midra/nco-utils/types/api/niconico/video'
 import type { FetchProxyApplyArguments } from '..'
 
-import { ncoParser } from '@midra/nco-parser'
-import { DANIME_CHANNEL_ID } from '@midra/nco-api/constants'
+import { DANIME_CHANNEL_ID } from '@midra/nco-utils/search/constants'
 
 import { logger } from '@/utils/logger'
 import { settings } from '@/utils/settings/page'
 import { extractMainThread } from '@/utils/api/extractMainThread'
 import { extractExtraThread } from '@/utils/api/extractExtraThread'
 import { utilsMessagingPage } from '@/utils/messaging/page'
-import { ncoApiProxy } from '@/proxy/nco-api/page'
+import { ncoApiProxy } from '@/proxy/nco-utils/api/page'
+import { ncoSearchProxy } from '@/proxy/nco-utils/search/page'
 
 import { hooksSharedData } from '.'
 
-const buildSearchQueryInput = (
-  rawText: string,
-  duration: number
-): BuildSearchQueryInput => {
-  const extracted = ncoParser.extract(
-    ncoParser.normalizeAll(rawText, {
-      adjust: {
-        letterCase: false,
-      },
-      remove: {
-        space: false,
-      },
-    })
-  )
-
-  return {
-    rawText,
-    title: extracted.title ?? undefined,
-    seasonText: extracted.season?.text,
-    seasonNumber: extracted.season?.number,
-    episodeText: extracted.episode?.text,
-    episodeNumber: extracted.episode?.number,
-    subtitle: extracted.subtitle ?? undefined,
-    duration,
-  }
-}
-
-const filterEasyComment = ({ comment }: VideoData) => {
+function filterEasyComment({ comment }: VideoData) {
   comment.threads = comment.threads.filter((val) => {
     return val.forkLabel !== 'easy'
   })
@@ -164,12 +136,13 @@ export const hookWatch = async (
         // dアニメ
         if (isDAnime && searchTargets.includes('official')) {
           // 検索 (公式)
-          const searchResults = await ncoApiProxy.search({
-            input: buildSearchQueryInput(video.title, video.duration),
-            options: {
+          const searchResults = await ncoSearchProxy.niconico({
+            input: video.title,
+            duration: video.duration,
+            targets: {
               official: true,
-              userAgent: EXT_USER_AGENT,
             },
+            userAgent: EXT_USER_AGENT,
           })
           const searchDataList = Object.values(searchResults)
             .flat()
@@ -193,13 +166,15 @@ export const hookWatch = async (
           if (dAnimeLink) {
             searchedVideoIds.add(dAnimeLink.linkedVideoId)
           } else {
-            // 検索 (dアニメ)
-            const searchResults = await ncoApiProxy.search({
-              input: buildSearchQueryInput(video.title, video.duration),
-              options: {
+            // 検索 (公式/dアニメ)
+            const searchResults = await ncoSearchProxy.niconico({
+              input: video.title,
+              duration: video.duration,
+              targets: {
+                official: true,
                 danime: true,
-                userAgent: EXT_USER_AGENT,
               },
+              userAgent: EXT_USER_AGENT,
             })
             const searchDataList = Object.values(searchResults)
               .flat()

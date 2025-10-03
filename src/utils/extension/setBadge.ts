@@ -7,7 +7,7 @@ const COLORS = {
   yellow: '#ef8511',
 }
 
-export const setBadge = async ({
+export async function setBadge({
   text,
   color,
   tabId,
@@ -15,7 +15,7 @@ export const setBadge = async ({
   text: string | null
   color?: keyof typeof COLORS
   tabId?: number
-}) => {
+}) {
   const bgColor = COLORS[color ?? 'blue']
   const textColor = '#ffffff'
 

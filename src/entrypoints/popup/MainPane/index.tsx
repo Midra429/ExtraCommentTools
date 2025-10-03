@@ -1,4 +1,3 @@
-import { memo } from 'react'
 import { Tabs, Tab } from '@heroui/react'
 import { SearchIcon, SettingsIcon } from 'lucide-react'
 
@@ -25,18 +24,20 @@ const tabItems: {
   },
 ]
 
+export type MainPaneProps = {
+  isActive?: boolean
+}
+
 /**
  * メイン
  */
-export const MainPane: React.FC<{
-  isActive?: boolean
-}> = memo(({ isActive }) => {
+export function MainPane({ isActive }: MainPaneProps) {
   return (
     <div className="flex size-full flex-col">
       {isActive ? (
         <Tabs
           classNames={{
-            base: 'border-b-1 border-foreground-200 bg-content1 p-2',
+            base: 'border-foreground-200 bg-content1 border-b-1 p-2',
             tabList: 'bg-content1 p-0',
             cursor: 'rounded-full',
             panel: 'h-full overflow-hidden p-0',
@@ -69,4 +70,4 @@ export const MainPane: React.FC<{
       )}
     </div>
   )
-})
+}

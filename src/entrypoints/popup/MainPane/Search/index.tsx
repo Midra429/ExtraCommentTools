@@ -2,7 +2,7 @@ import type { SearchNiconicoOptions } from '@/utils/api/searchNiconico'
 import type { ExtSlot } from '@/core/slots'
 import type { SearchInputHandle } from './Input'
 
-import { memo, useMemo, useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Spinner, cn } from '@heroui/react'
 
 import { extractVideoId } from '@/utils/api/extractVideoId'
@@ -16,7 +16,7 @@ import { SearchInput } from './Input'
 import { Results } from './Results'
 import { Pagination } from './Pagination'
 
-export const Search: React.FC = memo(() => {
+export function Search() {
   const inputRef = useRef<SearchInputHandle>(null)
 
   const [inputValue, setInputValue] = useState<string>()
@@ -31,39 +31,38 @@ export const Search: React.FC = memo(() => {
   const [genre] = useSettings('settings:searchOptions:genre')
   const [lengthRange] = useSettings('settings:searchOptions:lengthRange')
 
-  const options = useMemo<SearchNiconicoOptions>(() => {
-    return {
-      sort,
-      dateRange,
-      genre,
-      lengthRange,
+  const options: SearchNiconicoOptions = {
+    sort,
+    dateRange,
+    genre,
+    lengthRange,
+  }
+
+  async function search(
+    value: string,
+    page: number,
+    options: SearchNiconicoOptions
+  ) {
+    setIsLoading(true)
+
+    setCurrentPage(page)
+    setSlots([])
+
+    const videoId = extractVideoId(value)
+
+    const result = videoId
+      ? await searchNiconicoByIds(videoId)
+      : await searchNiconicoByKeyword(value, page, options)
+
+    if (result) {
+      setTotalCount(result.total)
+      setSlots(result.slots)
+    } else {
+      setTotalCount(0)
     }
-  }, [sort, dateRange, genre, lengthRange])
 
-  const search = useCallback(
-    async (value: string, page: number, options: SearchNiconicoOptions) => {
-      setIsLoading(true)
-
-      setCurrentPage(page)
-      setSlots([])
-
-      const videoId = extractVideoId(value)
-
-      const result = videoId
-        ? await searchNiconicoByIds(videoId)
-        : await searchNiconicoByKeyword(value, page, options)
-
-      if (result) {
-        setTotalCount(result.total)
-        setSlots(result.slots)
-      } else {
-        setTotalCount(0)
-      }
-
-      setIsLoading(false)
-    },
-    []
-  )
+    setIsLoading(false)
+  }
 
   useEffect(() => {
     if (!inputValue) return
@@ -82,7 +81,7 @@ export const Search: React.FC = memo(() => {
           'flex flex-col gap-2',
           'p-2',
           'bg-content1',
-          'border-b-1 border-foreground-200'
+          'border-foreground-200 border-b-1'
         )}
       >
         <SearchInput
@@ -111,7 +110,7 @@ export const Search: React.FC = memo(() => {
         )}
       </div>
 
-      <div className="border-t-1 border-foreground-200 bg-content1 p-2">
+      <div className="border-foreground-200 bg-content1 border-t-1 p-2">
         <Pagination
           page={currentPage}
           total={totalCount}
@@ -127,4 +126,4 @@ export const Search: React.FC = memo(() => {
       </div>
     </div>
   )
-})
+}

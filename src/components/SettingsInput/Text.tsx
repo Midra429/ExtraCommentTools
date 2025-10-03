@@ -11,20 +11,20 @@ export type Key = {
 
 export type Props<K extends Key = Key> = SettingsInputBaseProps<K, 'text', {}>
 
-export const Input: React.FC<Props> = (props) => {
+export function Input(props: Props) {
   const [value, setValue] = useSettings(props.settingsKey)
 
   return (
     <HeroUIInput
       classNames={{
         base: 'py-2',
-        inputWrapper: 'border-1 border-divider shadow-none',
+        inputWrapper: 'border-divider border-1 shadow-none',
       }}
       labelPlacement="outside"
       label={props.label}
       description={props.description}
       value={value}
-      onValueChange={setValue as any}
+      onValueChange={setValue}
     />
   )
 }

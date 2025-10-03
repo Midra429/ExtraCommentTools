@@ -1,6 +1,6 @@
-import type { VideoData } from '@midra/nco-api/types/niconico/video'
+import type { VideoData } from '@midra/nco-utils/types/api/niconico/video'
 
-export const extractMainThread = (videoData: VideoData) => {
+export function extractMainThread(videoData: VideoData) {
   const threads = videoData.comment.threads.filter((val) => {
     return val.isDefaultPostTarget || val.isEasyCommentPostTarget
   })

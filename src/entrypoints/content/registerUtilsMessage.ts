@@ -1,7 +1,7 @@
 import { utilsMessagingExtension } from '@/utils/messaging/extension'
 import { utilsMessagingPage } from '@/utils/messaging/page'
 
-export default () => {
+export default function () {
   utilsMessagingPage.onMessage('getCurrentTab', ({ data }) => {
     return utilsMessagingExtension.sendMessage('getCurrentTab', data)
   })

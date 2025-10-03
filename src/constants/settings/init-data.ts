@@ -24,17 +24,17 @@ export const SETTINGS_INIT_DATA: SettingsInitData = [
           {
             label: '自動',
             value: 'auto',
-            icon: SunMoonIcon,
+            Icon: SunMoonIcon,
           },
           {
             label: 'ライト',
             value: 'light',
-            icon: SunIcon,
+            Icon: SunIcon,
           },
           {
             label: 'ダーク',
             value: 'dark',
-            icon: MoonIcon,
+            Icon: MoonIcon,
           },
         ],
       },

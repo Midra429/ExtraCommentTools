@@ -1,4 +1,4 @@
-import type { VideoData } from '@midra/nco-api/types/niconico/video'
+import type { VideoData } from '@midra/nco-utils/types/api/niconico/video'
 
 import { storage } from '@/utils/storage/page'
 import { ExtSlotsManager } from '@/core/slots'

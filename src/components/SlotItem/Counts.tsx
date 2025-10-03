@@ -1,6 +1,5 @@
 import type { ExtSlot } from '@/core/slots'
 
-import { useMemo } from 'react'
 import { cn } from '@heroui/react'
 import { PlayIcon, MessageSquareTextIcon, HeartIcon } from 'lucide-react'
 
@@ -11,14 +10,13 @@ export type CountsProps = {
   isSearch?: boolean
 }
 
-export const Counts: React.FC<CountsProps> = ({ count, isSearch }) => {
+export function Counts({ count, isSearch }: CountsProps) {
   const [showKawaiiPct] = useSettings('settings:showKawaiiPct')
 
-  const kawaiiPct = useMemo(() => {
-    if (!showKawaiiPct || !count.kawaii) return
-
-    return Math.round((count.kawaii / count.comment) * 100 * 10) / 10
-  }, [showKawaiiPct, count.comment, count.kawaii])
+  const kawaiiPct =
+    showKawaiiPct &&
+    count.kawaii &&
+    Math.round((count.kawaii / count.comment) * 100 * 10) / 10
 
   return (
     <div
@@ -49,7 +47,7 @@ export const Counts: React.FC<CountsProps> = ({ count, isSearch }) => {
       </div>
 
       {/* かわいい率 */}
-      {kawaiiPct && (
+      {!!kawaiiPct && (
         <div className="flex flex-row items-center gap-1">
           <HeartIcon className={isSearch ? 'size-mini' : 'size-tiny'} />
 

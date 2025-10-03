@@ -1,4 +1,7 @@
-export default (target: any, paths?: string | string[]) => {
+export default function <T extends unknown>(
+  target: any,
+  paths?: string | string[]
+): T | undefined {
   if (paths) {
     if (typeof paths === 'string') {
       paths = paths.split('.')

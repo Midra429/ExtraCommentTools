@@ -1,11 +1,9 @@
-import { memo } from 'react'
-
 import { useExtSlots } from '@/hooks/useExtSlots'
 import { cn } from '@heroui/react'
 
 import { SlotItem } from '@/components/SlotItem'
 
-export const Body: React.FC = memo(() => {
+export function Body() {
   const slots = useExtSlots()
 
   return (
@@ -30,4 +28,4 @@ export const Body: React.FC = memo(() => {
       )}
     </div>
   )
-})
+}

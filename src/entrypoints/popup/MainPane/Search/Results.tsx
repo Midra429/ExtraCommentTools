@@ -1,7 +1,5 @@
 import type { ExtSlot } from '@/core/slots'
 
-import { useMemo } from 'react'
-
 import { slotsManager, useExtSlots } from '@/hooks/useExtSlots'
 
 import { SlotItem } from '@/components/SlotItem'
@@ -10,18 +8,12 @@ export type NiconicoResultsProps = {
   slots: ExtSlot[]
 }
 
-export const Results: React.FC<NiconicoResultsProps> = ({ slots }) => {
+export function Results({ slots }: NiconicoResultsProps) {
   const extSlots = useExtSlots()
 
-  const extSlotIds = useMemo(() => {
-    const ids = extSlots?.map((v) => v.id) ?? []
-
-    if (slotsManager) {
-      ids.push(slotsManager.id)
-    }
-
-    return ids
-  }, [extSlots])
+  const ids = extSlots
+    ?.map((v) => v.id)
+    .concat(slotsManager ? slotsManager.id : [])
 
   return (
     <div className="flex flex-col gap-2">
@@ -30,7 +22,7 @@ export const Results: React.FC<NiconicoResultsProps> = ({ slots }) => {
           key={slot.id}
           slot={slot}
           isSearch
-          isDisabled={extSlotIds.includes(slot.id)}
+          isDisabled={ids?.includes(slot.id)}
         />
       ))}
     </div>

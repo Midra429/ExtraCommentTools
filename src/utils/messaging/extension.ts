@@ -1,4 +1,4 @@
-import type { Tabs } from 'wxt/browser'
+import type { Tabs } from 'webextension-polyfill'
 import type { setBadge } from '@/utils/extension/setBadge'
 
 import { defineExtensionMessaging } from '@webext-core/messaging'

@@ -10,11 +10,11 @@ type ProtocolMap = {
 
 export const extMessaging = defineExtensionMessaging<ProtocolMap>()
 
-export const sendExtMessage = async <TType extends keyof ProtocolMap>(
+export async function sendExtMessage<TType extends keyof ProtocolMap>(
   type: TType,
   data: GetDataType<ProtocolMap[TType]>,
   tabId?: number
-): Promise<GetReturnType<ProtocolMap[TType]> | null> => {
+): Promise<GetReturnType<ProtocolMap[TType]> | null> {
   if (typeof tabId === 'undefined') {
     const tab = await webext.getCurrentActiveTab()
 

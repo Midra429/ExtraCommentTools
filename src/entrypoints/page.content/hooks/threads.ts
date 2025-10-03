@@ -1,8 +1,8 @@
 import type {
   Threads,
   ThreadsData,
-} from '@midra/nco-api/types/niconico/threads'
-import type { ThreadsRequestBody } from '@midra/nco-api/niconico/threads'
+} from '@midra/nco-utils/types/api/niconico/threads'
+import type { ThreadsRequestBody } from '@midra/nco-utils/api/services/niconico'
 import type { FetchProxyApplyArguments } from '..'
 
 import { NICONICO_COLOR_COMMANDS, COLOR_CODE_REGEXP } from '@/constants'
@@ -12,13 +12,13 @@ import { logger } from '@/utils/logger'
 import { settings } from '@/utils/settings/page'
 import { videoDataToSlot } from '@/utils/api/videoDataToSlot'
 import { utilsMessagingPage } from '@/utils/messaging/page'
-import { ncoApiProxy } from '@/proxy/nco-api/page'
+import { ncoApiProxy } from '@/proxy/nco-utils/api/page'
 
 import { hooksSharedData } from '.'
 
-export const hookThreads = async (
+export async function hookThreads(
   args: FetchProxyApplyArguments<true>
-): Promise<Response | null> => {
+): Promise<Response | null> {
   const { videoData, extraVideoDataList, slotsManager } = hooksSharedData
 
   if (!videoData || !extraVideoDataList.length || !slotsManager) {

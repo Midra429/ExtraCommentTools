@@ -36,7 +36,7 @@ export type DateRangeProps = {
   isDisabled?: boolean
 }
 
-export const DateRange: React.FC<DateRangeProps> = ({ isDisabled }) => {
+export function DateRange({ isDisabled }: DateRangeProps) {
   const [value, setValue] = useSettings('settings:searchOptions:dateRange')
 
   return (
@@ -57,7 +57,7 @@ export const DateRange: React.FC<DateRangeProps> = ({ isDisabled }) => {
           <SelectItem
             key={JSON.stringify(value)}
             classNames={{
-              base: 'gap-1 rounded-md px-1.5 py-1',
+              base: 'gap-1 rounded-md px-1.5 py-1 outline-none',
               title: 'text-tiny',
               selectedIcon: '!size-mini',
             }}

@@ -1,7 +1,7 @@
 import type { ExtSlot } from '@/core/slots'
 import type { PanelItemProps } from '@/components/PanelItem'
 
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import { cn } from '@heroui/react'
 
 import { slotsManager } from '@/hooks/useExtSlots'
@@ -23,24 +23,24 @@ export type SlotItemProps = {
   isDisabled?: boolean
 }
 
-export const SlotItem: React.FC<SlotItemProps> = ({
+export function SlotItem({
   classNames,
   slot,
   isSearch,
   isDisabled,
-}) => {
+}: SlotItemProps) {
   const [isOptionsOpen, setIsOptionsOpen] = useState(false)
 
-  const onPressAdd = useCallback(async () => {
+  async function onPressAdd() {
     await slotsManager?.add({
       ...slot,
       isManual: true,
     })
-  }, [slot])
+  }
 
-  const onPressRemove = useCallback(async () => {
+  async function onPressRemove() {
     await slotsManager?.remove({ id: slot.id })
-  }, [slot.id])
+  }
 
   return (
     <PanelItem

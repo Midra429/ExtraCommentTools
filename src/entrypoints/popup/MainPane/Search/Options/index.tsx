@@ -24,7 +24,7 @@ export type OptionsProps = {
   isDisabled?: boolean
 }
 
-export const Options: React.FC<OptionsProps> = ({ isOpen, isDisabled }) => {
+export function Options({ isOpen, isDisabled }: OptionsProps) {
   const willChange = useWillChange()
 
   return (

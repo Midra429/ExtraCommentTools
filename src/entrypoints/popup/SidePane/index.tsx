@@ -1,5 +1,3 @@
-import { memo } from 'react'
-
 import { Header } from './Header'
 import { Body } from './Body'
 import { Footer } from './Footer'
@@ -7,7 +5,7 @@ import { Footer } from './Footer'
 /**
  * サイド
  */
-export const SidePane: React.FC = memo(() => {
+export function SidePane() {
   return (
     <div className="flex h-full flex-col">
       <Header />
@@ -17,4 +15,4 @@ export const SidePane: React.FC = memo(() => {
       <Footer />
     </div>
   )
-})
+}

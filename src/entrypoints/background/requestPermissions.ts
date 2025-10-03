@@ -1,8 +1,8 @@
-import type { Permissions } from 'wxt/browser'
+import type { Permissions } from 'webextension-polyfill'
 
 import { webext } from '@/utils/webext'
 
-export default async () => {
+export default async function () {
   // 権限を要求 (Firefoxのみ)
   if (webext.isFirefox) {
     const manifest = webext.runtime.getManifest()

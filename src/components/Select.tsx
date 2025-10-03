@@ -4,7 +4,6 @@ import type {
   SelectSlots,
 } from '@heroui/react'
 
-import { useMemo } from 'react'
 import {
   Select as HeroUISelect,
   SelectItem as HeroUISelectItem,
@@ -21,7 +20,7 @@ const select = tv({
     base: '',
     label: '',
     mainWrapper: '',
-    trigger: 'border-1 border-divider shadow-none',
+    trigger: 'border-divider border-1 shadow-none',
     innerWrapper: [
       '[&:has(>svg)]:gap-2',
       '[&>svg]:shrink-0',
@@ -33,10 +32,10 @@ const select = tv({
     value: '',
     listboxWrapper: '',
     listbox: '',
-    popoverContent: 'border-1 border-foreground-100',
+    popoverContent: 'border-foreground-100 border-1',
     helperWrapper: '',
     description: [
-      'whitespace-pre-wrap text-tiny',
+      'text-tiny whitespace-pre-wrap',
       'text-foreground-500 dark:text-foreground-600',
     ],
     errorMessage: '',
@@ -45,7 +44,7 @@ const select = tv({
     size: {
       sm: {
         base: 'items-center justify-between gap-5',
-        label: 'shrink-0 p-0 text-small',
+        label: 'text-small shrink-0 p-0',
         mainWrapper: 'transition-colors',
         value: 'flex flex-row items-center justify-center gap-2',
       },
@@ -67,18 +66,12 @@ const select = tv({
   },
 })
 
-export const Select: React.FC<SelectProps> = (props) => {
-  const classNames = useMemo(() => {
-    const slots = select({ size: props.size })
-    const slotKeys = Object.keys(slots) as SelectSlots[]
-
-    return Object.fromEntries(
-      slotKeys.map((key) => [
-        key,
-        slots[key]({ class: props.classNames?.[key] }),
-      ])
-    ) as HeroUISelectProps['classNames']
-  }, [props.size])
+export function Select(props: SelectProps) {
+  const slots = select({ size: props.size })
+  const slotKeys = Object.keys(slots) as (keyof typeof slots)[]
+  const classNames = Object.fromEntries(
+    slotKeys.map((key) => [key, slots[key]({ class: props.classNames?.[key] })])
+  ) as HeroUISelectProps['classNames']
 
   return (
     <HeroUISelect

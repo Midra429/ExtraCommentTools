@@ -4,9 +4,10 @@ import { MATCHES } from '@/constants/matches'
 
 import { extractVideoId } from '@/utils/api/extractVideoId'
 import { registerProxy } from '@/utils/proxy-service/register'
-import { proxyMessaging } from '@/utils/proxy-service/messaging/page'
+import { onMessage } from '@/utils/proxy-service/messaging/page'
 import { extMessaging } from '@/core/messaging'
-import { ncoApiProxy } from '@/proxy/nco-api/extension'
+import { ncoApiProxy } from '@/proxy/nco-utils/api/extension'
+import { ncoSearchProxy } from '@/proxy/nco-utils/search/extension'
 
 import registerStorageMessage from './registerStorageMessage'
 import registerUtilsMessage from './registerUtilsMessage'
@@ -17,13 +18,14 @@ export default defineContentScript({
   main: () => void main(),
 })
 
-const main = () => {
+function main() {
   window.addEventListener('DOMContentLoaded', () => {
     // 動画情報APIが必ず実行されるようにする
     document.querySelector('[name="server-response"]')?.remove()
   })
 
-  registerProxy('ncoApi', ncoApiProxy, proxyMessaging.onMessage)
+  registerProxy('ncoApi', ncoApiProxy, onMessage)
+  registerProxy('ncoSearch', ncoSearchProxy, onMessage)
 
   registerStorageMessage()
   registerUtilsMessage()

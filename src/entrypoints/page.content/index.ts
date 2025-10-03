@@ -20,13 +20,11 @@ export default defineContentScript({
   matches: MATCHES,
   runAt: 'document_start',
   world: 'MAIN',
-  main: () => {
+  main() {
     logger.log('page.js')
 
     window.fetch = new Proxy(window.fetch, {
-      apply: async (
-        ...[target, thisArg, argArray]: FetchProxyApplyArguments
-      ) => {
+      async apply(...[target, thisArg, argArray]: FetchProxyApplyArguments) {
         if (argArray[0] instanceof Request) {
           return Reflect.apply(target, thisArg, argArray)
         }

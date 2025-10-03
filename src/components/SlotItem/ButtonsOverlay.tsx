@@ -8,10 +8,7 @@ export type ButtonsOverlayProps = {
   onRemove: () => void
 }
 
-export const ButtonsOverlay: React.FC<ButtonsOverlayProps> = ({
-  isManual,
-  onRemove,
-}) => {
+export function ButtonsOverlay({ isManual, onRemove }: ButtonsOverlayProps) {
   return (
     <div
       className={cn(
@@ -24,7 +21,7 @@ export const ButtonsOverlay: React.FC<ButtonsOverlayProps> = ({
       {isManual && (
         <Button
           className={cn(
-            'absolute right-[2px] top-[2px]',
+            'absolute top-[2px] right-[2px]',
             '!size-6 min-h-0 min-w-0',
             'border-1 border-white/80'
           )}

@@ -3,13 +3,13 @@ import { RotateCwIcon } from 'lucide-react'
 
 import { webext } from '@/utils/webext'
 
-export const Footer: React.FC = () => {
+export function Footer() {
   return (
     <div
       className={cn(
         'flex flex-row items-center justify-between gap-1',
         'p-2',
-        'border-t-1 border-foreground-200',
+        'border-foreground-200 border-t-1',
         'bg-content1'
       )}
     >

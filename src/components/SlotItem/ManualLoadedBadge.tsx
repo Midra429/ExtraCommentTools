@@ -7,10 +7,10 @@ export type ManualLoadedBadgeProps = {
   isManual: ExtSlot['isManual']
 }
 
-export const ManualLoadedBadge: React.FC<ManualLoadedBadgeProps> = ({
+export function ManualLoadedBadge({
   className,
   isManual,
-}) => {
+}: ManualLoadedBadgeProps) {
   if (!isManual) return
 
   return (

@@ -1,6 +1,6 @@
 import type { DateTimeDuration } from '@internationalized/date'
-import type { NiconicoGenre } from '@midra/nco-api/types/constants'
-import type { SearchQuerySort } from '@midra/nco-api/types/niconico/search'
+import type { NiconicoGenre } from '@midra/nco-utils/types/api/constants'
+import type { SearchQuerySort } from '@midra/nco-utils/types/api/niconico/search'
 import type { ExtSlotItems } from '@/core/slots'
 
 export type StorageItems_v1 = {

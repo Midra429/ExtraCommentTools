@@ -36,7 +36,7 @@ export type LengthRangeProps = {
   isDisabled?: boolean
 }
 
-export const LengthRange: React.FC<LengthRangeProps> = ({ isDisabled }) => {
+export function LengthRange({ isDisabled }: LengthRangeProps) {
   const [value, setValue] = useSettings('settings:searchOptions:lengthRange')
 
   return (
@@ -57,7 +57,7 @@ export const LengthRange: React.FC<LengthRangeProps> = ({ isDisabled }) => {
           <SelectItem
             key={JSON.stringify(value)}
             classNames={{
-              base: 'gap-1 rounded-md px-1.5 py-1',
+              base: 'gap-1 rounded-md px-1.5 py-1 outline-none',
               title: 'text-tiny',
               selectedIcon: '!size-mini',
             }}

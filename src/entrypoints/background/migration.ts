@@ -3,12 +3,12 @@
 import { logger } from '@/utils/logger'
 import { storage } from '@/utils/storage/extension'
 
-export default async () => {
+export default async function () {
   const version = (await storage.get('_version')) ?? 0
 
   // v3.3.6 -> v4.0.0
   if (version < 1) {
-    logger.log('migration: v3.3.6 -> v4.0.0')
+    logger.log('migration', 'v3.3.6 -> v4.0.0')
 
     await storage.remove()
 

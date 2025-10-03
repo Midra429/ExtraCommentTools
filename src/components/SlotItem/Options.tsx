@@ -1,7 +1,7 @@
 import type { Variants } from 'framer-motion'
 import type { ExtSlot } from '@/core/slots'
 
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@heroui/react'
 import { TRANSITION_VARIANTS } from '@heroui/framer-utils'
 import {
@@ -22,10 +22,12 @@ const transitionVariants: Variants = {
   enter: { ...TRANSITION_VARIANTS.collapse.enter, overflowY: 'unset' },
 }
 
-export const OptionsButton: React.FC<{
+export type OptionsButtonProps = {
   isOpen: boolean
   onPress: () => void
-}> = ({ isOpen, onPress }) => {
+}
+
+export function OptionsButton({ isOpen, onPress }: OptionsButtonProps) {
   return (
     <Button
       className="!size-6 min-h-0 min-w-0"
@@ -52,12 +54,12 @@ type SlotOffsetControlProps = {
   offsetMs: ExtSlot['offsetMs']
 }
 
-const SlotOffsetControl: React.FC<SlotOffsetControlProps> = ({
+function SlotOffsetControl({
   id,
   isStock,
   isAuto,
   offsetMs,
-}) => {
+}: SlotOffsetControlProps) {
   const [currentOffset, setCurrentOffset] = useState(0)
   const [offset, setOffset] = useState(0)
 
@@ -70,13 +72,13 @@ const SlotOffsetControl: React.FC<SlotOffsetControlProps> = ({
     }
   }, [offsetMs])
 
-  const onApply = useCallback(async () => {
+  async function onApply() {
     await slotsManager?.update({
       id,
       offsetMs: offset * 1000,
       isManual: offset ? true : !(isStock || isAuto),
     })
-  }, [id, offset, isStock, isAuto])
+  }
 
   return (
     <OffsetControl
@@ -93,13 +95,13 @@ export type OptionsProps = {
   isOpen: boolean
 } & SlotOffsetControlProps
 
-export const Options: React.FC<OptionsProps> = ({
+export function Options({
   isOpen,
   id,
   isStock,
   isAuto,
   offsetMs,
-}) => {
+}: OptionsProps) {
   const willChange = useWillChange()
 
   return (
@@ -115,7 +117,7 @@ export const Options: React.FC<OptionsProps> = ({
             variants={transitionVariants}
             onKeyDown={(e) => e.stopPropagation()}
           >
-            <div className="border-t-1 border-foreground-200 p-2">
+            <div className="border-foreground-200 border-t-1 p-2">
               <SlotOffsetControl
                 id={id}
                 isStock={isStock}

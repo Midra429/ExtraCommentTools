@@ -11,7 +11,7 @@ const SOURCE_BADGE_CLASSES: {
   [key in Exclude<SourceTagProps['type'], 'normal'>]: string
 } = {
   official: cn('bg-[#ffe248] text-black dark:bg-[#ffd700]'),
-  danime: cn('bg-danime-400 text-white dark:bg-danime-500'),
+  danime: cn('bg-danime-400 dark:bg-danime-500 text-white'),
 }
 
 const SOURCE_BADGE_NAME: {
@@ -21,7 +21,7 @@ const SOURCE_BADGE_NAME: {
   danime: 'dアニメ',
 }
 
-export const SourceBadge: React.FC<SourceTagProps> = ({ className, type }) => {
+export function SourceBadge({ className, type }: SourceTagProps) {
   if (type === 'normal') return
 
   return (

@@ -1,6 +1,6 @@
 import type { PopoverProps, ButtonProps } from '@heroui/react'
 
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import {
   Popover,
   PopoverTrigger,
@@ -44,12 +44,12 @@ const popoverIcon = tv({
   },
 })
 
-export const Popconfirm: React.FC<PopconfirmProps> = (props) => {
+export function Popconfirm(props: PopconfirmProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isOkLoading, setIsOkLoading] = useState(false)
   const [isCancelLoading, setIsCancelLoading] = useState(false)
 
-  const onPressCancel = useCallback(async () => {
+  async function onPressCancel() {
     if (props.onCancel) {
       const response = props.onCancel()
 
@@ -61,9 +61,9 @@ export const Popconfirm: React.FC<PopconfirmProps> = (props) => {
     }
 
     setIsOpen(false)
-  }, [props.onCancel])
+  }
 
-  const onPressOk = useCallback(async () => {
+  async function onPressOk() {
     const response = props.onOk()
 
     if (response instanceof Promise) {
@@ -73,14 +73,14 @@ export const Popconfirm: React.FC<PopconfirmProps> = (props) => {
     }
 
     setIsOpen(false)
-  }, [props.onOk])
+  }
 
   return (
     <Popover
       classNames={{
         content: [
           'flex flex-row items-start gap-1.5 p-2.5',
-          'border-1 border-foreground-100',
+          'border-foreground-100 border-1',
         ],
       }}
       placement={props.placement}
@@ -114,7 +114,7 @@ export const Popconfirm: React.FC<PopconfirmProps> = (props) => {
             {props.description}
           </span>
 
-          <div className="ml-auto mt-1.5 flex flex-row gap-2">
+          <div className="mt-1.5 ml-auto flex flex-row gap-2">
             <Button
               className="h-7"
               size="sm"
