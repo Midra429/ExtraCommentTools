@@ -36,49 +36,45 @@ https://addons.mozilla.org/ja/firefox/addon/引用コメントツール/
 
 ## 開発
 ### 環境
-- [pnpm](https://pnpm.io/ja/)
+- [bun](https://bun.com/)
 - [Visual Studio Code](https://code.visualstudio.com/)
 - [Chrome](https://www.google.com/intl/ja/chrome/)
 
 ### 開発サーバー
 ```sh
 # Chrome
-pnpm run dev
+bun run dev
 ```
 ```sh
 # Firefox
-pnpm run dev:firefox
+bun run dev:firefox
 ```
 
 ### 出力
 ```sh
 # dist/chrome-mv3
-pnpm run build
+bun run build
 ```
 ```sh
 # dist/firefox-mv3
-pnpm run build:firefox
+bun run build:firefox
 ```
 
 ### 出力 (ZIP)
 ```sh
 # dist/extra-comment-tools-0.0.0-chrome.zip
-pnpm run zip
+bun run zip
 ```
 ```sh
 # dist/extra-comment-tools-0.0.0-firefox.zip
 # dist/extra-comment-tools-0.0.0-sources.zip
-pnpm run zip:firefox
+bun run zip:firefox
 ```
 
 ## ライブラリ
-- **nco-parser**<br>
-[GitHub](https://github.com/Midra429/nco-parser) / [npm](https://www.npmjs.com/package/@midra/nco-parser)<br>
-アニメタイトルの解析や比較をするやつ
-
-- **nco-api**<br>
-[GitHub](https://github.com/Midra429/nco-api) / [npm](https://www.npmjs.com/package/@midra/nco-api)<br>
-[NCOverlay](https://github.com/Midra429/NCOverlay)で使うAPIをまとめたやつ
+- **nco-utils**<br>
+[GitHub](https://github.com/Midra429/nco-utils) / [npm](https://www.npmjs.com/package/@midra/nco-utils)<br>
+NCOverlay用のユーティリティライブラリ
 
 ## ライセンス
 当ライセンスは [MIT](LICENSE.txt) ライセンスの規約に基づいて付与されています。
