@@ -318,7 +318,7 @@ export const hookWatch = async (
         .filter((v) => v.threadIds.length)
         .sort((a, b) => a.index - b.index)
 
-      hooksSharedData.videoData = videoData
+      hooksSharedData.setVideoData(videoData)
     }
 
     return new Response(JSON.stringify(json), {

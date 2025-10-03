@@ -71,6 +71,7 @@ const accordionItemInfo = (
 
           <Link
             className="text-[length:inherit] text-foreground-500 dark:text-foreground-600"
+            underline="hover"
             href={`${GITHUB_URL}/releases/tag/v${version}`}
             isExternal
           >
@@ -240,6 +241,7 @@ const accordionItemOthers = (
             <Link
               size="sm"
               color="primary"
+              underline="hover"
               showAnchorIcon
               href={url}
               isExternal

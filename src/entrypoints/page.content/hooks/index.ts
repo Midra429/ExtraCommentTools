@@ -17,6 +17,19 @@ export const hooksSharedData = new (class HooksSharedData {
   #extraVideoDataList: ExtraVideoData[] = []
   #slotsManager: ExtSlotsManager | null = null
 
+  get videoId() {
+    return this.#videoId
+  }
+  get videoData() {
+    return this.#videoData
+  }
+  get extraVideoDataList() {
+    return this.#extraVideoDataList
+  }
+  get slotsManager() {
+    return this.#slotsManager
+  }
+
   async initialize(videoId: string) {
     if (this.#videoId === videoId) return
 
@@ -36,25 +49,7 @@ export const hooksSharedData = new (class HooksSharedData {
     this.#slotsManager = null
   }
 
-  get videoId() {
-    return this.#videoId
-  }
-
-  get slotsManager() {
-    return this.#slotsManager
-  }
-
-  get videoData() {
-    return this.#videoData
-  }
-  set videoData(value) {
-    this.#videoData = value
-  }
-
-  get extraVideoDataList() {
-    return this.#extraVideoDataList
-  }
-  set extraVideoDataList(value) {
-    this.#extraVideoDataList = value
+  setVideoData(videoData: VideoData) {
+    this.#videoData = videoData
   }
 })()
