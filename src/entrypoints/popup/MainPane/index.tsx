@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Tabs, Tab } from '@heroui/react'
 import { SearchIcon, SettingsIcon } from 'lucide-react'
 
@@ -32,6 +33,21 @@ export type MainPaneProps = {
  * メイン
  */
 export function MainPane({ isActive }: MainPaneProps) {
+  const [selectedKey, setSelectedKey] = useState<string>()
+  const [disableAnimation, setDisableAnimation] = useState(true)
+
+  useEffect(() => {
+    if (!isActive) return
+
+    setTimeout(() => {
+      setSelectedKey('settings')
+
+      setTimeout(() => {
+        setDisableAnimation(false)
+      })
+    })
+  }, [isActive])
+
   return (
     <div className="flex size-full flex-col">
       {isActive ? (
@@ -46,7 +62,9 @@ export function MainPane({ isActive }: MainPaneProps) {
           radius="none"
           fullWidth
           destroyInactiveTabPanel={false}
-          defaultSelectedKey="settings"
+          disableAnimation={disableAnimation}
+          selectedKey={selectedKey}
+          onSelectionChange={(key) => setSelectedKey(key as string)}
           items={tabItems}
         >
           {({ key, title, icon: Icon, children }) => (
