@@ -25,14 +25,14 @@ async function main() {
 
   registerProxy('ncoApi', ncoApi, onMessage)
   registerProxy('ncoSearch', ncoSearch, onMessage)
-
   registerUtilsMessage()
+
+  // 権限をリクエスト
+  requestPermissions()
 
   // インストール・アップデート時
   webext.runtime.onInstalled.addListener(async ({ reason }) => {
     const { version } = webext.runtime.getManifest()
-
-    requestPermissions()
 
     switch (reason) {
       case 'install':
