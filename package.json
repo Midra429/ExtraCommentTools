@@ -41,6 +41,7 @@
     "@types/nanoid-dictionary": "^4.2.3",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.1",
+    "@types/webextension-polyfill": "^0.12.4",
     "@webext-core/proxy-service": "^1.2.1",
     "@wxt-dev/auto-icons": "^1.1.0",
     "@wxt-dev/module-react": "^1.1.5",
