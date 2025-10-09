@@ -33,19 +33,17 @@ export type MainPaneProps = {
  * メイン
  */
 export function MainPane({ isActive }: MainPaneProps) {
-  const [selectedKey, setSelectedKey] = useState<string>()
+  const [selectedKey, setSelectedKey] = useState('settings')
   const [disableAnimation, setDisableAnimation] = useState(true)
 
   useEffect(() => {
     if (!isActive) return
 
-    setTimeout(() => {
-      setSelectedKey('settings')
+    const timeoutId = setTimeout(() => {
+      setDisableAnimation(false)
+    }, 50)
 
-      setTimeout(() => {
-        setDisableAnimation(false)
-      })
-    })
+    return () => clearInterval(timeoutId)
   }, [isActive])
 
   return (
