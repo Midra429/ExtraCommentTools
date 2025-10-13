@@ -33,7 +33,7 @@ export type MainPaneProps = {
  * メイン
  */
 export function MainPane({ isActive }: MainPaneProps) {
-  const [selectedKey, setSelectedKey] = useState('settings')
+  const [selectedKey, setSelectedKey] = useState('search')
   const [disableAnimation, setDisableAnimation] = useState(true)
 
   useEffect(() => {
