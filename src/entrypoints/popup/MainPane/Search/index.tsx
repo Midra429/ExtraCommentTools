@@ -1,5 +1,5 @@
 import type { SearchNiconicoOptions } from '@/utils/api/searchNiconico'
-import type { ExtSlot } from '@/core/slots'
+import type { Slot } from '@/core/slots'
 import type { SearchInputHandle } from './Input'
 
 import { useState, useEffect, useRef } from 'react'
@@ -24,7 +24,7 @@ export function Search() {
   const [isLoading, setIsLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
-  const [slots, setSlots] = useState<ExtSlot[]>([])
+  const [results, setResults] = useState<Slot[]>([])
 
   const [sort] = useSettings('settings:searchOptions:sort')
   const [dateRange] = useSettings('settings:searchOptions:dateRange')
@@ -46,7 +46,7 @@ export function Search() {
     setIsLoading(true)
 
     setCurrentPage(page)
-    setSlots([])
+    setResults([])
 
     const videoId = extractVideoId(value)
 
@@ -56,7 +56,7 @@ export function Search() {
 
     if (result) {
       setTotalCount(result.total)
-      setSlots(result.slots)
+      setResults(result.slots)
     } else {
       setTotalCount(0)
     }
@@ -106,7 +106,7 @@ export function Search() {
             <Spinner size="lg" color="primary" />
           </div>
         ) : (
-          <Results slots={slots} />
+          <Results results={results} />
         )}
       </div>
 

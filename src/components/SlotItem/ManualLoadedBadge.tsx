@@ -1,10 +1,10 @@
-import type { ExtSlot } from '@/core/slots'
+import type { Slot } from '@/core/slots'
 
 import { cn } from '@heroui/react'
 
 export type ManualLoadedBadgeProps = {
   className?: string
-  isManual: ExtSlot['isManual']
+  isManual: Slot['isManual']
 }
 
 export function ManualLoadedBadge({

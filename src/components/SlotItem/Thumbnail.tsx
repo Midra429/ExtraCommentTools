@@ -1,4 +1,4 @@
-import type { ExtSlot } from '@/core/slots'
+import type { Slot } from '@/core/slots'
 
 import { Image, cn } from '@heroui/react'
 
@@ -8,10 +8,10 @@ import { Offset } from './Offset'
 import { Duration } from './Duration'
 
 export type ThumbnailProps = {
-  type: ExtSlot['type']
-  offsetMs: ExtSlot['offsetMs']
-  isManual: ExtSlot['isManual']
-  info: ExtSlot['info']
+  type: Slot['type']
+  offsetMs: Slot['offsetMs']
+  isManual: Slot['isManual']
+  info: Slot['info']
   isSearch?: boolean
 }
 

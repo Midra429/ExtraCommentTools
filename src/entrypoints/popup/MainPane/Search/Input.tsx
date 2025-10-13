@@ -1,6 +1,8 @@
-import { useState, useImperativeHandle } from 'react'
+import { useEffect, useState, useImperativeHandle } from 'react'
 import { Button, Input, cn } from '@heroui/react'
 import { SearchIcon, ChevronDownIcon } from 'lucide-react'
+
+import { useSlotsManager } from '@/hooks/useSlots'
 
 import { Options } from './Options'
 
@@ -19,11 +21,33 @@ export function SearchInput({ isDisabled, onSearch, ref }: SearchInputProps) {
   const [isOptionsOpen, setIsOptionsOpen] = useState(false)
   const [isComposing, setIsComposing] = useState(false)
 
+  const slotsManager = useSlotsManager()
+
   const isSearchable = value.trim() && !isDisabled
 
   function search() {
     onSearch(value.trim())
   }
+
+  useEffect(() => {
+    slotsManager?.getParsedResult().then((parsed) => {
+      if (!parsed) return
+
+      const initValue =
+        [
+          parsed.titleStripped,
+          parsed.season?.text,
+          parsed.isSingleEpisode
+            ? parsed.episode?.text
+            : parsed.episodes?.map((v) => v.text).join(parsed.episodesDivider),
+          parsed.subtitleStripped,
+        ]
+          .filter(Boolean)
+          .join(' ') || parsed.input
+
+      setValue(initValue)
+    })
+  }, [slotsManager])
 
   useImperativeHandle(ref, () => {
     return { setValue }

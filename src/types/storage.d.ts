@@ -1,9 +1,14 @@
 import type { DateTimeDuration } from '@internationalized/date'
 import type { NiconicoGenre } from '@midra/nco-utils/types/api/constants'
 import type { SearchQuerySort } from '@midra/nco-utils/types/api/niconico/search'
-import type { ExtSlotItems } from '@/core/slots'
+import type { ParsedResult } from '@midra/nco-utils/parse'
+import type { Slot } from '@/core/slots'
 
-export type StorageItems_v1 = {
+export type InternalItems = {
+  _version: number
+}
+
+export type SettingItems = {
   // 設定: 全般 //////////////////////////////////////////////////
   /**
    * 設定: 全般 > テーマ
@@ -110,26 +115,20 @@ export type StorageItems_v1 = {
     start: number | null,
     end: number | null,
   ]
-
-  // ExtSlot //////////////////////////////////////////////////
-  'slots:ids': string[]
 }
 
-export type StorageItems = StorageItems_v1 & {
-  _version: number
-} & ExtSlotItems
-
-export type StorageKey = keyof StorageItems
-
-export type InternalKey = Extract<StorageKey, `_${string}`>
-export type InternalItems = {
-  [key in InternalKey]: StorageItems[key]
-}
-
-export type SettingsKey = Extract<StorageKey, `settings:${string}`>
-export type SettingItems = {
-  [key in SettingsKey]: StorageItems[key]
-}
-
-export type SettingsExportKey = InternalKey | SettingsKey
 export type SettingsExportItems = Partial<InternalItems & SettingItems>
+
+export type SlotItems = {
+  'slots:ids': string[]
+} & {
+  [key: `parsed:${string}`]: ParsedResult | null
+  [key: `slots:${string}`]: Slot[] | null
+}
+
+export type StorageItems = InternalItems & SettingItems & SlotItems
+
+export type InternalKey = keyof InternalItems
+export type SettingsKey = keyof SettingItems
+export type SettingsExportKey = keyof SettingsExportItems
+export type StorageKey = keyof StorageItems

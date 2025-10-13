@@ -1,11 +1,11 @@
-import type { ExtSlot } from '@/core/slots'
+import type { Slot } from '@/core/slots'
 
 import { Link, cn } from '@heroui/react'
 import { useOverflowDetector } from 'react-detectable-overflow'
 
 export type TitleProps = {
-  id: ExtSlot['id']
-  title: ExtSlot['info']['title']
+  id: Slot['id']
+  title: Slot['info']['title']
   isSearch?: boolean
 }
 

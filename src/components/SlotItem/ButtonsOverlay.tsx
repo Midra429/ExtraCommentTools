@@ -1,10 +1,10 @@
-import type { ExtSlot } from '@/core/slots'
+import type { Slot } from '@/core/slots'
 
 import { Button, cn } from '@heroui/react'
 import { Trash2Icon } from 'lucide-react'
 
 export type ButtonsOverlayProps = {
-  isManual: ExtSlot['isManual']
+  isManual: Slot['isManual']
   onRemove: () => void
 }
 

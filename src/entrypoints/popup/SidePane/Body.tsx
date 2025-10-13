@@ -1,10 +1,10 @@
-import { useExtSlots } from '@/hooks/useExtSlots'
+import { useSlots } from '@/hooks/useSlots'
 import { cn } from '@heroui/react'
 
 import { SlotItem } from '@/components/SlotItem'
 
 export function Body() {
-  const slots = useExtSlots()
+  const slots = useSlots()
 
   return (
     <div className="relative size-full overflow-y-auto p-2">

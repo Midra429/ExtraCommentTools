@@ -1,10 +1,10 @@
-import type { ExtSlot } from '@/core/slots'
+import type { Slot } from '@/core/slots'
 import type { PanelItemProps } from '@/components/PanelItem'
 
 import { useState } from 'react'
 import { cn } from '@heroui/react'
 
-import { slotsManager } from '@/hooks/useExtSlots'
+import { useSlotsManager } from '@/hooks/useSlots'
 
 import { PanelItem } from '@/components/PanelItem'
 
@@ -18,7 +18,7 @@ import { Options, OptionsButton } from './Options'
 
 export type SlotItemProps = {
   classNames?: PanelItemProps['classNames']
-  slot: ExtSlot
+  slot: Slot
   isSearch?: boolean
   isDisabled?: boolean
 }
@@ -30,6 +30,8 @@ export function SlotItem({
   isDisabled,
 }: SlotItemProps) {
   const [isOptionsOpen, setIsOptionsOpen] = useState(false)
+
+  const slotsManager = useSlotsManager()
 
   async function onPressAdd() {
     await slotsManager?.add({

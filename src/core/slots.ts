@@ -1,13 +1,14 @@
 import type { DeepPartial } from 'utility-types'
+import type { ParsedResult } from '@midra/nco-utils/parse'
 import type { StorageOnChangeCallback, WebExtStorage } from '@/utils/storage'
 
 import equal from 'fast-deep-equal'
 
 import { deepmerge } from '@/utils/deepmerge'
 
-const EXT_SLOTS_MAX = 500
+const SLOTS_MAX = 500
 
-export type ExtSlot = {
+export type Slot = {
   id: string
   type: 'normal' | 'official' | 'danime'
   isStock: boolean
@@ -28,16 +29,12 @@ export type ExtSlot = {
   }
 }
 
-export type ExtSlotUpdate = DeepPartial<ExtSlot> & Required<Pick<ExtSlot, 'id'>>
-
-export type ExtSlotItems = {
-  [key: `slots:${string}`]: ExtSlot[] | null
-}
+export type SlotUpdate = DeepPartial<Slot> & Required<Pick<Slot, 'id'>>
 
 /**
  * データ管理担当
  */
-export class ExtSlotsManager {
+export class SlotsManager {
   readonly id: string
   readonly storage: WebExtStorage
 
@@ -47,9 +44,11 @@ export class ExtSlotsManager {
   }
 
   async initialize() {
-    const slotIds = [...((await this.storage.get('slots:ids')) ?? [])]
+    await this.removeParsedResult()
 
-    const existIdx = slotIds.findIndex((id) => id === this.id) ?? -1
+    const slotIds = (await this.storage.get('slots:ids')) ?? []
+
+    const existIdx = slotIds.findIndex((id) => id === this.id)
 
     if (existIdx !== -1) {
       slotIds.splice(existIdx, 1)
@@ -57,12 +56,13 @@ export class ExtSlotsManager {
 
     slotIds.push(this.id)
 
-    const diff = slotIds.length - EXT_SLOTS_MAX
+    const diff = slotIds.length - SLOTS_MAX
 
     if (0 < diff) {
       const deletedSlotIds = slotIds.splice(0, diff)
 
       for (const id of deletedSlotIds) {
+        await this.storage.remove(`parsed:${id}`)
         await this.storage.remove(`slots:${id}`)
       }
     }
@@ -70,17 +70,29 @@ export class ExtSlotsManager {
     await this.storage.set('slots:ids', slotIds)
   }
 
-  get(): Promise<ExtSlot[] | null> {
+  getParsedResult(): Promise<ParsedResult | null> {
+    return this.storage.get(`parsed:${this.id}`)
+  }
+
+  setParsedResult(parsed: ParsedResult) {
+    return this.storage.set(`parsed:${this.id}`, parsed)
+  }
+
+  removeParsedResult() {
+    return this.storage.remove(`parsed:${this.id}`)
+  }
+
+  get(): Promise<Slot[] | null> {
     return this.storage.get(`slots:${this.id}`)
   }
 
-  set(slots: ExtSlot[]) {
+  set(slots: Slot[]) {
     return this.storage.set(`slots:${this.id}`, slots)
   }
 
-  async add(...slots: NonNullable<ExtSlot[]>) {
+  async add(...slots: Slot[]) {
     const oldSlots = (await this.get()) ?? []
-    const newSlots: NonNullable<ExtSlot[]> = []
+    const newSlots: Slot[] = []
 
     slots.forEach((slot) => {
       const idx = oldSlots.findIndex((v) => v.id === slot.id) ?? -1
@@ -95,7 +107,7 @@ export class ExtSlotsManager {
     return this.set([...oldSlots, ...newSlots])
   }
 
-  async update(slot: ExtSlotUpdate): Promise<boolean> {
+  async update(slot: SlotUpdate): Promise<boolean> {
     const slots = await this.get()
 
     if (!slots) {
@@ -119,7 +131,7 @@ export class ExtSlotsManager {
     return false
   }
 
-  async remove(target?: Partial<ExtSlot>) {
+  async remove(target?: Partial<Slot>) {
     if (target) {
       const oldSlots = await this.get()
 

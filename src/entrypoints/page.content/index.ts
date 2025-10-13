@@ -48,29 +48,33 @@ export default defineContentScript({
 
         let response: Response | null = null
 
-        if (init.method === 'GET') {
-          // 動画情報API
-          if (
-            url.pathname.startsWith('/watch/') &&
-            url.searchParams.get('responseType') === 'json'
-          ) {
-            response = await hookWatch(args)
-          }
-        }
+        switch (init.method) {
+          case 'GET':
+            // 動画情報API
+            if (
+              url.pathname.startsWith('/watch/') &&
+              url.searchParams.get('responseType') === 'json'
+            ) {
+              response = await hookWatch(args)
+            }
 
-        if (init.method === 'POST') {
-          // コメント取得API
-          if (url.pathname === '/v1/threads') {
-            response = await hookThreads(args)
-          }
+            break
 
-          // ニコるAPI
-          // if (
-          //   url.pathname.startsWith('/v1/threads') &&
-          //   url.pathname.endsWith('/nicorus')
-          // ) {
-          //   response = await hookNicorus(args)
-          // }
+          case 'POST':
+            // コメント取得API
+            if (url.pathname === '/v1/threads') {
+              response = await hookThreads(args)
+            }
+
+            // ニコるAPI
+            // if (
+            //   url.pathname.startsWith('/v1/threads') &&
+            //   url.pathname.endsWith('/nicorus')
+            // ) {
+            //   response = await hookNicorus(args)
+            // }
+
+            break
         }
 
         if (response) {

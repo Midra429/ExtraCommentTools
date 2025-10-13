@@ -1,4 +1,4 @@
-import type { ExtSlot } from '@/core/slots'
+import type { Slot } from '@/core/slots'
 
 import { cn } from '@heroui/react'
 import { PlayIcon, MessageSquareTextIcon, HeartIcon } from 'lucide-react'
@@ -6,7 +6,7 @@ import { PlayIcon, MessageSquareTextIcon, HeartIcon } from 'lucide-react'
 import { useSettings } from '@/hooks/useSettings'
 
 export type CountsProps = {
-  count: ExtSlot['info']['count']
+  count: Slot['info']['count']
   isSearch?: boolean
 }
 

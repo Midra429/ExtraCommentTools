@@ -1,5 +1,5 @@
 import type { Variants } from 'framer-motion'
-import type { ExtSlot } from '@/core/slots'
+import type { Slot } from '@/core/slots'
 
 import { useEffect, useState } from 'react'
 import { Button } from '@heroui/react'
@@ -13,7 +13,7 @@ import {
 } from 'framer-motion'
 import { SlidersHorizontalIcon, XIcon } from 'lucide-react'
 
-import { slotsManager } from '@/hooks/useExtSlots'
+import { useSlotsManager } from '@/hooks/useSlots'
 
 import { OffsetControl } from '@/components/OffsetControl'
 
@@ -48,10 +48,10 @@ export function OptionsButton({ isOpen, onPress }: OptionsButtonProps) {
 }
 
 type SlotOffsetControlProps = {
-  id: ExtSlot['id']
-  isStock: ExtSlot['isStock']
-  isAuto: ExtSlot['isAuto']
-  offsetMs: ExtSlot['offsetMs']
+  id: Slot['id']
+  isStock: Slot['isStock']
+  isAuto: Slot['isAuto']
+  offsetMs: Slot['offsetMs']
 }
 
 function SlotOffsetControl({
@@ -62,6 +62,8 @@ function SlotOffsetControl({
 }: SlotOffsetControlProps) {
   const [currentOffset, setCurrentOffset] = useState(0)
   const [offset, setOffset] = useState(0)
+
+  const slotsManager = useSlotsManager()
 
   useEffect(() => {
     const ofs = Math.round((offsetMs ?? 0) / 1000)

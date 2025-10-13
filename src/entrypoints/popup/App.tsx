@@ -1,4 +1,4 @@
-import { slotsManager } from '@/hooks/useExtSlots'
+import { useSlotsManager } from '@/hooks/useSlots'
 
 import { Layout } from '@/components/Layout'
 
@@ -6,6 +6,8 @@ import { MainPane } from './MainPane'
 import { SidePane } from './SidePane'
 
 function App() {
+  const slotsManager = useSlotsManager()
+
   const isActive = !!slotsManager
   const height = isActive ? 500 : 450
 

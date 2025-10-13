@@ -6,6 +6,7 @@ import type {
 import type { FetchProxyApplyArguments } from '..'
 
 import { DANIME_CHANNEL_ID } from '@midra/nco-utils/search/constants'
+import { parse } from '@midra/nco-utils/parse'
 
 import { logger } from '@/utils/logger'
 import { settings } from '@/utils/settings/page'
@@ -52,15 +53,6 @@ export const hookWatch = async (
 
   await hooksSharedData.initialize(videoId)
 
-  // 設定
-  const showExtra = await settings.get('settings:comment:showExtra')
-  const mergeExtra = await settings.get('settings:comment:mergeExtra')
-  const translucentExtra = await settings.get(
-    'settings:comment:translucentExtra'
-  )
-  const showEasy = await settings.get('settings:comment:showEasy')
-  const searchTargets = await settings.get('settings:autoLoad:searchTargets')
-
   try {
     const res = await Reflect.apply(...args)
     const json: VideoResponse = await res.json()
@@ -68,8 +60,23 @@ export const hookWatch = async (
     logger.log(apiLogName, json)
 
     if (json.meta.status === 200) {
+      // 設定
+      const showExtra = await settings.get('settings:comment:showExtra')
+      const mergeExtra = await settings.get('settings:comment:mergeExtra')
+      const translucentExtra = await settings.get(
+        'settings:comment:translucentExtra'
+      )
+      const showEasy = await settings.get('settings:comment:showEasy')
+      const searchTargets = await settings.get(
+        'settings:autoLoad:searchTargets'
+      )
+
       const videoData = json.data.response as VideoData
       const { channel, comment, video } = videoData
+
+      const parsed = parse(video.title)
+
+      logger.log('parsed', parsed)
 
       // かんたんコメントを非表示
       if (!showEasy) {
@@ -137,7 +144,7 @@ export const hookWatch = async (
         if (isDAnime && searchTargets.includes('official')) {
           // 検索 (公式)
           const searchResults = await ncoSearchProxy.niconico({
-            input: video.title,
+            input: parsed,
             duration: video.duration,
             targets: {
               official: true,
@@ -168,7 +175,7 @@ export const hookWatch = async (
           } else {
             // 検索 (公式/dアニメ)
             const searchResults = await ncoSearchProxy.niconico({
-              input: video.title,
+              input: parsed,
               duration: video.duration,
               targets: {
                 official: true,
@@ -293,6 +300,7 @@ export const hookWatch = async (
         .filter((v) => v.threadIds.length)
         .sort((a, b) => a.index - b.index)
 
+      hooksSharedData.slotsManager?.setParsedResult(parsed)
       hooksSharedData.setVideoData(videoData)
     }
 

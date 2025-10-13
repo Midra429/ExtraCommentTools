@@ -1,10 +1,10 @@
-import type { ExtSlot } from '@/core/slots'
+import type { Slot } from '@/core/slots'
 
 import { cn } from '@heroui/react'
 
 export type SourceTagProps = {
   className?: string
-  type: ExtSlot['type']
+  type: Slot['type']
 }
 
 const SOURCE_BADGE_CLASSES: {

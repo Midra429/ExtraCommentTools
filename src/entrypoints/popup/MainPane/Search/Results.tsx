@@ -1,28 +1,29 @@
-import type { ExtSlot } from '@/core/slots'
+import type { Slot } from '@/core/slots'
 
-import { slotsManager, useExtSlots } from '@/hooks/useExtSlots'
+import { useSlotsManager, useSlots } from '@/hooks/useSlots'
 
 import { SlotItem } from '@/components/SlotItem'
 
 export type NiconicoResultsProps = {
-  slots: ExtSlot[]
+  results: Slot[]
 }
 
-export function Results({ slots }: NiconicoResultsProps) {
-  const extSlots = useExtSlots()
+export function Results({ results }: NiconicoResultsProps) {
+  const slotsManager = useSlotsManager()
+  const slots = useSlots()
 
-  const ids = extSlots
-    ?.map((v) => v.id)
-    .concat(slotsManager ? slotsManager.id : [])
+  const ids = [slotsManager?.id, slots?.map((v) => v.id)]
+    .filter((v) => v != null)
+    .flat()
 
   return (
     <div className="flex flex-col gap-2">
-      {slots.map((slot) => (
+      {results.map((slot) => (
         <SlotItem
           key={slot.id}
           slot={slot}
           isSearch
-          isDisabled={ids?.includes(slot.id)}
+          isDisabled={ids.includes(slot.id)}
         />
       ))}
     </div>

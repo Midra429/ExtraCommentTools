@@ -1,4 +1,4 @@
-import type { ExtSlot } from '@/core/slots'
+import type { Slot } from '@/core/slots'
 
 import { cn } from '@heroui/react'
 
@@ -6,7 +6,7 @@ import { formatDuration } from '@/utils/format'
 
 export type DurationProps = {
   className?: string
-  duration: ExtSlot['info']['duration']
+  duration: Slot['info']['duration']
 }
 
 export function Duration({ className, duration }: DurationProps) {

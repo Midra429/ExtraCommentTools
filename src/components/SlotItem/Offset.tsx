@@ -1,11 +1,11 @@
-import type { ExtSlot } from '@/core/slots'
+import type { Slot } from '@/core/slots'
 
 import { cn } from '@heroui/react'
 import { ClockIcon } from 'lucide-react'
 
 export type OffsetProps = {
   className?: string
-  offsetMs: ExtSlot['offsetMs']
+  offsetMs: Slot['offsetMs']
 }
 
 export function Offset({ className, offsetMs }: OffsetProps) {

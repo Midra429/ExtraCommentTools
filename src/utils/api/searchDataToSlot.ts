@@ -1,5 +1,5 @@
 import type { SearchData } from '@midra/nco-utils/types/api/niconico/search'
-import type { ExtSlot } from '@/core/slots'
+import type { Slot } from '@/core/slots'
 
 import { DANIME_CHANNEL_ID } from '@midra/nco-utils/search/constants'
 
@@ -16,8 +16,8 @@ export function searchDataToSlot(
     | 'commentCounter'
     | 'categoryTags'
   >,
-  slot?: Partial<ExtSlot>
-): ExtSlot {
+  slot?: Partial<Slot>
+): Slot {
   const isDAnime = data.channelId === DANIME_CHANNEL_ID
   const isOfficialAnime = !!(
     data.channelId &&

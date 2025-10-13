@@ -1,7 +1,4 @@
-import type {
-  Threads,
-  ThreadsData,
-} from '@midra/nco-utils/types/api/niconico/threads'
+import type { Threads } from '@midra/nco-utils/types/api/niconico/threads'
 import type { ThreadsRequestBody } from '@midra/nco-utils/api/services/niconico'
 import type { FetchProxyApplyArguments } from '..'
 
@@ -39,14 +36,6 @@ export async function hookThreads(
     return null
   }
 
-  // 設定
-  const mergeExtra = await settings.get('settings:comment:mergeExtra')
-  const translucentExtra = await settings.get(
-    'settings:comment:translucentExtra'
-  )
-  const extraColor = await settings.get('settings:comment:extraColor')
-  const forceExtraColor = await settings.get('settings:comment:forceExtraColor')
-
   try {
     const res = await Reflect.apply(...args)
     const json: Threads = await res.json()
@@ -54,21 +43,31 @@ export async function hookThreads(
     logger.log(apiLogName, json)
 
     if (json.meta.status === 200) {
-      const threadsData = json.data as ThreadsData
+      // 設定
+      const mergeExtra = await settings.get('settings:comment:mergeExtra')
+      const translucentExtra = await settings.get(
+        'settings:comment:translucentExtra'
+      )
+      const extraColor = await settings.get('settings:comment:extraColor')
+      const forceExtraColor = await settings.get(
+        'settings:comment:forceExtraColor'
+      )
+
+      const threadsData = json.data!
       const { globalComments, threads } = threadsData
 
       // 追加された動画情報
-      const addedVideoDataList = extraVideoDataList.filter(({ _ect }) => {
-        return !_ect.isStock
-      })
+      const addedVideoDataList = extraVideoDataList.filter(
+        (v) => !v._ect.isStock
+      )
 
       // コメント取得 (引用)
-      const threadsDataList = (
-        await ncoApiProxy.niconico.multipleThreads(
+      const threadsDataList = await ncoApiProxy.niconico
+        .multipleThreads(
           addedVideoDataList.map((v) => v.comment.nvComment),
           body.additionals
         )
-      ).filter((v) => v !== null)
+        .then((data) => data.filter((v) => v !== null))
 
       threadsDataList.forEach((threadsData) => {
         globalComments.push(...threadsData.globalComments)
@@ -87,7 +86,7 @@ export async function hookThreads(
         const slot = slots?.find((v) => v.id === videoId)
 
         const offsetMs = slot?.offsetMs ?? 0
-        let commands = slot?.commands ?? []
+        const commands = slot?.commands ?? []
 
         const isExtra = extraVideoDataList.some((v) => v.video.id === videoId)
         let hasCustomColor = false
