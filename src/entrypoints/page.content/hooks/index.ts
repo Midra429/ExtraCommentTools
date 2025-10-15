@@ -31,8 +31,6 @@ export const hooksSharedData = new (class HooksSharedData {
   }
 
   async initialize(videoId: string) {
-    if (this.#videoId === videoId) return
-
     this.clear()
 
     this.#videoId = videoId

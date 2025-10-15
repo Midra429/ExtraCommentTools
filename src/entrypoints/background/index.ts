@@ -20,7 +20,7 @@ export default defineBackground({
   main: () => void main(),
 })
 
-async function main() {
+function main() {
   logger.log('background.js')
 
   registerProxy('ncoApi', ncoApi, onMessage)
@@ -73,9 +73,9 @@ async function main() {
     webext.contextMenus.onClicked.addListener(async ({ menuItemId }) => {
       switch (menuItemId) {
         case 'report':
-          const url = await getFormsUrl()
-
-          webext.tabs.create({ url })
+          webext.tabs.create({
+            url: await getFormsUrl(),
+          })
 
           break
       }

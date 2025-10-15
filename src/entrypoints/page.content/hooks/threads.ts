@@ -64,7 +64,7 @@ export async function hookThreads(
       // コメント取得 (引用)
       const threadsDataList = await ncoApiProxy.niconico
         .multipleThreads(
-          addedVideoDataList.map((v) => v.comment.nvComment),
+          addedVideoDataList.map((v) => v.comment),
           body.additionals
         )
         .then((data) => data.filter((v) => v !== null))
@@ -190,7 +190,7 @@ export async function hookThreads(
       statusText: res.statusText,
     })
   } catch (err) {
-    logger.log(apiLogName, err)
+    logger.error(apiLogName, err)
   }
 
   return null

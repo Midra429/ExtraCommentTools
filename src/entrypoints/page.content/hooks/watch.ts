@@ -3,6 +3,7 @@ import type {
   VideoData,
   ThreadId,
 } from '@midra/nco-utils/types/api/niconico/video'
+import type { SearchTarget } from '@midra/nco-utils/types/search'
 import type { FetchProxyApplyArguments } from '..'
 
 import { DANIME_CHANNEL_ID } from '@midra/nco-utils/search/constants'
@@ -10,8 +11,7 @@ import { parse } from '@midra/nco-utils/parse'
 
 import { logger } from '@/utils/logger'
 import { settings } from '@/utils/settings/page'
-import { extractMainThread } from '@/utils/api/extractMainThread'
-import { extractExtraThread } from '@/utils/api/extractExtraThread'
+import { extractThread } from '@/utils/api/extractThread'
 import { utilsMessagingPage } from '@/utils/messaging/page'
 import { ncoApiProxy } from '@/proxy/nco-utils/api/page'
 import { ncoSearchProxy } from '@/proxy/nco-utils/search/page'
@@ -39,7 +39,7 @@ function filterEasyComment({ comment }: VideoData) {
 export const hookWatch = async (
   args: FetchProxyApplyArguments<true>
 ): Promise<Response | null> => {
-  logger.log('---------------------------------------')
+  logger.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
   logger.log('hookWatch()')
 
   await utilsMessagingPage.sendMessage('setBadge', {
@@ -71,6 +71,13 @@ export const hookWatch = async (
         'settings:autoLoad:searchTargets'
       )
 
+      const targets: {
+        [key in SearchTarget]?: boolean
+      } = {
+        official: searchTargets.includes('official'),
+        danime: searchTargets.includes('danime'),
+      }
+
       const videoData = json.data.response as VideoData
       const { channel, comment, video } = videoData
 
@@ -84,9 +91,9 @@ export const hookWatch = async (
       }
 
       // メインスレッド
-      const mainThread = extractMainThread(videoData)
+      const mainThread = extractThread('main', videoData)
       // 引用スレッド
-      const extraThread = extractExtraThread(videoData)
+      const extraThread = extractThread('extra', videoData)
 
       const stockVideoIds = new Set(
         videoData.comment.threads.map((v) => v.videoId)
@@ -141,14 +148,12 @@ export const hookWatch = async (
         const searchedVideoIds = new Set<string>()
 
         // dアニメ
-        if (isDAnime && searchTargets.includes('official')) {
+        if (isDAnime && targets.official) {
           // 検索 (公式)
           const searchResults = await ncoSearchProxy.niconico({
             input: parsed,
             duration: video.duration,
-            targets: {
-              official: true,
-            },
+            targets,
             userAgent: EXT_USER_AGENT,
           })
           const searchDataList = Object.values(searchResults)
@@ -162,11 +167,11 @@ export const hookWatch = async (
           })
         }
         // 公式
-        else if (isOfficial && searchTargets.includes('danime')) {
+        else if (isOfficial && (targets.official || targets.danime)) {
           // 関連付けられたdアニメの動画
-          const dAnimeLink = await ncoApiProxy.niconico.channelVideoDAnimeLinks(
-            video.id
-          )
+          const dAnimeLink = targets.danime
+            ? await ncoApiProxy.niconico.channelVideoDAnimeLinks(video.id)
+            : null
 
           logger.log('niconico.channelVideoDAnimeLinks', dAnimeLink)
 
@@ -177,10 +182,7 @@ export const hookWatch = async (
             const searchResults = await ncoSearchProxy.niconico({
               input: parsed,
               duration: video.duration,
-              targets: {
-                official: true,
-                danime: true,
-              },
+              targets,
               userAgent: EXT_USER_AGENT,
             })
             const searchDataList = Object.values(searchResults)
@@ -220,7 +222,7 @@ export const hookWatch = async (
           const isManual = manualVideoIds.has(videoId)
 
           if (!isStock) {
-            const mainThread = extractMainThread(videoData)
+            const mainThread = extractThread('main', videoData)
 
             mainThread.threads.forEach((val) => {
               if (!val.label.startsWith('extra-')) {
@@ -258,13 +260,11 @@ export const hookWatch = async (
 
         // 引用コメントのレイヤーをメインに統合
         if (mergeExtra) {
-          if (mainLayerIdx !== -1) {
-            comment.layers[mainLayerIdx].threadIds.push(
-              ...comment.layers[extraLayerIdx].threadIds
-            )
+          comment.layers[mainLayerIdx].threadIds.push(
+            ...comment.layers[extraLayerIdx].threadIds
+          )
 
-            delete comment.layers[extraLayerIdx]
-          }
+          delete comment.layers[extraLayerIdx]
         }
 
         // バッジを設定
@@ -310,7 +310,7 @@ export const hookWatch = async (
       statusText: res.statusText,
     })
   } catch (err) {
-    logger.log(apiLogName, err)
+    logger.error(apiLogName, err)
   }
 
   return null

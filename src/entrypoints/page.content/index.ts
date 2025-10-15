@@ -25,24 +25,28 @@ export default defineContentScript({
 
     window.fetch = new Proxy(window.fetch, {
       async apply(...[target, thisArg, argArray]: FetchProxyApplyArguments) {
-        if (argArray[0] instanceof Request) {
-          return Reflect.apply(target, thisArg, argArray)
-        }
-
-        if (typeof argArray[0] === 'string') {
-          argArray[0] = /^https?:\/\//.test(argArray[0])
-            ? new URL(argArray[0])
-            : new URL(argArray[0], location.origin)
-        }
-
-        argArray[1] ??= {}
-        argArray[1].method ??= 'GET'
-
         const args = [
           target,
           thisArg,
           argArray,
         ] as FetchProxyApplyArguments<true>
+
+        if (argArray[0] instanceof Request) {
+          return Reflect.apply(...args)
+        }
+
+        if (typeof argArray[0] === 'string') {
+          if (URL.canParse(argArray[0])) {
+            argArray[0] = new URL(argArray[0])
+          } else if (URL.canParse(argArray[0], location.origin)) {
+            argArray[0] = new URL(argArray[0], location.origin)
+          } else {
+            return Reflect.apply(...args)
+          }
+        }
+
+        argArray[1] ??= {}
+        argArray[1].method ??= 'GET'
 
         const [url, init] = argArray
 
@@ -52,7 +56,7 @@ export default defineContentScript({
           case 'GET':
             // 動画情報API
             if (
-              url.pathname.startsWith('/watch/') &&
+              /^\/watch\/[a-z]{2}?\d+$/.test(url.pathname) &&
               url.searchParams.get('responseType') === 'json'
             ) {
               response = await hookWatch(args)
@@ -77,15 +81,7 @@ export default defineContentScript({
             break
         }
 
-        if (response) {
-          return response
-        } else {
-          try {
-            return await Reflect.apply(...args)
-          } catch (err) {
-            console.log(err)
-          }
-        }
+        return response ?? Reflect.apply(...args)
       },
     })
   },
