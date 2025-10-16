@@ -6,7 +6,7 @@ import equal from 'fast-deep-equal'
 
 import { deepmerge } from '@/utils/deepmerge'
 
-const SLOTS_MAX = 500
+const SLOTS_MAX = 1000
 
 export type Slot = {
   id: string
@@ -62,8 +62,7 @@ export class SlotsManager {
       const deletedSlotIds = slotIds.splice(0, diff)
 
       for (const id of deletedSlotIds) {
-        await this.storage.remove(`parsed:${id}`)
-        await this.storage.remove(`slots:${id}`)
+        await this.storage.remove(`parsed:${id}`, `slots:${id}`)
       }
     }
 

@@ -43,16 +43,6 @@ export async function hookThreads(
     logger.log(apiLogName, json)
 
     if (json.meta.status === 200) {
-      // 設定
-      const mergeExtra = await settings.get('settings:comment:mergeExtra')
-      const translucentExtra = await settings.get(
-        'settings:comment:translucentExtra'
-      )
-      const extraColor = await settings.get('settings:comment:extraColor')
-      const forceExtraColor = await settings.get(
-        'settings:comment:forceExtraColor'
-      )
-
       const threadsData = json.data!
       const { globalComments, threads } = threadsData
 
@@ -75,6 +65,16 @@ export async function hookThreads(
       })
 
       const slots = await slotsManager?.get()
+
+      // 設定
+      const mergeExtra = await settings.get('settings:comment:mergeExtra')
+      const translucentExtra = await settings.get(
+        'settings:comment:translucentExtra'
+      )
+      const extraColor = await settings.get('settings:comment:extraColor')
+      const forceExtraColor = await settings.get(
+        'settings:comment:forceExtraColor'
+      )
 
       // オフセット・コマンド適用
       threads.forEach((thread) => {

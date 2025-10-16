@@ -64,9 +64,12 @@ export const hookWatch = async (
 
       // URLのIDを動画情報のIDに置き換える
       if (url.pathname.split('/').at(-1) !== video.id) {
-        const newPath = url.pathname.replace(/[^\/]+$/, video.id)
+        const oldPath = url.pathname
+        const newPath = oldPath.replace(/[^\/]+$/, video.id)
 
         history.replaceState(null, '', newPath)
+
+        logger.log('replace', `${oldPath} -> ${newPath}`)
       }
 
       // 共有データを初期化
