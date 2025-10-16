@@ -15,7 +15,6 @@ import {
   DatabaseIcon,
   CircleEllipsisIcon,
   ClipboardListIcon,
-  BookTextIcon,
   RotateCcwIcon,
   Trash2Icon,
 } from 'lucide-react'
@@ -88,13 +87,6 @@ const accordionItemInfo = (
 
           {/* 不具合報告・機能提案 */}
           <FormsButton />
-
-          {/* Wiki */}
-          {/* <IconLink
-            icon={BookTextIcon}
-            title="Wiki"
-            href={`${GITHUB_URL}/wiki`}
-          /> */}
 
           {/* GitHub */}
           <IconLink icon={SiGithub} href={GITHUB_URL} />
@@ -179,8 +171,8 @@ const accordionItemStorage = (
           text: '削除',
           onPress: async () => {
             const values = await storage.get()
-            const cacheKeys = Object.keys(values).filter((v) =>
-              v.startsWith('slots:')
+            const cacheKeys = Object.keys(values).filter(
+              (key) => key.startsWith('parsed:') || key.startsWith('slots:')
             ) as StorageKey[]
 
             if (cacheKeys.length) {
