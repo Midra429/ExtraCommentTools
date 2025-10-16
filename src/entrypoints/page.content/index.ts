@@ -56,7 +56,7 @@ export default defineContentScript({
           case 'GET':
             // 動画情報API
             if (
-              /^\/watch\/[a-z]{2}?\d+$/.test(url.pathname) &&
+              /^\/watch\/(?:[a-z]{2})?\d+$/.test(url.pathname) &&
               url.searchParams.get('responseType') === 'json'
             ) {
               response = await hookWatch(args)
