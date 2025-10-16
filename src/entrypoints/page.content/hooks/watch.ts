@@ -49,9 +49,8 @@ export const hookWatch = async (
   const [url, init] = args[2]
   const apiLogName = `${init.method} ${url.pathname}`
 
-  const videoId = url.pathname.split('/').at(-1)!
-
-  await hooksSharedData.initialize(videoId)
+  // 共有データをクリア
+  hooksSharedData.clear()
 
   try {
     const res = await Reflect.apply(...args)
@@ -60,6 +59,24 @@ export const hookWatch = async (
     logger.log(apiLogName, json)
 
     if (json.meta.status === 200) {
+      const videoData = json.data.response as VideoData
+      const { channel, comment, video } = videoData
+
+      // URLのIDを動画情報のIDに置き換える
+      if (url.pathname.split('/').at(-1) !== video.id) {
+        const newPath = url.pathname.replace(/[^\/]+$/, video.id)
+
+        history.replaceState(null, '', newPath)
+      }
+
+      // 共有データを初期化
+      await hooksSharedData.initialize(video.id)
+
+      // タイトルを解析
+      const parsed = parse(video.title)
+
+      logger.log('parsed', parsed)
+
       // 設定
       const showExtra = await settings.get('settings:comment:showExtra')
       const mergeExtra = await settings.get('settings:comment:mergeExtra')
@@ -77,13 +94,6 @@ export const hookWatch = async (
         official: searchTargets.includes('official'),
         danime: searchTargets.includes('danime'),
       }
-
-      const videoData = json.data.response as VideoData
-      const { channel, comment, video } = videoData
-
-      const parsed = parse(video.title)
-
-      logger.log('parsed', parsed)
 
       // かんたんコメントを非表示
       if (!showEasy) {
