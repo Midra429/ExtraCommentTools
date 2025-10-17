@@ -56,12 +56,12 @@ if (webext.isFirefox) {
 
     let bytes = 0
 
-    Object.entries(values).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(values)) {
       bytes += new Blob([
         key,
         typeof value === 'string' ? value : JSON.stringify(value),
       ]).size
-    })
+    }
 
     return bytes
   }

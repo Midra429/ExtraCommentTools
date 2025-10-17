@@ -93,7 +93,7 @@ export class SlotsManager {
     const oldSlots = (await this.get()) ?? []
     const newSlots: Slot[] = []
 
-    slots.forEach((slot) => {
+    for (const slot of slots) {
       const idx = oldSlots.findIndex((v) => v.id === slot.id) ?? -1
 
       if (idx !== -1) {
@@ -101,7 +101,7 @@ export class SlotsManager {
       } else {
         newSlots.push(slot)
       }
-    })
+    }
 
     return this.set([...oldSlots, ...newSlots])
   }

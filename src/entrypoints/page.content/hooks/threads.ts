@@ -11,14 +11,14 @@ import { videoDataToSlot } from '@/utils/api/videoDataToSlot'
 import { utilsMessagingPage } from '@/utils/messaging/page'
 import { ncoApiProxy } from '@/proxy/nco-utils/api/page'
 
-import { hooksSharedData } from '.'
+import { shared } from '.'
 
 export async function hookThreads(
   args: FetchProxyApplyArguments<true>
 ): Promise<Response | null> {
-  const { videoData, extraVideoDataList, slotsManager } = hooksSharedData
+  const { targetVideoData, extraVideoDataList, slotsManager } = shared
 
-  if (!videoData || !extraVideoDataList.length || !slotsManager) {
+  if (!targetVideoData || !extraVideoDataList.length || !slotsManager) {
     return null
   }
 
@@ -32,10 +32,6 @@ export async function hookThreads(
       ? JSON.parse(init.body)
       : null
 
-  if (!body) {
-    return null
-  }
-
   try {
     const res = await Reflect.apply(...args)
     const json: Threads = await res.json()
@@ -45,26 +41,6 @@ export async function hookThreads(
     if (json.meta.status === 200) {
       const threadsData = json.data!
       const { globalComments, threads } = threadsData
-
-      // 追加された動画情報
-      const addedVideoDataList = extraVideoDataList.filter(
-        (v) => !v._ect.isStock
-      )
-
-      // コメント取得 (引用)
-      const threadsDataList = await ncoApiProxy.niconico
-        .multipleThreads(
-          addedVideoDataList.map((v) => v.comment),
-          body.additionals
-        )
-        .then((data) => data.filter((v) => v !== null))
-
-      threadsDataList.forEach((threadsData) => {
-        globalComments.push(...threadsData.globalComments)
-        threads.push(...threadsData.threads)
-      })
-
-      const slots = await slotsManager?.get()
 
       // 設定
       const mergeExtra = await settings.get('settings:comment:mergeExtra')
@@ -76,10 +52,30 @@ export async function hookThreads(
         'settings:comment:forceExtraColor'
       )
 
+      const slots = await slotsManager?.get()
+
+      // 追加された動画情報
+      const addedVideoDataList = extraVideoDataList.filter(
+        (v) => !v._ect.isStock
+      )
+
+      // コメント取得 (引用)
+      const threadsDataList = await ncoApiProxy.niconico.multipleThreads(
+        addedVideoDataList.map((v) => v.comment),
+        body?.additionals
+      )
+
+      for (const data of threadsDataList) {
+        if (!data) continue
+
+        globalComments.push(...data.globalComments)
+        threads.push(...data.threads)
+      }
+
       // オフセット・コマンド適用
-      threads.forEach((thread) => {
+      for (const thread of threads) {
         const forkId = `${thread.fork}:${thread.id}`
-        const videoId = videoData.comment.threads.find(
+        const videoId = targetVideoData.comment.threads.find(
           (v) => `${v.forkLabel}:${v.id}` === forkId
         )?.videoId
 
@@ -107,9 +103,9 @@ export async function hookThreads(
           hasCustomColor = true
         }
 
-        if (!offsetMs && !commands.length) return
+        if (!offsetMs && !commands.length) continue
 
-        thread.comments.forEach((cmt) => {
+        for (const cmt of thread.comments) {
           cmt.vposMs += offsetMs
 
           const hasColorCommand = cmt.commands.some((command) => {
@@ -144,8 +140,8 @@ export async function hookThreads(
           cmt.commands = [...new Set([...cmt.commands, ...tmpCommands])]
 
           cmt.isPremium ||= hasCustomColor
-        })
-      })
+        }
+      }
 
       // 読み込み済みの動画情報
       const loadedThreadForkIds = threads.map((v) => `${v.fork}:${v.id}`)
@@ -172,10 +168,10 @@ export async function hookThreads(
       }
 
       // バッジを設定
-      const loadedCount = loadedVideoDataList.length
+      const count = loadedVideoDataList.length
 
       await utilsMessagingPage.sendMessage('setBadge', {
-        text: loadedCount ? loadedCount.toString() : null,
+        text: count ? count.toString() : null,
         color: 'green',
       })
     } else {
@@ -190,6 +186,10 @@ export async function hookThreads(
       statusText: res.statusText,
     })
   } catch (err) {
+    await utilsMessagingPage.sendMessage('setBadge', {
+      text: null,
+    })
+
     logger.error(apiLogName, err)
   }
 

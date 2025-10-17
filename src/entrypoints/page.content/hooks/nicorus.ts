@@ -2,7 +2,7 @@ import type { FetchProxyApplyArguments } from '..'
 
 import { logger } from '@/utils/logger'
 
-import { hooksSharedData } from '.'
+import { shared } from '.'
 
 type ThreadsNicorusRequestBody = {
   videoId: string
@@ -15,9 +15,9 @@ type ThreadsNicorusRequestBody = {
 export async function hookNicorus(
   args: FetchProxyApplyArguments<true>
 ): Promise<Response | null> {
-  const { videoId, videoData, slotsManager } = hooksSharedData
+  const { videoId, targetVideoData, slotsManager } = shared
 
-  if (!videoId || !videoData || !slotsManager) {
+  if (!videoId || !targetVideoData || !slotsManager) {
     return null
   }
 

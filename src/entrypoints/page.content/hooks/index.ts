@@ -11,17 +11,17 @@ export type ExtraVideoData = VideoData & {
   }
 }
 
-export const hooksSharedData = new (class HooksSharedData {
+export const shared = new (class Shared {
   #videoId: string | null = null
-  #videoData: VideoData | null = null
+  #targetVideoData: VideoData | null = null
   #extraVideoDataList: ExtraVideoData[] = []
   #slotsManager: SlotsManager | null = null
 
   get videoId() {
     return this.#videoId
   }
-  get videoData() {
-    return this.#videoData
+  get targetVideoData() {
+    return this.#targetVideoData
   }
   get extraVideoDataList() {
     return this.#extraVideoDataList
@@ -42,12 +42,16 @@ export const hooksSharedData = new (class HooksSharedData {
 
   clear() {
     this.#videoId = null
-    this.#videoData = null
+    this.#targetVideoData = null
     this.#extraVideoDataList = []
     this.#slotsManager = null
   }
 
-  setVideoData(videoData: VideoData) {
-    this.#videoData = videoData
+  setTargetVideoData(videoData: VideoData) {
+    this.#targetVideoData = videoData
+  }
+
+  addExtraVideoData(...data: ExtraVideoData[]) {
+    this.#extraVideoDataList.push(...data)
   }
 })()

@@ -16,18 +16,18 @@ import { utilsMessagingPage } from '@/utils/messaging/page'
 import { ncoApiProxy } from '@/proxy/nco-utils/api/page'
 import { ncoSearchProxy } from '@/proxy/nco-utils/search/page'
 
-import { hooksSharedData } from '.'
+import { shared } from '.'
 
 function filterEasyComment({ comment }: VideoData) {
   comment.threads = comment.threads.filter((val) => {
     return val.forkLabel !== 'easy'
   })
 
-  comment.layers.forEach((layer) => {
+  for (const layer of comment.layers) {
     layer.threadIds = layer.threadIds.filter((val) => {
       return val.forkLabel !== 'easy'
     })
-  })
+  }
 
   comment.nvComment.params.targets = comment.nvComment.params.targets.filter(
     (val) => {
@@ -42,15 +42,16 @@ export const hookWatch = async (
   logger.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
   logger.log('hookWatch()')
 
+  const [url, init] = args[2]
+  const apiLogName = `${init.method} ${url.pathname}`
+
+  // バッジをリセット
   await utilsMessagingPage.sendMessage('setBadge', {
     text: null,
   })
 
-  const [url, init] = args[2]
-  const apiLogName = `${init.method} ${url.pathname}`
-
   // 共有データをクリア
-  hooksSharedData.clear()
+  shared.clear()
 
   try {
     const res = await Reflect.apply(...args)
@@ -73,12 +74,7 @@ export const hookWatch = async (
       }
 
       // 共有データを初期化
-      await hooksSharedData.initialize(video.id)
-
-      // タイトルを解析
-      const parsed = parse(video.title)
-
-      logger.log('parsed', parsed)
+      await shared.initialize(video.id)
 
       // 設定
       const showExtra = await settings.get('settings:comment:showExtra')
@@ -150,9 +146,16 @@ export const hookWatch = async (
       // 引用レイヤーを半透明化
       comment.layers[extraLayerIdx].isTranslucent = translucentExtra
 
+      // タイトルを解析
+      const parsed = parse(video.title)
+
+      logger.log('parsed', parsed)
+
+      await shared.slotsManager?.setParsedResult(parsed)
+
       // 引用コメントを表示
       if (showExtra) {
-        const slots = await hooksSharedData.slotsManager?.get()
+        const slots = await shared.slotsManager?.get()
         const manualVideoIds = new Set(slots?.map((slot) => slot.id))
 
         const isDAnime = channel?.id === `ch${DANIME_CHANNEL_ID}`
@@ -173,11 +176,11 @@ export const hookWatch = async (
             .flat()
             .filter((v) => !stockVideoIds.has(v.contentId))
 
-          logger.log('niconico.search', searchDataList)
+          logger.log('ncoSearch.niconico', searchDataList)
 
-          searchDataList.forEach((data) => {
+          for (const data of searchDataList) {
             searchedVideoIds.add(data.contentId)
-          })
+          }
         }
         // 公式
         else if (isOfficial && (targets.official || targets.danime)) {
@@ -202,49 +205,49 @@ export const hookWatch = async (
               .flat()
               .filter((v) => !stockVideoIds.has(v.contentId))
 
-            logger.log('niconico.search', searchDataList)
+            logger.log('ncoSearch.niconico', searchDataList)
 
-            searchDataList.forEach((data) => {
+            for (const data of searchDataList) {
               searchedVideoIds.add(data.contentId)
-            })
+            }
           }
         }
 
         // 引用動画情報を取得
-        const extraVideoDataList = (
-          await ncoApiProxy.niconico.multipleVideo([
-            ...new Set([
-              ...extraThread.videoIds,
-              ...searchedVideoIds,
-              ...manualVideoIds,
-            ]),
-          ])
-        ).filter((v) => v !== null)
+        const videoDataList = await ncoApiProxy.niconico.multipleVideo([
+          ...new Set([
+            ...extraThread.videoIds,
+            ...searchedVideoIds,
+            ...manualVideoIds,
+          ]),
+        ])
 
         // 引用動画情報を追加
-        extraVideoDataList.forEach((videoData) => {
+        for (const data of videoDataList) {
+          if (!data) continue
+
           // かんたんコメントを非表示
           if (!showEasy) {
-            filterEasyComment(videoData)
+            filterEasyComment(data)
           }
 
-          const videoId = videoData.video.id
+          const videoId = data.video.id
 
           const isStock = stockVideoIds.has(videoId)
           const isAuto = searchedVideoIds.has(videoId)
           const isManual = manualVideoIds.has(videoId)
 
           if (!isStock) {
-            const mainThread = extractThread('main', videoData)
+            const mainThread = extractThread('main', data)
 
-            mainThread.threads.forEach((val) => {
-              if (!val.label.startsWith('extra-')) {
-                val.label = `extra-${val.label}` as any
+            for (const thread of mainThread.threads) {
+              if (!thread.label.startsWith('extra-')) {
+                thread.label = `extra-${thread.label}` as any
               }
-              val.isDefaultPostTarget = false
-              val.isEasyCommentPostTarget = false
-              val.postkeyStatus = 0
-            })
+              thread.isDefaultPostTarget = false
+              thread.isEasyCommentPostTarget = false
+              thread.postkeyStatus = 0
+            }
 
             comment.threads.push(...mainThread.threads)
 
@@ -259,17 +262,17 @@ export const hookWatch = async (
             )
 
             // メインのスレッドのみ
-            videoData.comment.nvComment.params.targets =
-              videoData.comment.nvComment.params.targets.filter((val) => {
+            data.comment.nvComment.params.targets =
+              data.comment.nvComment.params.targets.filter((val) => {
                 return mainThread.forkIds.includes(`${val.fork}:${val.id}`)
               })
           }
 
-          hooksSharedData.extraVideoDataList.push({
-            ...videoData,
+          shared.addExtraVideoData({
+            ...data,
             _ect: { isStock, isAuto, isManual },
           })
-        })
+        }
 
         // 引用コメントのレイヤーをメインに統合
         if (mergeExtra) {
@@ -281,11 +284,11 @@ export const hookWatch = async (
         }
 
         // バッジを設定
-        const extraCount = extraVideoDataList.length
+        const count = shared.extraVideoDataList.length
 
-        if (extraCount) {
+        if (count) {
           await utilsMessagingPage.sendMessage('setBadge', {
-            text: extraCount.toString(),
+            text: count.toString(),
             color: 'yellow',
           })
         }
@@ -296,11 +299,11 @@ export const hookWatch = async (
           return !extraThread.forkIds.includes(`${val.forkLabel}:${val.id}`)
         })
 
-        comment.layers.forEach((layer) => {
+        for (const layer of comment.layers) {
           layer.threadIds = layer.threadIds.filter((val) => {
             return !extraThread.forkIds.includes(`${val.forkLabel}:${val.id}`)
           })
-        })
+        }
 
         comment.nvComment.params.targets =
           comment.nvComment.params.targets.filter((val) => {
@@ -313,8 +316,7 @@ export const hookWatch = async (
         .filter((v) => v.threadIds.length)
         .sort((a, b) => a.index - b.index)
 
-      hooksSharedData.slotsManager?.setParsedResult(parsed)
-      hooksSharedData.setVideoData(videoData)
+      shared.setTargetVideoData(videoData)
     }
 
     return new Response(JSON.stringify(json), {
@@ -323,6 +325,10 @@ export const hookWatch = async (
       statusText: res.statusText,
     })
   } catch (err) {
+    await utilsMessagingPage.sendMessage('setBadge', {
+      text: null,
+    })
+
     logger.error(apiLogName, err)
   }
 
