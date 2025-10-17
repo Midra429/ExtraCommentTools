@@ -7,9 +7,11 @@ import { GITHUB_URL } from '@/constants'
 import { logger } from '@/utils/logger'
 import { webext } from '@/utils/webext'
 import { getFormsUrl } from '@/utils/getFormsUrl'
+import { setBadge } from '@/utils/extension/setBadge'
 import { settings } from '@/utils/settings/extension'
 import { registerProxy } from '@/utils/proxy-service/register'
 import { onMessage } from '@/utils/proxy-service/messaging/extension'
+import { extractVideoId } from '@/utils/api/extractVideoId'
 
 import migration from './migration'
 import requestPermissions from './requestPermissions'
@@ -80,5 +82,19 @@ function main() {
           break
       }
     })
+  })
+
+  // タブ更新時
+  webext.tabs.onUpdated.addListener((tabId, { status, url }) => {
+    switch (status) {
+      case 'loading':
+      case 'complete':
+        // バッジをリセット
+        if (url && !extractVideoId(url)) {
+          setBadge({ tabId, text: null })
+        }
+
+        break
+    }
   })
 }
