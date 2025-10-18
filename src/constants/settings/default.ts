@@ -14,6 +14,7 @@ export const SETTINGS_DEFAULT: SettingItems = {
   'settings:comment:extraColor': '#FFFFFF',
   'settings:comment:forceExtraColor': false,
   'settings:comment:showEasy': true,
+  'settings:comment:hideAssistedComments': false,
 
   // 自動引用
   'settings:autoLoad:searchTargets': ['official', 'danime'],

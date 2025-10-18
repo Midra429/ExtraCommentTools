@@ -65,6 +65,12 @@ export type SettingItems = {
    */
   'settings:comment:showEasy': boolean
 
+  /**
+   * 設定: コメント > コメントアシストの表示を抑制
+   * @default true
+   */
+  'settings:comment:hideAssistedComments': boolean
+
   // 設定: 自動引用 //////////////////////////////////////////////////
   /**
    * 設定: 自動引用 > 検索対象

@@ -7,8 +7,9 @@ import { SETTINGS_DEFAULT } from '@/constants/settings/default'
 
 import { logger } from '@/utils/logger'
 import { settings } from '@/utils/settings/page'
-import { videoDataToSlot } from '@/utils/api/videoDataToSlot'
 import { utilsMessagingPage } from '@/utils/messaging/page'
+import { videoDataToSlot } from '@/utils/api/videoDataToSlot'
+import { findAssistedCommentIds } from '@/utils/api/findAssistedCommentIds'
 import { ncoApiProxy } from '@/proxy/nco-utils/api/page'
 
 import { shared } from '.'
@@ -50,6 +51,9 @@ export async function hookThreads(
       const extraColor = await settings.get('settings:comment:extraColor')
       const forceExtraColor = await settings.get(
         'settings:comment:forceExtraColor'
+      )
+      const hideAssistedComments = await settings.get(
+        'settings:comment:hideAssistedComments'
       )
 
       const slots = await slotsManager?.get()
@@ -103,43 +107,57 @@ export async function hookThreads(
           hasCustomColor = true
         }
 
-        if (!offsetMs && !commands.length) continue
+        // コメントアシストの表示を抑制
+        const assistedCommentIds = hideAssistedComments
+          ? findAssistedCommentIds(thread.comments)
+          : null
+
+        if (assistedCommentIds?.length) {
+          thread.comments = thread.comments.filter(
+            (cmt) => !assistedCommentIds.includes(cmt.id)
+          )
+        }
 
         for (const cmt of thread.comments) {
           cmt.vposMs += offsetMs
 
-          const hasColorCommand = cmt.commands.some((command) => {
-            return (
-              NICONICO_COLOR_COMMANDS.includes(command) ||
-              COLOR_CODE_REGEXP.test(command)
-            )
-          })
+          if (commands.length) {
+            let tmpCommands = commands
 
-          let tmpCommands = commands
-
-          if (hasCustomColor) {
-            if (forceExtraColor) {
+            if (hasCustomColor) {
               // 引用コメントの色を強制
-              cmt.commands = cmt.commands.filter((command) => {
-                return (
-                  !NICONICO_COLOR_COMMANDS.includes(command) &&
-                  !COLOR_CODE_REGEXP.test(command)
-                )
-              })
-            } else if (hasColorCommand) {
-              // カラーコマンド優先
-              tmpCommands = commands.filter((command) => {
-                return (
-                  !NICONICO_COLOR_COMMANDS.includes(command) &&
-                  !COLOR_CODE_REGEXP.test(command)
-                )
-              })
+              if (forceExtraColor) {
+                cmt.commands = cmt.commands.filter((command) => {
+                  return (
+                    !NICONICO_COLOR_COMMANDS.includes(command) &&
+                    !COLOR_CODE_REGEXP.test(command)
+                  )
+                })
+              } else {
+                const hasColorCommand = cmt.commands.some((command) => {
+                  return (
+                    NICONICO_COLOR_COMMANDS.includes(command) ||
+                    COLOR_CODE_REGEXP.test(command)
+                  )
+                })
+
+                // カラーコマンド優先
+                if (hasColorCommand) {
+                  tmpCommands = commands.filter((command) => {
+                    return (
+                      !NICONICO_COLOR_COMMANDS.includes(command) &&
+                      !COLOR_CODE_REGEXP.test(command)
+                    )
+                  })
+                }
+              }
+
+              // isPremiumじゃないと一部カラーコマンドが使えない
+              cmt.isPremium = true
             }
+
+            cmt.commands = [...new Set([...cmt.commands, ...tmpCommands])]
           }
-
-          cmt.commands = [...new Set([...cmt.commands, ...tmpCommands])]
-
-          cmt.isPremium ||= hasCustomColor
         }
       }
 
