@@ -3,7 +3,7 @@ import type { Slot } from '@/core/slots'
 import { Button, cn } from '@heroui/react'
 import { Trash2Icon } from 'lucide-react'
 
-export type ButtonsOverlayProps = {
+export interface ButtonsOverlayProps {
   isManual: Slot['isManual']
   onRemove: () => void
 }

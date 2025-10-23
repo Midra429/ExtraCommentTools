@@ -7,7 +7,7 @@ import { ManualLoadedBadge } from './ManualLoadedBadge'
 import { Offset } from './Offset'
 import { Duration } from './Duration'
 
-export type ThumbnailProps = {
+export interface ThumbnailProps {
   type: Slot['type']
   offsetMs: Slot['offsetMs']
   isManual: Slot['isManual']

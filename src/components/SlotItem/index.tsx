@@ -16,7 +16,7 @@ import { Title } from './Title'
 import { Counts } from './Counts'
 import { Options, OptionsButton } from './Options'
 
-export type SlotItemProps = {
+export interface SlotItemProps {
   classNames?: PanelItemProps['classNames']
   slot: Slot
   isSearch?: boolean

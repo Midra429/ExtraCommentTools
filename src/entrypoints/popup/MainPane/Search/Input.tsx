@@ -6,11 +6,11 @@ import { useSlotsManager } from '@/hooks/useSlots'
 
 import { Options } from './Options'
 
-export type SearchInputHandle = {
+export interface SearchInputHandle {
   setValue: (value: string) => void
 }
 
-export type SearchInputProps = {
+export interface SearchInputProps {
   isDisabled: boolean
   onSearch: (value: string) => void
   ref: React.Ref<SearchInputHandle>

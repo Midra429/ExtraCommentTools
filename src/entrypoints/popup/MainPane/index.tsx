@@ -25,7 +25,7 @@ const tabItems: {
   },
 ]
 
-export type MainPaneProps = {
+export interface MainPaneProps {
   isActive?: boolean
 }
 

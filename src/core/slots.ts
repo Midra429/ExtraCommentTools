@@ -8,7 +8,7 @@ import { deepmerge } from '@/utils/deepmerge'
 
 const SLOTS_MAX = 1000
 
-export type Slot = {
+export interface Slot {
   id: string
   type: 'normal' | 'official' | 'danime'
   isStock: boolean

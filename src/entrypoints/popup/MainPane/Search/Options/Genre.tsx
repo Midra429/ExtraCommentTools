@@ -13,7 +13,7 @@ const GENRES: SettingItems['settings:searchOptions:genre'][] = [
   ...NICONICO_GENRES,
 ]
 
-export type GenreProps = {
+export interface GenreProps {
   isDisabled?: boolean
 }
 

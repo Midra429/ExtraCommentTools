@@ -5,7 +5,7 @@ import { defineExtensionMessaging } from '@webext-core/messaging'
 
 // content -> background
 
-export type ProtocolMap = {
+export interface ProtocolMap {
   getCurrentTab: (args?: null) => Tabs.Tab
 
   setBadge: (

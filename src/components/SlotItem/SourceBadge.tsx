@@ -2,7 +2,7 @@ import type { Slot } from '@/core/slots'
 
 import { cn } from '@heroui/react'
 
-export type SourceTagProps = {
+export interface SourceTagProps {
   className?: string
   type: Slot['type']
 }

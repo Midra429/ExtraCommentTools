@@ -8,16 +8,15 @@ import * as Checkbox from './Checkbox'
 import * as Checkcard from './Checkcard'
 import * as ColorPicker from './ColorPicker'
 
-export type SettingsInputBaseProps<
+export interface SettingsInputBaseProps<
   K extends SettingsKey,
   T extends SettingsInputType,
-  P extends object = {},
-> = {
+> {
   settingsKey: K
   inputType: T
   label: string
   description?: string
-} & P
+}
 
 export type SettingsInputType = keyof typeof SettingsInput
 

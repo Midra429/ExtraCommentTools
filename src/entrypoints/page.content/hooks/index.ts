@@ -3,7 +3,7 @@ import type { VideoData } from '@midra/nco-utils/types/api/niconico/video'
 import { storage } from '@/utils/storage/page'
 import { SlotsManager } from '@/core/slots'
 
-export type ExtraVideoData = VideoData & {
+export interface ExtraVideoData extends VideoData {
   _ect: {
     isStock: boolean
     isAuto: boolean

@@ -4,7 +4,7 @@ import { logger } from '@/utils/logger'
 
 import { shared } from '.'
 
-type ThreadsNicorusRequestBody = {
+interface ThreadsNicorusRequestBody {
   videoId: string
   fork: string
   no: number

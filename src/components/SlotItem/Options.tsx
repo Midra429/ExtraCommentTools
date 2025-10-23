@@ -22,7 +22,7 @@ const transitionVariants: Variants = {
   enter: { ...TRANSITION_VARIANTS.collapse.enter, overflowY: 'unset' },
 }
 
-export type OptionsButtonProps = {
+export interface OptionsButtonProps {
   isOpen: boolean
   onPress: () => void
 }
@@ -47,7 +47,7 @@ export function OptionsButton({ isOpen, onPress }: OptionsButtonProps) {
   )
 }
 
-type SlotOffsetControlProps = {
+interface SlotOffsetControlProps {
   id: Slot['id']
   isStock: Slot['isStock']
   isAuto: Slot['isAuto']
@@ -93,9 +93,9 @@ function SlotOffsetControl({
   )
 }
 
-export type OptionsProps = {
+export interface OptionsProps extends SlotOffsetControlProps {
   isOpen: boolean
-} & SlotOffsetControlProps
+}
 
 export function Options({
   isOpen,

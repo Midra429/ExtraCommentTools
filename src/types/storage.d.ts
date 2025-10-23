@@ -4,11 +4,11 @@ import type { SearchQuerySort } from '@midra/nco-utils/types/api/niconico/search
 import type { ParsedResult } from '@midra/nco-utils/parse'
 import type { Slot } from '@/core/slots'
 
-export type InternalItems = {
+export interface InternalItems {
   _version: number
 }
 
-export type SettingItems = {
+export interface SettingItems {
   // 設定: 全般 //////////////////////////////////////////////////
   /**
    * 設定: 全般 > テーマ
@@ -123,7 +123,8 @@ export type SettingItems = {
   ]
 }
 
-export type SettingsExportItems = Partial<InternalItems & SettingItems>
+export interface SettingsExportItems
+  extends Partial<InternalItems & SettingItems> {}
 
 export type SlotItems = {
   'slots:ids': string[]

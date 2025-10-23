@@ -4,17 +4,17 @@ import { webext } from '@/utils/webext'
 
 import { Tooltip } from '@/components/Tooltip'
 
-export type IconLinkProps =
+export type IconLinkProps = {
+  icon: React.FC<any>
+  title?: string
+} & (
   | {
-      icon: React.FC<any>
-      title?: string
       href: string
     }
   | {
-      icon: React.FC<any>
-      title?: string
       onPress: () => void
     }
+)
 
 export function IconLink(props: IconLinkProps) {
   return (

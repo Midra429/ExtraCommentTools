@@ -3,7 +3,7 @@ import type { Slot } from '@/core/slots'
 import { Link, cn } from '@heroui/react'
 import { useOverflowDetector } from 'react-detectable-overflow'
 
-export type TitleProps = {
+export interface TitleProps {
   id: Slot['id']
   title: Slot['info']['title']
   isSearch?: boolean

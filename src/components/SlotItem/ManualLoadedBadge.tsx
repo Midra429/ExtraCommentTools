@@ -2,7 +2,7 @@ import type { Slot } from '@/core/slots'
 
 import { cn } from '@heroui/react'
 
-export type ManualLoadedBadgeProps = {
+export interface ManualLoadedBadgeProps {
   className?: string
   isManual: Slot['isManual']
 }

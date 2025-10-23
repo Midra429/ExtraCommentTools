@@ -3,7 +3,7 @@ import type { Slot } from '@/core/slots'
 import { cn } from '@heroui/react'
 import { ClockIcon } from 'lucide-react'
 
-export type OffsetProps = {
+export interface OffsetProps {
   className?: string
   offsetMs: Slot['offsetMs']
 }

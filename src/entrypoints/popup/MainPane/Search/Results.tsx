@@ -4,7 +4,7 @@ import { useSlotsManager, useSlots } from '@/hooks/useSlots'
 
 import { SlotItem } from '@/components/SlotItem'
 
-export type NiconicoResultsProps = {
+export interface NiconicoResultsProps {
   results: Slot[]
 }
 

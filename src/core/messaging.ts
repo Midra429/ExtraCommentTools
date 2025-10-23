@@ -4,7 +4,7 @@ import { defineExtensionMessaging } from '@webext-core/messaging'
 
 import { webext } from '@/utils/webext'
 
-type ProtocolMap = {
+interface ProtocolMap {
   getVideoId: (args?: null) => string | null
 }
 

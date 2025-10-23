@@ -28,7 +28,7 @@ const PRESET_COLORS = [
 const TRANSPARENT_BACKGROUND_IMAGE =
   'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMiAyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0wIDBIMVYxSDBWMFoiIGZpbGw9IiNFMUUxRTEiLz48cGF0aCBkPSJNMSAxSDJWMkgxVjFaIiBmaWxsPSIjRTFFMUUxIi8+PC9zdmc+'
 
-type ColorPickerProps = {
+interface ColorPickerProps {
   hex: string
   onChange: (hex: string) => void
   onReset: () => string
@@ -458,13 +458,10 @@ export type Key = {
   [key in SettingsKey]: StorageItems[key] extends string ? key : never
 }[SettingsKey]
 
-export type Props<K extends Key = Key> = SettingsInputBaseProps<
-  K,
-  'color-picker',
-  {
-    alpha?: boolean
-  }
->
+export interface Props<K extends Key = Key>
+  extends SettingsInputBaseProps<K, 'color-picker'> {
+  alpha?: boolean
+}
 
 export function Input(props: Props) {
   const [value, setValue] = useSettings(props.settingsKey)
