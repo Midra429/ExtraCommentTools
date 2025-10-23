@@ -1,7 +1,7 @@
 {
   "name": "extra-comment-tools",
   "displayName": "引用コメントツール",
-  "version": "4.1.8",
+  "version": "4.1.9",
   "description": "ニコニコ動画の引用コメント関連のツール",
   "author": "Midra <me@midra.me> (https://github.com/Midra429)",
   "license": "MIT",
