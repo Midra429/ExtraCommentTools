@@ -12,7 +12,7 @@ export function ButtonsOverlay({ isManual, onRemove }: ButtonsOverlayProps) {
   return (
     <div
       className={cn(
-        'absolute inset-[1px] z-10',
+        'absolute inset-px z-10',
         'opacity-0 hover:opacity-100',
         'transition-opacity'
       )}
@@ -21,8 +21,8 @@ export function ButtonsOverlay({ isManual, onRemove }: ButtonsOverlayProps) {
       {isManual && (
         <Button
           className={cn(
-            'absolute top-[2px] right-[2px]',
-            '!size-6 min-h-0 min-w-0',
+            'absolute top-0.5 right-0.5',
+            'size-6! min-h-0 min-w-0',
             'border-1 border-white/80'
           )}
           size="sm"

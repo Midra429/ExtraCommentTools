@@ -118,7 +118,7 @@ function ImportSettings() {
               base: 'size-full',
               label: 'hidden',
               inputWrapper: [
-                '!h-full !w-full',
+                'h-full! w-full!',
                 'border-divider border-1 shadow-none',
               ],
               input: 'text-tiny size-full font-mono',
@@ -213,7 +213,7 @@ function ExportSettings() {
               base: 'size-full',
               label: 'hidden',
               inputWrapper: [
-                '!h-full !w-full',
+                'h-full! w-full!',
                 'border-divider border-1 shadow-none',
               ],
               input: 'text-tiny size-full font-mono',

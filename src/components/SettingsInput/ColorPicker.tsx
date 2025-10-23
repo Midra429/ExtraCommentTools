@@ -44,7 +44,7 @@ function ColorPicker(props: ColorPickerProps) {
     <Popover
       classNames={{
         backdrop: 'bg-transparent',
-        trigger: '!scale-100 !opacity-100',
+        trigger: 'scale-100! opacity-100!',
         content: 'border-foreground-100 border-1 p-0',
       }}
       radius="sm"
@@ -61,7 +61,7 @@ function ColorPicker(props: ColorPickerProps) {
             'border-foreground-200 hover:border-default-400 border-1',
             'rounded-small',
             'overflow-hidden',
-            'transition-[border-color] !duration-150',
+            'transition-[border-color] duration-150!',
             'cursor-pointer'
           )}
         >
@@ -264,10 +264,10 @@ function ColorPickerPopover(props: ColorPickerProps) {
             }}
           />
           <div
-            className={cn('absolute inset-0', 'bg-gradient-to-r from-white')}
+            className={cn('absolute inset-0', 'bg-linear-to-r from-white')}
           />
           <div
-            className={cn('absolute inset-0', 'bg-gradient-to-t from-black')}
+            className={cn('absolute inset-0', 'bg-linear-to-t from-black')}
           />
 
           <div
@@ -320,7 +320,7 @@ function ColorPickerPopover(props: ColorPickerProps) {
           />
 
           <div
-            className="absolute top-[1px]"
+            className="absolute top-px"
             style={{
               left: `${(hue / 360) * 100}%`,
             }}
@@ -366,7 +366,7 @@ function ColorPickerPopover(props: ColorPickerProps) {
             />
 
             <div
-              className="absolute top-[1px]"
+              className="absolute top-px"
               style={{
                 left: `${alpha * 100}%`,
               }}
@@ -391,7 +391,7 @@ function ColorPickerPopover(props: ColorPickerProps) {
         <>
           <Divider />
 
-          <div className="flex flex-row flex-wrap gap-[4px]" style={{ width }}>
+          <div className="flex flex-row flex-wrap gap-1" style={{ width }}>
             {props.presets.map((preset, idx) => (
               <div
                 key={idx}
@@ -428,7 +428,7 @@ function ColorPickerPopover(props: ColorPickerProps) {
               'shadow-none',
               'text-small',
             ],
-            input: 'text-small !ps-1',
+            input: 'text-small ps-1!',
           }}
           size="sm"
           label="HEX"
@@ -441,7 +441,7 @@ function ColorPickerPopover(props: ColorPickerProps) {
         />
 
         <Button
-          className="!size-6 min-w-6 rounded-md"
+          className="size-6! min-w-6 rounded-md"
           size="sm"
           variant="light"
           isIconOnly

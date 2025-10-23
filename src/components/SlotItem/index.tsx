@@ -58,7 +58,7 @@ export function SlotItem({
       <div
         className={cn(
           'relative flex flex-row p-1',
-          isSearch ? 'h-[5.125rem] gap-1.5' : 'h-[5.75rem] gap-2'
+          isSearch ? 'h-20.5 gap-1.5' : 'h-23 gap-2'
         )}
       >
         <div className="relative h-full shrink-0">
