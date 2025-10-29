@@ -2,26 +2,35 @@ import type { V1Thread } from '@xpadev-net/niconicomments'
 
 type V1ThreadComment = V1Thread['comments'][number]
 
-// コメントアシストの開始日
-const COMMENT_ASSIST_START_DATE = new Date('2025-04-26T00:00:00+09:00')
+interface V1ThreadCommentSorted extends V1ThreadComment {
+  _postedAtTime: number
+}
 
-function isAssistedCommentBase(comment: V1ThreadComment): boolean {
+// コメントアシストの開始日
+const COMMENT_ASSIST_STARTED_AT = new Date(
+  '2025-04-26T00:00:00+09:00'
+).getTime()
+
+function isAssistedCommentBase(comment: V1ThreadCommentSorted): boolean {
+  const cmdLen = comment.commands.length
+
   return (
     // コメントのスコアが-1000より大きい
     -1000 < comment.score &&
     // コマンドなし or 匿名コマンドのみ
-    (comment.commands.length === 0 ||
-      (comment.commands.length === 1 && comment.commands[0] === '184'))
+    (cmdLen === 0 || (cmdLen === 1 && comment.commands[0] === '184'))
   )
 }
 
 function isAssistedComment(
-  base: V1ThreadComment,
-  target: V1ThreadComment
+  base: V1ThreadCommentSorted,
+  target: V1ThreadCommentSorted
 ): boolean {
+  const cmdLen = target.commands.length
+
   return (
     // コメントアシストの開始日以降に投稿
-    COMMENT_ASSIST_START_DATE <= new Date(target.postedAt) &&
+    COMMENT_ASSIST_STARTED_AT <= target._postedAtTime &&
     // コメントIDが異なる
     target.id !== base.id &&
     // ユーザーIDが異なる
@@ -29,12 +38,11 @@ function isAssistedComment(
     // 同じコメント
     target.body === base.body &&
     // コマンドなし or 匿名コマンドのみ
-    (target.commands.length === 0 ||
-      (target.commands.length === 1 && target.commands[0] === '184')) &&
+    (cmdLen === 0 || (cmdLen === 1 && target.commands[0] === '184')) &&
     // ニコるが10未満
     target.nicoruCount < 10 &&
-    // 時間差が8秒以下
-    Math.abs(target.vposMs - base.vposMs) <= 8000
+    // 時間差が12秒以下
+    Math.abs(target.vposMs - base.vposMs) <= 12000
   )
 }
 
@@ -46,82 +54,76 @@ export interface AssistedCommentResult {
 /**
  * アシストコメントを探す
  */
-export function findAssistedCommentIds(
-  comments: V1ThreadComment[],
-  scoreThreshold = 4
-): string[] {
-  if (comments.length <= 1) {
+export function findAssistedCommentIds(comments: V1ThreadComment[]): string[] {
+  if (comments.length <= 3) {
     return []
   }
 
   const sameCommentGroups: [
-    base: V1ThreadComment,
-    ...targets: V1ThreadComment[],
+    base: V1ThreadCommentSorted,
+    ...targets: V1ThreadCommentSorted[],
   ][] = []
 
   // 投稿日時順にソート
-  comments.sort((a, b) => {
-    return new Date(a.postedAt).getTime() - new Date(b.postedAt).getTime()
-  })
+  const sorted = comments
+    .map<V1ThreadCommentSorted>((cmt) => ({
+      ...cmt,
+      _postedAtTime: new Date(cmt.postedAt).getTime(),
+    }))
+    .sort((a, b) => a._postedAtTime - b._postedAtTime)
 
-  for (const cmt of comments) {
-    const groupIdx = sameCommentGroups.findIndex(([base]) => {
+  for (const cmt of sorted) {
+    const group = sameCommentGroups.find(([base]) => {
       return isAssistedComment(base, cmt)
     })
 
-    // targets
-    if (groupIdx !== -1) {
-      sameCommentGroups[groupIdx].push(cmt)
-    }
-    // base
-    else if (isAssistedCommentBase(cmt)) {
+    if (group) {
+      // targets
+      group.push(cmt)
+    } else if (isAssistedCommentBase(cmt)) {
+      // base
       sameCommentGroups.push([cmt])
     }
   }
 
   const sameComments = sameCommentGroups.flat()
+  const userCounts: Record<string, number> = {}
+
+  for (const { userId } of sameComments) {
+    userCounts[userId] ??= 0
+    userCounts[userId]++
+  }
 
   return sameCommentGroups.flatMap<string>(([base, ...targets]) => {
-    let baseScore = 0
-
-    // 同じコメントの数
-    const sameCommentCount = targets.length
-
-    if (sameCommentCount <= 3) return []
-
-    if (8 <= sameCommentCount) {
-      baseScore += 3
-    } else if (6 <= sameCommentCount) {
-      baseScore += 2
-    } else if (4 <= sameCommentCount) {
-      baseScore += 1
-    }
-
     // 文字の長さ
     const wordCount = base.body.length
+    const wordScore =
+      (8 <= wordCount && 4) ||
+      (4 <= wordCount && 3) ||
+      (2 <= wordCount && 2) ||
+      (1 <= wordCount && 1) ||
+      0
 
-    if (10 <= wordCount) {
-      baseScore += 3
-    } else if (7 <= wordCount) {
-      baseScore += 2
-    } else if (4 <= wordCount) {
-      baseScore += 1
-    }
+    // 同じコメントの数
+    const commentCount = targets.length
+    const commentScore =
+      (9 <= commentCount && 4) ||
+      (7 <= commentCount && 3) ||
+      (5 <= commentCount && 2) ||
+      (3 <= commentCount && 1) ||
+      0
 
-    if (!baseScore) return []
+    if (!wordScore && !commentScore) return []
 
     return targets.flatMap<string>(({ id, userId }) => {
-      // 合計スコア (1 <= n <= 9)
-      let score = baseScore
-
       // ユーザーが同じコメントをした回数
-      const sameUserCount = sameComments.filter(
-        (v) => v.userId === userId
-      ).length
+      const userCount = userCounts[userId]
 
-      score += Math.min(sameUserCount - 1, 3)
+      const scoreThreshold = 5 - Math.min(userCount, 4)
 
-      return scoreThreshold < score ? id : []
+      return scoreThreshold <= wordScore && scoreThreshold <= commentScore
+        ? id
+        : []
     })
   })
 }
