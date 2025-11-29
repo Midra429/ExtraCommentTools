@@ -35,7 +35,7 @@ export function IconLink(props: IconLinkProps) {
             : () => webext.tabs.create({ url: props.href })
         }
       >
-        <props.icon className="text-foreground-700 size-5" />
+        <props.icon className="size-5 text-foreground-700" />
       </Button>
     </Tooltip>
   )

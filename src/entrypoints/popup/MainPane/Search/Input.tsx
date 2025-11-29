@@ -62,7 +62,7 @@ export function SearchInput({ isDisabled, onSearch, ref }: SearchInputProps) {
               label: 'hidden',
               mainWrapper: 'w-full',
               inputWrapper: [
-                'border-divider border-1 border-r-0',
+                'border-1 border-divider border-r-0',
                 'rounded-r-none',
                 'shadow-none',
               ],

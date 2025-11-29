@@ -21,7 +21,7 @@ export function Body() {
             'flex size-full flex-col items-center justify-center gap-3'
           )}
         >
-          <span className="text-small text-foreground-500">
+          <span className="text-foreground-500 text-small">
             コメントはありません
           </span>
         </div>

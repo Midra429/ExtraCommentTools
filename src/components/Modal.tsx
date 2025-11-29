@@ -40,7 +40,7 @@ export function Modal(props: ModalProps) {
       classNames={{
         wrapper: 'justify-end',
         base: !props.fullWidth && 'max-w-[370px]',
-        header: 'border-foreground-200 text-medium border-b-1 p-2',
+        header: 'border-foreground-200 border-b-1 p-2 text-medium',
         body: 'p-0',
         footer: 'border-foreground-200 border-t-1 p-2',
       }}
@@ -66,7 +66,7 @@ export function Modal(props: ModalProps) {
               </HeroUIModalHeader>
             )}
 
-            <HeroUIModalBody className="bg-background max-h-full gap-0 overflow-auto">
+            <HeroUIModalBody className="max-h-full gap-0 overflow-auto bg-background">
               {props.children}
             </HeroUIModalBody>
 

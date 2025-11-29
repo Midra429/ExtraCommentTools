@@ -26,7 +26,7 @@ export function Layout(props: LayoutProps) {
   return (
     <HeroUIProvider locale="ja-JP">
       <main
-        className={cn('overflow-x-hidden overflow-y-auto', props.className)}
+        className={cn('overflow-y-auto overflow-x-hidden', props.className)}
         style={props.style}
       >
         {props.children}

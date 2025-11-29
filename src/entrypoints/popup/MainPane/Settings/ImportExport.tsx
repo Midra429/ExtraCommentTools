@@ -112,16 +112,16 @@ function ImportSettings() {
           </Button>
         }
       >
-        <div className="bg-content1 size-full p-2">
+        <div className="size-full bg-content1 p-2">
           <Textarea
             classNames={{
               base: 'size-full',
               label: 'hidden',
               inputWrapper: [
                 'h-full! w-full!',
-                'border-divider border-1 shadow-none',
+                'border-1 border-divider shadow-none',
               ],
-              input: 'text-tiny size-full font-mono',
+              input: 'size-full font-mono text-tiny',
             }}
             disableAutosize
             label="入力"
@@ -207,16 +207,16 @@ function ExportSettings() {
           </Tooltip>
         }
       >
-        <div className="bg-content1 size-full p-2">
+        <div className="size-full bg-content1 p-2">
           <Textarea
             classNames={{
               base: 'size-full',
               label: 'hidden',
               inputWrapper: [
                 'h-full! w-full!',
-                'border-divider border-1 shadow-none',
+                'border-1 border-divider shadow-none',
               ],
-              input: 'text-tiny size-full font-mono',
+              input: 'size-full font-mono text-tiny',
             }}
             disableAutosize
             isReadOnly

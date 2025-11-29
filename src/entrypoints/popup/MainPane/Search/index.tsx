@@ -110,7 +110,7 @@ export function Search() {
         )}
       </div>
 
-      <div className="border-foreground-200 bg-content1 border-t-1 p-2">
+      <div className="border-foreground-200 border-t-1 bg-content1 p-2">
         <Pagination
           page={currentPage}
           total={totalCount}

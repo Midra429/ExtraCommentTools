@@ -45,7 +45,7 @@ function ColorPicker(props: ColorPickerProps) {
       classNames={{
         backdrop: 'bg-transparent',
         trigger: 'scale-100! opacity-100!',
-        content: 'border-foreground-100 border-1 p-0',
+        content: 'border-1 border-foreground-100 p-0',
       }}
       radius="sm"
       placement="left"
@@ -58,7 +58,7 @@ function ColorPicker(props: ColorPickerProps) {
         <div
           className={cn(
             'relative h-8 w-20',
-            'border-foreground-200 hover:border-default-400 border-1',
+            'border-1 border-foreground-200 hover:border-default-400',
             'rounded-small',
             'overflow-hidden',
             'transition-[border-color] duration-150!',
@@ -246,12 +246,12 @@ function ColorPickerPopover(props: ColorPickerProps) {
 
   return (
     <div className="flex flex-col gap-2 p-2">
-      <div className="flex flex-col gap-1 select-none">
+      <div className="flex select-none flex-col gap-1">
         {/* Saturation, Value */}
         <div
           className={cn(
             'relative',
-            'border-divider border-1',
+            'border-1 border-divider',
             'rounded-md',
             'overflow-hidden'
           )}
@@ -298,7 +298,7 @@ function ColorPickerPopover(props: ColorPickerProps) {
         <div
           className={cn(
             'relative',
-            'border-divider border-1',
+            'border-1 border-divider',
             'rounded-md',
             'overflow-hidden'
           )}
@@ -344,7 +344,7 @@ function ColorPickerPopover(props: ColorPickerProps) {
           <div
             className={cn(
               'relative',
-              'border-divider border-1',
+              'border-1 border-divider',
               'rounded-md',
               'overflow-hidden'
             )}
@@ -397,7 +397,7 @@ function ColorPickerPopover(props: ColorPickerProps) {
                 key={idx}
                 className={cn(
                   'aspect-square',
-                  'border-divider border-1',
+                  'border-1 border-divider',
                   'rounded-sm',
                   'cursor-pointer'
                 )}
@@ -423,12 +423,12 @@ function ColorPickerPopover(props: ColorPickerProps) {
             inputWrapper: [
               'h-6 min-h-6',
               'px-1.5',
-              'border-divider border-1',
+              'border-1 border-divider',
               'rounded-md',
               'shadow-none',
               'text-small',
             ],
-            input: 'text-small ps-1!',
+            input: 'ps-1! text-small',
           }}
           size="sm"
           label="HEX"
@@ -447,7 +447,7 @@ function ColorPickerPopover(props: ColorPickerProps) {
           isIconOnly
           onPress={() => onTextChange(props.onReset())}
         >
-          <RotateCcwIcon className="text-foreground-700 size-3.5" />
+          <RotateCcwIcon className="size-3.5 text-foreground-700" />
         </Button>
       </div>
     </div>

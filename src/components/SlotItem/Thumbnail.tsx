@@ -26,7 +26,7 @@ export function Thumbnail({
     <>
       <Image
         classNames={{
-          wrapper: 'bg-foreground-300 h-full rounded-lg p-px',
+          wrapper: 'h-full rounded-lg bg-foreground-300 p-px',
           img: 'aspect-video h-full rounded-lg object-cover',
         }}
         src={info.thumbnail}

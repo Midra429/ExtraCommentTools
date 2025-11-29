@@ -8,7 +8,7 @@ export function Header() {
         'p-2',
         'border-foreground-200 border-b-1',
         'bg-content1',
-        'text-medium font-semibold'
+        'font-semibold text-medium'
       )}
     >
       <div className="flex min-h-8 flex-row items-center">

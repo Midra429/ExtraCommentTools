@@ -27,7 +27,7 @@ export function Input(props: Props) {
     <CheckboxGroup
       classNames={{
         base: 'gap-2 py-2',
-        label: 'text-small text-foreground',
+        label: 'text-foreground text-small',
         wrapper: 'gap-2',
       }}
       size="sm"
@@ -47,25 +47,25 @@ export function Input(props: Props) {
               'bg-default-100 hover:bg-default-200',
               'data-[selected=true]:bg-primary/15 dark:data-[selected=true]:bg-primary/20',
               'rounded-medium',
-              'border-divider hover:border-default-400 border-1',
+              'border-1 border-divider hover:border-default-400',
               'data-[selected=true]:border-primary',
               'transition-colors motion-reduce:transition-none',
               'cursor-pointer',
             ],
             wrapper: [
               'rounded-full',
-              'before:bg-default-50! before:rounded-full before:border-1',
+              'before:rounded-full before:border-1 before:bg-default-50!',
               'after:rounded-full',
             ],
             label: 'flex w-full flex-col gap-0.5',
           }}
           value={value}
         >
-          <span className="text-small line-clamp-2">{label}</span>
+          <span className="line-clamp-2 text-small">{label}</span>
           {description && (
             <span
               className={cn(
-                'text-tiny line-clamp-2',
+                'line-clamp-2 text-tiny',
                 'text-foreground-500 dark:text-foreground-600'
               )}
             >
