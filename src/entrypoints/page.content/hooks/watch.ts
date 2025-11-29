@@ -186,7 +186,7 @@ export const hookWatch = async (
         else if (isOfficial && (targets.official || targets.danime)) {
           // 関連付けられたdアニメの動画
           const dAnimeLink = targets.danime
-            ? await ncoApiProxy.niconico.channelVideoDAnimeLinks(video.id)
+            ? await ncoApiProxy.niconico.v1.channelVideoDAnimeLinks(video.id)
             : null
 
           logger.log('niconico.channelVideoDAnimeLinks', dAnimeLink)
