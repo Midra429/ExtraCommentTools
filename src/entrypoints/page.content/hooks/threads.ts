@@ -1,5 +1,8 @@
-import type { Threads } from '@midra/nco-utils/types/api/niconico/threads'
-import type { ThreadsRequestBody } from '@midra/nco-utils/api/services/niconico'
+import type {
+  V1Threads,
+  V1ThreadsOk,
+} from '@midra/nco-utils/types/api/niconico/v1/threads'
+import type { ThreadsRequestBody } from '@midra/nco-utils/api/services/niconico/v1'
 import type { FetchProxyApplyArguments } from '..'
 
 import { NICONICO_COLOR_COMMANDS, COLOR_CODE_REGEXP } from '@/constants'
@@ -14,12 +17,16 @@ import { ncoApiProxy } from '@/proxy/nco-utils/api/page'
 
 import { shared } from '.'
 
+function isResponseOk(json: V1Threads): json is V1ThreadsOk {
+  return json.meta.status === 200
+}
+
 export async function hookThreads(
   args: FetchProxyApplyArguments<true>
 ): Promise<Response | null> {
   const { targetVideoData, extraVideoDataList, slotsManager } = shared
 
-  if (!targetVideoData || !extraVideoDataList.length || !slotsManager) {
+  if (!targetVideoData || !slotsManager) {
     return null
   }
 
@@ -35,12 +42,12 @@ export async function hookThreads(
 
   try {
     const res = await Reflect.apply(...args)
-    const json: Threads = await res.json()
+    const json: V1Threads = await res.json()
 
     logger.log(apiLogName, json)
 
-    if (json.meta.status === 200) {
-      const threadsData = json.data!
+    if (isResponseOk(json)) {
+      const threadsData = json.data
       const { globalComments, threads } = threadsData
 
       // 設定
@@ -64,7 +71,7 @@ export async function hookThreads(
       )
 
       // コメント取得 (引用)
-      const threadsDataList = await ncoApiProxy.niconico.multipleThreads(
+      const threadsDataList = await ncoApiProxy.niconico.v1.multipleThreads(
         addedVideoDataList.map((v) => v.comment),
         body?.additionals
       )
@@ -75,6 +82,9 @@ export async function hookThreads(
         globalComments.push(...data.globalComments)
         threads.push(...data.threads)
       }
+
+      let cmtCnt = 0
+      let assistedCmtCnt = 0
 
       // オフセット・コマンド適用
       for (const thread of threads) {
@@ -111,6 +121,9 @@ export async function hookThreads(
         const assistedCommentIds = hideAssistedComments
           ? findAssistedCommentIds(thread.comments)
           : null
+
+        cmtCnt += thread.comments.length
+        assistedCmtCnt += assistedCommentIds?.length ?? 0
 
         if (assistedCommentIds?.length) {
           thread.comments = thread.comments.filter(
@@ -159,6 +172,10 @@ export async function hookThreads(
             cmt.commands = [...new Set([...cmt.commands, ...tmpCommands])]
           }
         }
+      }
+
+      if (hideAssistedComments) {
+        logger.log('assistedComment', `${assistedCmtCnt} / ${cmtCnt}`)
       }
 
       // 読み込み済みの動画情報
