@@ -30,11 +30,11 @@ export type SettingsInputProps<K extends SettingsKey> =
   | (K extends ColorPicker.Key ? ColorPicker.Props<K> : never)
 
 export const SettingsInput = {
-  'select': Select.Input,
-  'toggle': Toggle.Input,
-  'text': Text.Input,
-  'range': Range.Input,
-  'checkbox': Checkbox.Input,
-  'checkcard': Checkcard.Input,
+  select: Select.Input,
+  toggle: Toggle.Input,
+  text: Text.Input,
+  range: Range.Input,
+  checkbox: Checkbox.Input,
+  checkcard: Checkcard.Input,
   'color-picker': ColorPicker.Input,
 }

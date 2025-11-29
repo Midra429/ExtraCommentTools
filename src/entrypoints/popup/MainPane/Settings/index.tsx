@@ -277,7 +277,7 @@ export function Settings() {
       defaultExpandedKeys={['_info']}
     >
       {accordionItemInfo}
-      {...accordionItemSettings as any}
+      {...(accordionItemSettings as any)}
       {accordionItemStorage}
       {accordionItemOthers}
     </Accordion>
