@@ -49,6 +49,7 @@
     "@wxt-dev/module-react": "^1.2.2",
     "@xpadev-net/niconicomments": "^0.2.78",
     "babel-plugin-react-compiler": "^1.0.0",
+    "concurrently": "^9.2.1",
     "postcss": "^8.5.15",
     "tailwindcss": "^4.3.0",
     "typescript": "^5.9.3",
