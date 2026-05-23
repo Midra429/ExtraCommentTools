@@ -1,6 +1,7 @@
 import type { SearchData } from '@midra/nco-utils/types/api/niconico/search'
 import type { Slot } from '@/core/slots'
 
+import { TAG_ANIME_REGEXP } from '@midra/nco-utils/api/constants'
 import { DANIME_CHANNEL_ID } from '@midra/nco-utils/search/constants'
 
 export function searchDataToSlot(
@@ -22,7 +23,7 @@ export function searchDataToSlot(
   const isOfficialAnime = !!(
     data.channelId &&
     data.categoryTags &&
-    /(^|\s)アニメ(\s|$)/.test(data.categoryTags)
+    TAG_ANIME_REGEXP.test(data.categoryTags)
   )
 
   return {

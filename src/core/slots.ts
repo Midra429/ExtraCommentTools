@@ -1,5 +1,5 @@
-import type { DeepPartial } from 'utility-types'
 import type { ParsedResult } from '@midra/nco-utils/parse'
+import type { DeepPartial } from 'utility-types'
 import type { StorageOnChangeCallback, WebExtStorage } from '@/utils/storage'
 
 import equal from 'fast-deep-equal'
@@ -8,25 +8,29 @@ import { deepmerge } from '@/utils/deepmerge'
 
 const SLOTS_MAX = 1000
 
+export type SlotType = 'normal' | 'official' | 'danime'
+
+export interface SlotInfo {
+  title: string
+  duration: number
+  date: number
+  count: {
+    view: number
+    comment: number
+    kawaii?: number
+  }
+  thumbnail?: string
+}
+
 export interface Slot {
   id: string
-  type: 'normal' | 'official' | 'danime'
+  type: SlotType
   isStock: boolean
   isAuto: boolean
   isManual: boolean
+  info: SlotInfo
   offsetMs?: number
   commands?: string[]
-  info: {
-    title: string
-    duration: number
-    date: number
-    count: {
-      view: number
-      comment: number
-      kawaii?: number
-    }
-    thumbnail?: string
-  }
 }
 
 export type SlotUpdate = DeepPartial<Slot> & Required<Pick<Slot, 'id'>>
@@ -94,7 +98,7 @@ export class SlotsManager {
     const newSlots: Slot[] = []
 
     for (const slot of slots) {
-      const idx = oldSlots.findIndex((v) => v.id === slot.id) ?? -1
+      const idx = oldSlots.findIndex((v) => v.id === slot.id)
 
       if (idx !== -1) {
         oldSlots[idx] = slot

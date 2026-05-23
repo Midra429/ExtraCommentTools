@@ -1,115 +1,309 @@
-import type { WebExtBrowser, SidePanel } from 'webextension-polyfill'
+import type browser from 'webextension-polyfill'
+import type { Browser } from 'wxt/browser'
 
-import { browser } from '@wxt-dev/webextension-polyfill/browser'
+import { browser as webext } from 'wxt/browser'
+import { isBackground } from '@wxt-dev/is-background'
 
-const webext = browser as WebExtBrowser
+declare module 'wxt/browser' {
+  namespace Browser {
+    export namespace runtime {
+      export interface ManifestSidebarAction {
+        default_panel?: string
+      }
+
+      export interface ManifestV3 {
+        sidebar_action?: ManifestSidebarAction
+      }
+
+      export function getManifest(): ManifestV3
+    }
+
+    export namespace action {
+      export var path: string | undefined
+
+      /**
+       * ポップアップを新しいウィンドウで開く
+       * @param tabId リンクするタブのID
+       */
+      export function openPopout(
+        createData: OpenPopoutCreateData
+      ): Promise<windows.Window | undefined>
+    }
+
+    export namespace sidePanel {
+      export var path: string | undefined
+
+      export function open(options?: OpenOptions): Promise<void>
+
+      export function close(options?: CloseOptions): Promise<void>
+
+      /**
+       * サイドパネルを新しいウィンドウで開く
+       * @param tabId リンクするタブのID
+       */
+      export function openPopout(
+        createData: OpenPopoutCreateData
+      ): Promise<windows.Window | undefined>
+    }
+
+    export type OpenPopoutThisArg = typeof action | typeof sidePanel
+    export type OpenPopout = OpenPopoutThisArg['openPopout']
+    export type OpenPopoutCreateData = Omit<windows.CreateData, 'type' | 'url'>
+
+    export var SEARCH_PARAM_TAB_ID: `_${string}_tabId`
+
+    export var isChrome: boolean
+    export var isFirefox: boolean
+    export var isSafari: boolean
+
+    export var inBackground: boolean
+    export var inContentScript: boolean
+    export var inPopup: boolean
+    export var inSidePanel: boolean
+    export var inPopout: boolean
+
+    export function getCurrentActiveTab(): Promise<tabs.Tab | undefined>
+
+    export function getCurrentActiveTabId(): Promise<number | undefined>
+  }
+}
+
+const manifest = webext.runtime.getManifest()
+
+webext.SEARCH_PARAM_TAB_ID = `_${EXT_BUILD_ID}_tabId`
 
 webext.isChrome =
   import.meta.env.CHROME || import.meta.env.EDGE || import.meta.env.OPERA
 webext.isFirefox = import.meta.env.FIREFOX
 webext.isSafari = import.meta.env.SAFARI
 
-webext.getCurrentActiveTab = async function (windowId) {
-  const [tab] = await this.tabs.query({
-    active: true,
-    ...(typeof windowId === 'number' && windowId !== this.windows.WINDOW_ID_NONE
-      ? { windowId }
-      : { currentWindow: true }),
-  })
+const { protocol, pathname, search } = location
 
-  if (typeof tab?.id === 'number' && tab.id !== this.tabs.TAB_ID_NONE) {
-    return tab as any
+const searchParamTabId = new URLSearchParams(search).get(
+  webext.SEARCH_PARAM_TAB_ID
+)
+
+webext.inBackground = isBackground()
+webext.inContentScript = !webext.inBackground && /^https?:$/.test(protocol)
+webext.inPopup = !webext.inContentScript && pathname === '/popup.html'
+webext.inSidePanel = !webext.inContentScript && pathname === '/sidepanel.html'
+webext.inPopout = !!searchParamTabId
+
+webext.getCurrentActiveTab = async function () {
+  const tabId = searchParamTabId
+    ? Number(searchParamTabId)
+    : webext.tabs.TAB_ID_NONE
+
+  try {
+    const [tab] =
+      tabId !== webext.tabs.TAB_ID_NONE
+        ? [await this.tabs.get(tabId)]
+        : await this.tabs.query({
+            active: true,
+            currentWindow: true,
+          })
+
+    if (tab?.id != null && tab.id !== this.tabs.TAB_ID_NONE) {
+      return tab
+    }
+  } catch {}
+}
+
+webext.getCurrentActiveTabId = async function () {
+  const tab = await this.getCurrentActiveTab()
+
+  return tab?.id
+}
+
+async function openPopout(
+  this: Browser.OpenPopoutThisArg,
+  { tabId, ...createData }: Browser.OpenPopoutCreateData
+): ReturnType<Browser.OpenPopout> {
+  if (tabId == null || tabId === webext.tabs.TAB_ID_NONE) {
+    const tab = await webext.getCurrentActiveTab()
+
+    tabId = tab?.id
   }
 
-  return null
+  const url =
+    tabId != null && tabId !== webext.tabs.TAB_ID_NONE
+      ? `${this.path}?${webext.SEARCH_PARAM_TAB_ID}=${tabId}`
+      : this.path
+
+  return webext.windows.create({
+    ...createData,
+    type: 'popup',
+    url,
+  })
+}
+
+if (webext.action) {
+  webext.action.path = manifest.action?.default_popup
+
+  webext.action.openPopout = openPopout
 }
 
 // Chrome
 if (webext.isChrome) {
   if (webext.sidePanel) {
+    webext.sidePanel.path = manifest.side_panel?.default_path
+
     webext.sidePanel.open = new Proxy(webext.sidePanel.open, {
-      apply(
+      async apply(
         target,
-        thisArg: SidePanel.Static,
-        argArray: Parameters<SidePanel.Static['open']>
+        thisArg: typeof Browser.sidePanel,
+        [options]: Parameters<typeof Browser.sidePanel.open>
       ) {
-        thisArg.setOptions({
+        if (options?.tabId == null) {
+          const tabId = await webext.getCurrentActiveTabId()
+
+          if (tabId != null) {
+            if (options) {
+              options.tabId = tabId
+            } else {
+              options = { tabId }
+            }
+          }
+        }
+
+        await thisArg.setOptions({
           enabled: true,
           path: webext.sidePanel.path,
-          tabId: argArray[0].tabId,
+          tabId: options?.tabId,
         })
 
-        return Reflect.apply(target, thisArg, argArray)
+        return Reflect.apply(target, thisArg, [options])
       },
     })
 
-    webext.sidePanel.close = function ({ tabId }) {
-      return this.setOptions({ enabled: false, tabId })
+    webext.sidePanel.close = async function (options) {
+      if (options?.tabId == null) {
+        const tabId = await webext.getCurrentActiveTabId()
+
+        if (tabId != null) {
+          if (options) {
+            options.tabId = tabId
+          } else {
+            options = { tabId }
+          }
+        }
+      }
+
+      return this.setOptions({
+        enabled: false,
+        tabId: options?.tabId,
+      })
     }
+
+    webext.sidePanel.openPopout = openPopout
   }
 }
 
 // Firefox
 if (webext.isFirefox) {
-  webext.storage.local.getBytesInUse = async function (keys) {
+  // @ts-ignore
+  webext.storage.local.getBytesInUse = async function (keys: string) {
     const values = await this.get(keys)
 
-    let bytes = 0
-
-    for (const [key, value] of Object.entries(values)) {
-      bytes += new Blob([
+    return Object.entries(values).reduce((prev, [key, value]) => {
+      const { size } = new Blob([
         key,
         typeof value === 'string' ? value : JSON.stringify(value),
-      ]).size
-    }
+      ])
 
-    return bytes
+      return prev + size
+    }, 0)
   }
 
-  if (webext.sidebarAction) {
+  if ('sidebarAction' in webext) {
+    const { sidebarAction } = webext as unknown as browser.Browser
+
+    enum Side {
+      LEFT = 'left',
+      RIGHT = 'right',
+    }
+
     webext.sidePanel = {
+      Side,
+
+      path: manifest.sidebar_action?.default_panel,
+
       open() {
-        return webext.sidebarAction.open()
+        return sidebarAction.open()
       },
 
       close() {
-        return webext.sidebarAction.close()
+        return sidebarAction.close()
       },
+
+      openPopout,
 
       async getOptions(options) {
         const { tabId } = options ?? {}
 
         let isOpen = false
 
-        if (typeof tabId === 'number') {
+        if (tabId != null) {
           const { windowId } = await webext.tabs.get(tabId)
 
-          isOpen = await webext.sidebarAction.isOpen({ windowId })
+          isOpen = await sidebarAction.isOpen({ windowId })
         }
 
-        const path = await webext.sidebarAction.getPanel({ tabId })
+        const path = this.path
         const enabled = !!path && isOpen
 
         return { enabled, path, tabId }
       },
 
       async setOptions({ enabled, path, tabId }) {
-        const currentPanel = await webext.sidebarAction.getPanel({ tabId })
+        const panel = enabled ? path || this.path || null : null
 
-        const panel =
-          enabled === false ? null : path || currentPanel || this.path || null
+        await sidebarAction.setPanel({ panel, tabId })
+      },
 
-        await webext.sidebarAction.setPanel({ panel, tabId })
+      async getPanelBehavior() {
+        return {}
+      },
+
+      async setPanelBehavior() {},
+
+      async getLayout() {
+        return {
+          side: this.Side.RIGHT,
+        }
+      },
+
+      onOpened: {
+        addListener() {},
+        getRules() {},
+        hasListener() {
+          return false
+        },
+        removeRules() {},
+        addRules() {},
+        removeListener() {},
+        hasListeners() {
+          return false
+        },
+      },
+
+      onClosed: {
+        addListener() {},
+        getRules() {},
+        hasListener() {
+          return false
+        },
+        removeRules() {},
+        addRules() {},
+        removeListener() {},
+        hasListeners() {
+          return false
+        },
       },
     }
   }
 }
 
-if (webext.sidePanel) {
-  const { side_panel, sidebar_action } = webext.runtime.getManifest()
-
-  webext.sidePanel.path =
-    side_panel?.default_path ?? sidebar_action?.default_panel
-}
+export type { Browser }
 
 export { webext }

@@ -1,21 +1,22 @@
+import type { ThreadsRequestBody } from '@midra/nco-utils/api/services/niconico/v1'
 import type {
   V1Threads,
   V1ThreadsOk,
 } from '@midra/nco-utils/types/api/niconico/v1/threads'
-import type { ThreadsRequestBody } from '@midra/nco-utils/api/services/niconico/v1'
 import type { FetchProxyApplyArguments } from '..'
 
-import { NICONICO_COLOR_COMMANDS, COLOR_CODE_REGEXP } from '@/constants'
+import { COLOR_CODE_REGEXP, NICONICO_COLOR_COMMANDS } from '@/constants'
 import { SETTINGS_DEFAULT } from '@/constants/settings/default'
-
 import { logger } from '@/utils/logger'
-import { settings } from '@/utils/settings/page'
-import { utilsMessagingPage } from '@/utils/messaging/page'
-import { videoDataToSlot } from '@/utils/api/videoDataToSlot'
 import { findAssistedCommentIds } from '@/utils/api/findAssistedCommentIds'
+import { videoDataToSlot } from '@/utils/api/videoDataToSlot'
+import { settings } from '@/utils/settings/page'
+import { sendPageMessage } from '@/messaging/page'
 import { ncoApiProxy } from '@/proxy/nco-utils/api/page'
 
 import { shared } from '.'
+
+const JSON_REGEXP = /^{.*}$/
 
 function isResponseOk(json: V1Threads): json is V1ThreadsOk {
   return json.meta.status === 200
@@ -36,7 +37,7 @@ export async function hookThreads(
   const apiLogName = `${init.method} ${url.pathname}`
 
   const body: ThreadsRequestBody | null =
-    typeof init?.body === 'string' && /^{.*}$/.test(init.body)
+    typeof init?.body === 'string' && JSON_REGEXP.test(init.body)
       ? JSON.parse(init.body)
       : null
 
@@ -51,16 +52,12 @@ export async function hookThreads(
       const { globalComments, threads } = threadsData
 
       // 設定
-      const mergeExtra = await settings.get('settings:comment:mergeExtra')
-      const translucentExtra = await settings.get(
-        'settings:comment:translucentExtra'
-      )
-      const extraColor = await settings.get('settings:comment:extraColor')
-      const forceExtraColor = await settings.get(
-        'settings:comment:forceExtraColor'
-      )
+      const mergeExtra = await settings.get('comment:mergeExtra')
+      const translucentExtra = await settings.get('comment:translucentExtra')
+      const extraColor = await settings.get('comment:extraColor')
+      const forceExtraColor = await settings.get('comment:forceExtraColor')
       const hideAssistedComments = await settings.get(
-        'settings:comment:hideAssistedComments'
+        'comment:hideAssistedComments'
       )
 
       const slots = await slotsManager?.get()
@@ -110,7 +107,7 @@ export async function hookThreads(
         if (
           isExtra &&
           COLOR_CODE_REGEXP.test(extraColor) &&
-          extraColor !== SETTINGS_DEFAULT['settings:comment:extraColor']
+          extraColor !== SETTINGS_DEFAULT['comment:extraColor']
         ) {
           commands.push(extraColor)
 
@@ -205,12 +202,12 @@ export async function hookThreads(
       // バッジを設定
       const count = loadedVideoDataList.length
 
-      await utilsMessagingPage.sendMessage('setBadge', {
+      await sendPageMessage('content:setBadge', {
         text: count ? count.toString() : null,
         color: 'green',
       })
     } else {
-      await utilsMessagingPage.sendMessage('setBadge', {
+      await sendPageMessage('content:setBadge', {
         text: null,
       })
     }
@@ -221,7 +218,7 @@ export async function hookThreads(
       statusText: res.statusText,
     })
   } catch (err) {
-    await utilsMessagingPage.sendMessage('setBadge', {
+    await sendPageMessage('content:setBadge', {
       text: null,
     })
 

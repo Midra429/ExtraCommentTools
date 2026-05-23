@@ -1,5 +1,5 @@
-import type { Slot } from '@/core/slots'
 import type { PanelItemProps } from '@/components/PanelItem'
+import type { Slot } from '@/core/slots'
 
 import { useState } from 'react'
 import { cn } from '@heroui/react'
@@ -8,13 +8,13 @@ import { useSlotsManager } from '@/hooks/useSlots'
 
 import { PanelItem } from '@/components/PanelItem'
 
-import { ButtonsOverlay } from './ButtonsOverlay'
 import { AddButton } from './AddButton'
-import { Thumbnail } from './Thumbnail'
-import { DateTime } from './DateTime'
-import { Title } from './Title'
+import { ButtonsOverlay } from './ButtonsOverlay'
 import { Counts } from './Counts'
+import { DateTime } from './DateTime'
 import { Options, OptionsButton } from './Options'
+import { Thumbnail } from './Thumbnail'
+import { Title } from './Title'
 
 export interface SlotItemProps {
   classNames?: PanelItemProps['classNames']

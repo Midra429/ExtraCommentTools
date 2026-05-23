@@ -1,14 +1,15 @@
 import type { SettingsInitData } from '@/types/constants'
 
 import {
-  SlidersHorizontalIcon,
-  MessageSquareTextIcon,
   MessageSquareQuoteIcon,
-  CameraIcon,
-  SunMoonIcon,
-  SunIcon,
+  MessageSquareTextIcon,
   MoonIcon,
+  SlidersHorizontalIcon,
+  SunIcon,
+  SunMoonIcon,
 } from 'lucide-react'
+
+import { SETTINGS_DEFAULT } from './default'
 
 export const SETTINGS_INIT_DATA: SettingsInitData = [
   {
@@ -17,7 +18,7 @@ export const SETTINGS_INIT_DATA: SettingsInitData = [
     icon: SlidersHorizontalIcon,
     items: [
       {
-        settingsKey: 'settings:theme',
+        settingsKey: 'theme',
         inputType: 'select',
         label: 'テーマ',
         options: [
@@ -39,7 +40,7 @@ export const SETTINGS_INIT_DATA: SettingsInitData = [
         ],
       },
       {
-        settingsKey: 'settings:showChangelog',
+        settingsKey: 'showChangelog',
         inputType: 'toggle',
         label: '更新内容を表示',
         description: 'アップデート後に更新内容を新しいタブで開きます。',
@@ -57,38 +58,75 @@ export const SETTINGS_INIT_DATA: SettingsInitData = [
     icon: MessageSquareTextIcon,
     items: [
       {
-        settingsKey: 'settings:comment:showExtra',
+        settingsKey: 'comment:showExtra',
         inputType: 'toggle',
         label: '引用コメントを表示',
       },
       {
-        settingsKey: 'settings:comment:mergeExtra',
+        settingsKey: 'comment:mergeExtra',
         inputType: 'toggle',
         label: '引用コメントを重ならないように表示',
+        disable: {
+          when: [
+            {
+              key: 'comment:showExtra',
+              value: false,
+            },
+          ],
+        },
       },
       {
-        settingsKey: 'settings:comment:translucentExtra',
+        settingsKey: 'comment:translucentExtra',
         inputType: 'toggle',
         label: '引用コメントを半透明化',
+        disable: {
+          when: [
+            {
+              key: 'comment:showExtra',
+              value: false,
+            },
+          ],
+        },
       },
       {
-        settingsKey: 'settings:comment:extraColor',
+        settingsKey: 'comment:extraColor',
         inputType: 'color-picker',
         label: '引用コメントの色',
+        disable: {
+          when: [
+            {
+              key: 'comment:showExtra',
+              value: false,
+            },
+          ],
+        },
       },
       {
-        settingsKey: 'settings:comment:forceExtraColor',
+        settingsKey: 'comment:forceExtraColor',
         inputType: 'toggle',
         label: '引用コメントの色を強制',
         description: 'コマンドによる色変更を上書きします。',
+        disable: {
+          operator: 'or',
+          when: [
+            {
+              key: 'comment:showExtra',
+              value: false,
+            },
+            {
+              key: 'comment:extraColor',
+              value: SETTINGS_DEFAULT['comment:extraColor'],
+            },
+          ],
+        },
       },
       {
-        settingsKey: 'settings:comment:showEasy',
+        settingsKey: 'comment:showEasy',
         inputType: 'toggle',
         label: 'かんたんコメントを表示',
       },
       {
-        settingsKey: 'settings:comment:hideAssistedComments',
+        settingsKey: 'comment:hideAssistedComments',
         inputType: 'toggle',
         label: 'コメントアシストの表示を抑制',
         description:
@@ -102,13 +140,21 @@ export const SETTINGS_INIT_DATA: SettingsInitData = [
     icon: MessageSquareQuoteIcon,
     items: [
       {
-        settingsKey: 'settings:autoLoad:searchTargets',
+        settingsKey: 'autoLoad:searchTargets',
         inputType: 'checkbox',
         label: '検索対象',
         options: [
           { label: '公式チャンネル', value: 'official' },
           { label: 'dアニメストア', value: 'danime' },
         ],
+        disable: {
+          when: [
+            {
+              key: 'comment:showExtra',
+              value: false,
+            },
+          ],
+        },
       },
     ],
   },

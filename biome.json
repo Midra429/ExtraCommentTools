@@ -1,32 +1,125 @@
 {
   "$schema": "https://biomejs.dev/schemas/latest/schema.json",
+
+  "files": {
+    "includes": ["**", "!dist/**/*", "!node_modules/**/*"]
+  },
+
   "vcs": {
     "enabled": true,
     "clientKind": "git",
     "useIgnoreFile": true
   },
-  "files": {
-    "includes": ["**", "!!**/dist"]
-  },
+
   "linter": {
     "enabled": true,
+    "domains": {
+      "react": "recommended"
+    },
     "rules": {
       "recommended": false,
+      "correctness": {
+        "noUnusedFunctionParameters": "warn",
+        "noUnusedImports": "warn",
+        "noUnusedLabels": "warn",
+        "noUnusedPrivateClassMembers": "warn",
+        "noUnusedVariables": "warn",
+        "useExhaustiveDependencies": "off"
+      },
       "nursery": {
         "useSortedClasses": {
           "fix": "safe",
-          "level": "error",
+          "level": "on",
           "options": {
             "attributes": ["classNames"],
             "functions": ["twMerge", "twJoin", "cn", "tv"]
           }
         }
+      },
+      "performance": {
+        "useTopLevelRegex": "on"
+      },
+      "style": {
+        "useImportType": {
+          "level": "on",
+          "options": {
+            "style": "separatedType"
+          }
+        }
+      },
+      "suspicious": {
+        "noArrayIndexKey": "off"
       }
     }
   },
+
   "assist": {
-    "enabled": false
+    "enabled": true,
+    "actions": {
+      "recommended": false,
+      "source": {
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              { "type": true },
+
+              ":BLANK_LINE:",
+
+              [":NODE:", ":BUN:"],
+
+              ":BLANK_LINE:",
+
+              ["#imports", "wxt", "wxt/**"],
+              ["react", "react/**"],
+              "@heroui/**",
+              "*react*",
+              [":PACKAGE:", ":PACKAGE_WITH_PROTOCOL:", "!@midra/*/**"],
+              "@midra/*/*",
+              "@midra/*/**",
+
+              ":BLANK_LINE:",
+
+              [
+                ":ALIAS:",
+                "!@/components/**",
+                "!@/constants/**",
+                "!@/entrypoints/**",
+                "!@/hooks/**",
+                "!@/messaging/**",
+                "!@/ncoverlay/**",
+                "!@/proxy/**",
+                "!@/utils/**"
+              ],
+              "@/constants/**",
+              "@/utils/*",
+              "@/utils/**",
+              "@/hooks/**",
+              "@/messaging/**",
+              "@/proxy/**",
+              "@/ncoverlay/**",
+              "@/entrypoints/**",
+
+              ":BLANK_LINE:",
+
+              "@/components/**",
+
+              ":BLANK_LINE:",
+
+              [":PATH:", "!**/*.json"],
+
+              ":BLANK_LINE:",
+
+              "**/*.json"
+            ],
+            "identifierOrder": "lexicographic"
+          }
+        },
+        "useSortedProperties": "on"
+      }
+    }
   },
+
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
@@ -38,31 +131,33 @@
     "bracketSameLine": false,
     "bracketSpacing": true,
     "expand": "auto",
-    "useEditorconfig": true,
-    "includes": ["**", "!dist/**/*", "!node_modules/**/*"]
+    "useEditorconfig": true
   },
-  "html": {
-    "formatter": {
-      "indentScriptAndStyle": false,
-      "selfCloseVoidElements": "always"
-    }
-  },
-  "css": {
-    "parser": {
-      "tailwindDirectives": true
-    }
-  },
+
   "javascript": {
     "formatter": {
+      "quoteStyle": "single",
       "jsxQuoteStyle": "double",
       "quoteProperties": "asNeeded",
       "trailingCommas": "es5",
       "semicolons": "asNeeded",
       "arrowParentheses": "always",
       "bracketSameLine": false,
-      "quoteStyle": "single",
-      "attributePosition": "auto",
-      "bracketSpacing": true
+      "bracketSpacing": true,
+      "attributePosition": "auto"
+    }
+  },
+
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+
+  "html": {
+    "formatter": {
+      "indentScriptAndStyle": false,
+      "selfCloseVoidElements": "always"
     }
   }
 }

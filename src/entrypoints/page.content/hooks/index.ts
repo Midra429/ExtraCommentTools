@@ -1,7 +1,7 @@
 import type { VideoData } from '@midra/nco-utils/types/api/niconico/video'
 
-import { storage } from '@/utils/storage/page'
 import { SlotsManager } from '@/core/slots'
+import { storage } from '@/utils/storage/page'
 
 export interface ExtraVideoData extends VideoData {
   _ect: {

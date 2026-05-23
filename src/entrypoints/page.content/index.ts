@@ -1,11 +1,11 @@
 import { defineContentScript } from '#imports'
 
 import { MATCHES } from '@/constants/matches'
-
 import { logger } from '@/utils/logger'
+import { NICONICO_WATCH_PATH_REGEXP } from '@/utils/api/extractVideoId'
 
-import { hookWatch } from './hooks/watch'
 import { hookThreads } from './hooks/threads'
+import { hookWatch } from './hooks/watch'
 // import { hookNicorus } from './hooks/nicorus'
 
 export type FetchProxyApplyArguments<IsHook extends boolean = false> = [
@@ -24,31 +24,31 @@ export default defineContentScript({
     logger.log('page.js')
 
     window.fetch = new Proxy(window.fetch, {
-      async apply(...[target, thisArg, argArray]: FetchProxyApplyArguments) {
-        const args = [
-          target,
-          thisArg,
-          argArray,
-        ] as FetchProxyApplyArguments<true>
+      apply: async (...args: FetchProxyApplyArguments) => {
+        let [input, init] = args[2]
 
-        if (argArray[0] instanceof Request) {
+        if (input instanceof Request) {
           return Reflect.apply(...args)
         }
 
-        if (typeof argArray[0] === 'string') {
-          if (URL.canParse(argArray[0])) {
-            argArray[0] = new URL(argArray[0])
-          } else if (URL.canParse(argArray[0], location.origin)) {
-            argArray[0] = new URL(argArray[0], location.origin)
+        if (typeof input === 'string') {
+          if (URL.canParse(input)) {
+            input = new URL(input)
+          } else if (URL.canParse(input, location.href)) {
+            input = new URL(input, location.href)
           } else {
             return Reflect.apply(...args)
           }
         }
 
-        argArray[1] ??= {}
-        argArray[1].method ??= 'GET'
+        init ??= {}
+        init.method ??= 'GET'
 
-        const [url, init] = argArray
+        const hookArgs: FetchProxyApplyArguments<true> = [
+          args[0],
+          args[1],
+          [input, init],
+        ]
 
         let response: Response | null = null
 
@@ -56,26 +56,26 @@ export default defineContentScript({
           case 'GET':
             // 動画情報API
             if (
-              /^\/watch\/(?:[a-z]{2})?\d+$/.test(url.pathname) &&
-              url.searchParams.get('responseType') === 'json'
+              NICONICO_WATCH_PATH_REGEXP.test(input.pathname) &&
+              input.searchParams.get('responseType') === 'json'
             ) {
-              response = await hookWatch(args)
+              response = await hookWatch(hookArgs)
             }
 
             break
 
           case 'POST':
             // コメント取得API
-            if (url.pathname === '/v1/threads') {
-              response = await hookThreads(args)
+            if (input.pathname === '/v1/threads') {
+              response = await hookThreads(hookArgs)
             }
 
             // ニコるAPI
             // if (
-            //   url.pathname.startsWith('/v1/threads') &&
-            //   url.pathname.endsWith('/nicorus')
+            //   input.pathname.startsWith('/v1/threads') &&
+            //   input.pathname.endsWith('/nicorus')
             // ) {
-            //   response = await hookNicorus(args)
+            //   response = await hookNicorus(hookArgs)
             // }
 
             break

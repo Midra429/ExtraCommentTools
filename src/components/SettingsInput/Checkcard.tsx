@@ -1,27 +1,31 @@
-import type { StorageItems, SettingsKey } from '@/types/storage'
+import type { SettingItems, SettingsKey } from '@/types/storage'
 import type { SettingsInputBaseProps } from '.'
 
-import { CheckboxGroup, Checkbox, cn } from '@heroui/react'
+import { useEffect, useState } from 'react'
+import { Checkbox, CheckboxGroup, cn } from '@heroui/react'
 
 import { useSettings } from '@/hooks/useSettings'
 
+import { initConditional } from '.'
+
 export type Key = {
-  [key in SettingsKey]: StorageItems[key] extends (string | number)[]
-    ? key
-    : never
+  [P in SettingsKey]: SettingItems[P] extends (string | number)[] ? P : never
 }[SettingsKey]
 
 export interface Props<K extends Key = Key>
   extends SettingsInputBaseProps<K, 'checkcard'> {
   options: {
     label: string
-    value: StorageItems[K][number]
+    value: SettingItems[K][number]
     description?: string
   }[]
 }
 
-export function Input(props: Props) {
+export function Input(props: Omit<Props, 'inputType'>) {
   const [value, setValue] = useSettings(props.settingsKey)
+  const [isDisabled, setIsDisabled] = useState(false)
+
+  useEffect(() => initConditional(props.disable, setIsDisabled), [])
 
   return (
     <CheckboxGroup
@@ -33,12 +37,13 @@ export function Input(props: Props) {
       size="sm"
       orientation="vertical"
       label={props.label}
+      isDisabled={isDisabled}
       value={value}
       onChange={setValue as any}
     >
-      {props.options.map(({ label, description, value }, idx) => (
+      {props.options.map(({ label, description, value }) => (
         <Checkbox
-          key={idx}
+          key={value}
           classNames={{
             base: [
               'gap-0.5',

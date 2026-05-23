@@ -1,36 +1,27 @@
-import type { StorageItems, SettingsKey } from '@/types/storage'
+import type { SettingItems, SettingsKey } from '@/types/storage'
 import type { SettingsInputBaseProps } from '.'
 
-import { useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { Switch } from '@heroui/react'
-
-import { SETTINGS_DEFAULT } from '@/constants/settings/default'
 
 import { useSettings } from '@/hooks/useSettings'
 
 import { ItemLabel } from '@/components/ItemLabel'
 
+import { initConditional } from '.'
+
 export type Key = {
-  [key in SettingsKey]: StorageItems[key] extends boolean ? key : never
+  [P in SettingsKey]: SettingItems[P] extends boolean ? P : never
 }[SettingsKey]
 
 export interface Props<K extends Key = Key>
   extends SettingsInputBaseProps<K, 'toggle'> {}
 
-export function Input(props: Props) {
+export function Input(props: Omit<Props, 'inputType'>) {
   const [value, setValue] = useSettings(props.settingsKey)
+  const [isDisabled, setIsDisabled] = useState(false)
 
-  const [showExtra] = useSettings('settings:comment:showExtra')
-  const [extraColor] = useSettings('settings:comment:extraColor')
-
-  const isDisabled =
-    ((props.settingsKey === 'settings:comment:mergeExtra' ||
-      props.settingsKey === 'settings:comment:translucentExtra') &&
-      !showExtra) ||
-    (props.settingsKey === 'settings:comment:forceExtraColor' &&
-      (!showExtra ||
-        extraColor === SETTINGS_DEFAULT['settings:comment:extraColor'])) ||
-    false
+  useEffect(() => initConditional(props.disable, setIsDisabled), [])
 
   return (
     <Switch

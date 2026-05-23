@@ -1,11 +1,11 @@
-import type { PopoverProps, ButtonProps } from '@heroui/react'
+import type { ButtonProps, PopoverProps } from '@heroui/react'
 
 import { useState } from 'react'
 import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
   Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   cn,
   tv,
 } from '@heroui/react'
@@ -55,7 +55,9 @@ export function Popconfirm(props: PopconfirmProps) {
 
       if (response instanceof Promise) {
         setIsCancelLoading(true)
+
         await response
+
         setIsCancelLoading(false)
       }
     }
@@ -68,7 +70,9 @@ export function Popconfirm(props: PopconfirmProps) {
 
     if (response instanceof Promise) {
       setIsOkLoading(true)
+
       await response
+
       setIsOkLoading(false)
     }
 
@@ -107,8 +111,7 @@ export function Popconfirm(props: PopconfirmProps) {
           <span
             className={cn(
               'text-tiny',
-              'text-foreground-500 dark:text-foreground-600',
-              'whitespace-pre-wrap'
+              'text-foreground-500 dark:text-foreground-600'
             )}
           >
             {props.description}
@@ -118,8 +121,8 @@ export function Popconfirm(props: PopconfirmProps) {
             <Button
               className="h-7"
               size="sm"
-              color={props.cancelColor || 'default'}
               variant="flat"
+              color={props.cancelColor || 'default'}
               isLoading={isCancelLoading}
               onPress={onPressCancel}
             >
@@ -129,8 +132,8 @@ export function Popconfirm(props: PopconfirmProps) {
             <Button
               className="h-7"
               size="sm"
-              color={props.okColor || 'primary'}
               variant="solid"
+              color={props.okColor || 'primary'}
               isLoading={isOkLoading}
               onPress={onPressOk}
             >

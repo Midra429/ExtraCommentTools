@@ -1,7 +1,7 @@
 import type { Slot } from '@/core/slots'
 
 import { cn } from '@heroui/react'
-import { PlayIcon, MessageSquareTextIcon, HeartIcon } from 'lucide-react'
+import { HeartIcon, MessageSquareTextIcon, PlayIcon } from 'lucide-react'
 
 import { useSettings } from '@/hooks/useSettings'
 
@@ -11,7 +11,7 @@ export interface CountsProps {
 }
 
 export function Counts({ count, isSearch }: CountsProps) {
-  const [showKawaiiPct] = useSettings('settings:showKawaiiPct')
+  const [showKawaiiPct] = useSettings('showKawaiiPct')
 
   const kawaiiPct =
     showKawaiiPct &&

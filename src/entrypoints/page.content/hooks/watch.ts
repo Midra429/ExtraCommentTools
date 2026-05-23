@@ -1,18 +1,19 @@
 import type {
-  VideoResponse,
-  VideoData,
   ThreadId,
+  VideoData,
+  VideoResponse,
 } from '@midra/nco-utils/types/api/niconico/video'
 import type { SearchTarget } from '@midra/nco-utils/types/search'
 import type { FetchProxyApplyArguments } from '..'
 
-import { DANIME_CHANNEL_ID } from '@midra/nco-utils/search/constants'
 import { parse } from '@midra/nco-utils/parse'
+import { DANIME_CHANNEL_ID } from '@midra/nco-utils/search/constants'
 
 import { logger } from '@/utils/logger'
-import { settings } from '@/utils/settings/page'
 import { extractThread } from '@/utils/api/extractThread'
-import { utilsMessagingPage } from '@/utils/messaging/page'
+import { NICONICO_WATCH_PATH_REGEXP } from '@/utils/api/extractVideoId'
+import { settings } from '@/utils/settings/page'
+import { sendPageMessage } from '@/messaging/page'
 import { ncoApiProxy } from '@/proxy/nco-utils/api/page'
 import { ncoSearchProxy } from '@/proxy/nco-utils/search/page'
 
@@ -46,7 +47,7 @@ export const hookWatch = async (
   const apiLogName = `${init.method} ${url.pathname}`
 
   // バッジをリセット
-  await utilsMessagingPage.sendMessage('setBadge', {
+  await sendPageMessage('content:setBadge', {
     text: null,
   })
 
@@ -64,9 +65,11 @@ export const hookWatch = async (
       const { channel, comment, video } = videoData
 
       // URLのIDを動画情報のIDに置き換える
-      if (url.pathname.split('/').at(-1) !== video.id) {
+      const videoId = url.pathname.match(NICONICO_WATCH_PATH_REGEXP)![0]
+
+      if (videoId !== video.id) {
         const oldPath = url.pathname
-        const newPath = oldPath.replace(/[^\/]+$/, video.id)
+        const newPath = oldPath.replace(NICONICO_WATCH_PATH_REGEXP, video.id)
 
         history.replaceState(null, '', newPath)
 
@@ -77,15 +80,11 @@ export const hookWatch = async (
       await shared.initialize(video.id)
 
       // 設定
-      const showExtra = await settings.get('settings:comment:showExtra')
-      const mergeExtra = await settings.get('settings:comment:mergeExtra')
-      const translucentExtra = await settings.get(
-        'settings:comment:translucentExtra'
-      )
-      const showEasy = await settings.get('settings:comment:showEasy')
-      const searchTargets = await settings.get(
-        'settings:autoLoad:searchTargets'
-      )
+      const showExtra = await settings.get('comment:showExtra')
+      const mergeExtra = await settings.get('comment:mergeExtra')
+      const translucentExtra = await settings.get('comment:translucentExtra')
+      const showEasy = await settings.get('comment:showEasy')
+      const searchTargets = await settings.get('autoLoad:searchTargets')
 
       const targets: {
         [key in SearchTarget]?: boolean
@@ -287,7 +286,7 @@ export const hookWatch = async (
         const count = shared.extraVideoDataList.length
 
         if (count) {
-          await utilsMessagingPage.sendMessage('setBadge', {
+          await sendPageMessage('content:setBadge', {
             text: count.toString(),
             color: 'yellow',
           })
@@ -325,7 +324,7 @@ export const hookWatch = async (
       statusText: res.statusText,
     })
   } catch (err) {
-    await utilsMessagingPage.sendMessage('setBadge', {
+    await sendPageMessage('content:setBadge', {
       text: null,
     })
 

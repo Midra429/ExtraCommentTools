@@ -7,15 +7,17 @@ export interface SourceTagProps {
   type: Slot['type']
 }
 
+type SourceBadgeKey = Exclude<SourceTagProps['type'], 'normal'>
+
 const SOURCE_BADGE_CLASSES: {
-  [key in Exclude<SourceTagProps['type'], 'normal'>]: string
+  [P in SourceBadgeKey]: string | undefined
 } = {
   official: cn('bg-[#ffe248] text-black dark:bg-[#ffd700]'),
   danime: cn('bg-danime-400 text-white dark:bg-danime-500'),
 }
 
 const SOURCE_BADGE_NAME: {
-  [key in Exclude<SourceTagProps['type'], 'normal'>]: string
+  [P in SourceBadgeKey]: string
 } = {
   official: '公式',
   danime: 'dアニメ',

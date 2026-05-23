@@ -2,37 +2,37 @@ import { useSlotsManager } from '@/hooks/useSlots'
 
 import { Layout } from '@/components/Layout'
 
-import { MainPane } from './MainPane'
-import { SidePane } from './SidePane'
+import { Comments } from './Comments'
+import { MainTabs } from './MainTabs'
+import { Settings } from './MainTabs/Settings'
 
 function App() {
   const slotsManager = useSlotsManager()
 
   const isActive = !!slotsManager
-  const height = isActive ? 500 : 450
 
   return (
     <Layout className="overflow-hidden">
-      <div className="flex size-fit flex-row">
+      <div
+        className="flex w-fit flex-row *:h-full"
+        style={{
+          height: isActive ? 500 : 450,
+        }}
+      >
         {isActive && (
-          <div
-            className="border-foreground-200 border-r-1"
-            style={{
-              width: 430,
-              height,
-            }}
-          >
-            <SidePane />
+          <div className="flex w-107 flex-col border-foreground-200 border-r-1">
+            <Comments />
           </div>
         )}
 
-        <div
-          style={{
-            width: 370,
-            height,
-          }}
-        >
-          <MainPane isActive={isActive} />
+        <div className="flex w-93 flex-col">
+          {isActive ? (
+            <MainTabs />
+          ) : (
+            <div className="h-full overflow-y-auto">
+              <Settings />
+            </div>
+          )}
         </div>
       </div>
     </Layout>

@@ -1,38 +1,45 @@
-import type { Storage as WxtStorage } from 'webextension-polyfill'
 import type { StorageKey } from '@/types/storage'
+import type { Browser } from '@/utils/webext'
 
 import equal from 'fast-deep-equal'
 
 import { webext } from '@/utils/webext'
+
 import { WebExtStorage } from '.'
 
 const extensionStorage = webext.storage.local
 
 export const storage = new WebExtStorage({
   get: async (...keys: StorageKey[]) => {
-    if (keys.length === 1) {
+    if (!keys.length) {
+      return extensionStorage.get()
+    } else if (keys.length === 1) {
       const key = keys[0]
       const value: any = (await extensionStorage.get(key))[key]
 
       return value ?? null
-    }
+    } else {
+      return Promise.all(
+        keys.map(async (key) => {
+          const value = (await extensionStorage.get(key))[key]
 
-    return keys.length
-      ? extensionStorage.get(Object.fromEntries(keys.map((key) => [key, null])))
-      : extensionStorage.get()
+          return value ?? null
+        })
+      )
+    }
   },
 
   set: async (key, value) => {
     if (value != null) {
       return extensionStorage.set({ [key]: value })
     } else {
-      return extensionStorage.remove(key)
+      return extensionStorage.remove(key as string)
     }
   },
 
   remove: async (...keys: StorageKey[]) => {
     if (keys.length) {
-      await extensionStorage.remove(keys)
+      await extensionStorage.remove(keys as string[])
     } else {
       await extensionStorage.clear()
     }
@@ -44,17 +51,17 @@ export const storage = new WebExtStorage({
         return extensionStorage.getBytesInUse(null)
 
       case 1:
-        return extensionStorage.getBytesInUse(keys[0])
+        return extensionStorage.getBytesInUse(keys[0] as string)
 
       default:
-        return extensionStorage.getBytesInUse(keys)
+        return extensionStorage.getBytesInUse(keys as string[])
     }
   },
 
   onChange(key, callback) {
-    const onChangeCallback = ({
-      [key]: change,
-    }: WxtStorage.StorageAreaOnChangedChangesType) => {
+    const onChangeCallback: (changes: {
+      [key: string]: Browser.storage.StorageChange
+    }) => void = ({ [key]: change }) => {
       if (!change) return
 
       const current: any = change.newValue ?? null

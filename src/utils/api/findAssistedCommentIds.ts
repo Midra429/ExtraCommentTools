@@ -1,8 +1,6 @@
-import type { V1Thread } from '@xpadev-net/niconicomments'
+import type { V1Comment } from '@midra/nco-utils/types/api/niconico/v1/threads'
 
-type V1ThreadComment = V1Thread['comments'][number]
-
-interface V1ThreadCommentSorted extends V1ThreadComment {
+interface V1CommentSorted extends V1Comment {
   _postedAtTime: number
 }
 
@@ -11,7 +9,7 @@ const COMMENT_ASSIST_STARTED_AT = new Date(
   '2025-04-26T00:00:00+09:00'
 ).getTime()
 
-function isAssistedCommentBase(comment: V1ThreadCommentSorted): boolean {
+function isAssistedCommentBase(comment: V1CommentSorted): boolean {
   const cmdLen = comment.commands.length
 
   return (
@@ -23,8 +21,8 @@ function isAssistedCommentBase(comment: V1ThreadCommentSorted): boolean {
 }
 
 function isAssistedComment(
-  base: V1ThreadCommentSorted,
-  target: V1ThreadCommentSorted
+  base: V1CommentSorted,
+  target: V1CommentSorted
 ): boolean {
   const cmdLen = target.commands.length
 
@@ -47,26 +45,26 @@ function isAssistedComment(
 }
 
 export interface AssistedCommentResult {
-  id: V1ThreadComment['id']
+  id: V1Comment['id']
   score: number
 }
 
 /**
  * アシストコメントを探す
  */
-export function findAssistedCommentIds(comments: V1ThreadComment[]): string[] {
+export function findAssistedCommentIds(comments: V1Comment[]): string[] {
   if (comments.length <= 3) {
     return []
   }
 
   const sameCommentGroups: [
-    base: V1ThreadCommentSorted,
-    ...targets: V1ThreadCommentSorted[],
+    base: V1CommentSorted,
+    ...targets: V1CommentSorted[],
   ][] = []
 
   // 投稿日時順にソート
   const sorted = comments
-    .map<V1ThreadCommentSorted>((cmt) => ({
+    .map<V1CommentSorted>((cmt) => ({
       ...cmt,
       _postedAtTime: new Date(cmt.postedAt).getTime(),
     }))
@@ -94,7 +92,9 @@ export function findAssistedCommentIds(comments: V1ThreadComment[]): string[] {
     userCounts[userId]++
   }
 
-  return sameCommentGroups.flatMap<string>(([base, ...targets]) => {
+  const results: string[] = []
+
+  for (const [base, ...targets] of sameCommentGroups) {
     // 文字の長さ
     const wordCount = base.body.length
     const wordScore =
@@ -113,17 +113,18 @@ export function findAssistedCommentIds(comments: V1ThreadComment[]): string[] {
       (3 <= commentCount && 1) ||
       0
 
-    if (!wordScore && !commentScore) return []
+    if (!wordScore && !commentScore) continue
 
-    return targets.flatMap<string>(({ id, userId }) => {
+    for (const { id, userId } of targets) {
       // ユーザーが同じコメントをした回数
       const userCount = userCounts[userId]
-
       const scoreThreshold = 5 - Math.min(userCount, 4)
 
-      return scoreThreshold <= wordScore && scoreThreshold <= commentScore
-        ? id
-        : []
-    })
-  })
+      if (scoreThreshold <= wordScore && scoreThreshold <= commentScore) {
+        results.push(id)
+      }
+    }
+  }
+
+  return results
 }

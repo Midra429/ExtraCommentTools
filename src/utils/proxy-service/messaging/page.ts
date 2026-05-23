@@ -1,7 +1,8 @@
 import type { ProtocolMap } from '..'
 
-import { defineWindowMessaging } from '@webext-core/messaging/page'
+import { defineCustomEventMessaging } from '@webext-core/messaging/page'
 
-export const { onMessage, sendMessage } = defineWindowMessaging<ProtocolMap>({
-  namespace: `${EXT_BUILD_ID}:proxy-service`,
-})
+export const { onMessage, sendMessage } =
+  defineCustomEventMessaging<ProtocolMap>({
+    namespace: `${EXT_BUILD_ID}:proxy-service`,
+  })

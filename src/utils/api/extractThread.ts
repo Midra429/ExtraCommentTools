@@ -1,6 +1,6 @@
 import type {
-  VideoData,
   Thread,
+  VideoData,
 } from '@midra/nco-utils/types/api/niconico/video'
 
 function filterMainThreads(threads: Thread[]) {

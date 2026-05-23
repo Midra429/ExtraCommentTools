@@ -37,14 +37,14 @@ https://addons.mozilla.org/ja/firefox/addon/引用コメントツール/
 
 ## 開発
 ### 環境
-- [bun](https://bun.com/)
+- [Bun](https://bun.com/)
 - [Visual Studio Code](https://code.visualstudio.com/)
 - [Chrome](https://www.google.com/intl/ja/chrome/)
 
 ### 開発サーバー
 ```sh
 # Chrome
-bun run dev
+bun run dev:chrome
 ```
 ```sh
 # Firefox
@@ -54,7 +54,12 @@ bun run dev:firefox
 ### 出力
 ```sh
 # dist/chrome-mv3
+# dist/firefox-mv3
 bun run build
+```
+```sh
+# dist/chrome-mv3
+bun run build:chrome
 ```
 ```sh
 # dist/firefox-mv3
@@ -64,7 +69,13 @@ bun run build:firefox
 ### 出力 (ZIP)
 ```sh
 # dist/extra-comment-tools-0.0.0-chrome.zip
+# dist/extra-comment-tools-0.0.0-firefox.zip
+# dist/extra-comment-tools-0.0.0-sources.zip
 bun run zip
+```
+```sh
+# dist/extra-comment-tools-0.0.0-chrome.zip
+bun run zip:chrome
 ```
 ```sh
 # dist/extra-comment-tools-0.0.0-firefox.zip

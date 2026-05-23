@@ -5,7 +5,7 @@ import { webext } from '@/utils/webext'
 import { Tooltip } from '@/components/Tooltip'
 
 export type IconLinkProps = {
-  icon: React.FC<any>
+  Icon: (props: React.ComponentProps<'svg'>) => React.ReactNode
   title?: string
 } & (
   | {
@@ -16,12 +16,11 @@ export type IconLinkProps = {
     }
 )
 
-export function IconLink(props: IconLinkProps) {
+export function IconLink({ Icon, title, ...props }: IconLinkProps) {
   return (
     <Tooltip
       content={
-        props.title ||
-        ('href' in props && new URL(props.href).pathname.slice(1))
+        title || ('href' in props && new URL(props.href).pathname.slice(1))
       }
     >
       <Button
@@ -35,7 +34,7 @@ export function IconLink(props: IconLinkProps) {
             : () => webext.tabs.create({ url: props.href })
         }
       >
-        <props.icon className="size-5 text-foreground-700" />
+        <Icon className="size-5 text-foreground-700" />
       </Button>
     </Tooltip>
   )

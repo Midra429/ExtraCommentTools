@@ -1,16 +1,18 @@
 import type { SearchQueryFilters } from '@midra/nco-utils/types/api/niconico/search'
 import type { SettingItems } from '@/types/storage'
 
-import { now, getLocalTimeZone } from '@internationalized/date'
+import { getLocalTimeZone, now } from '@internationalized/date'
 
 import { ncoApiProxy } from '@/proxy/nco-utils/api/extension'
 
-import { videoDataToSlot } from './videoDataToSlot'
 import { searchDataToSlot } from './searchDataToSlot'
+import { videoDataToSlot } from './videoDataToSlot'
+
+const TIMEZONE_SUFFIX_REGEXP = /\[.+\]$/
 
 export async function searchNiconicoByIds(...ids: string[]) {
-  const videoDataList = await ncoApiProxy.niconico.multipleVideo(ids)
-  const filtered = videoDataList.filter((v) => v !== null)
+  const data = await ncoApiProxy.niconico.multipleVideo(ids)
+  const filtered = data.filter((v) => v !== null)
 
   if (filtered.length) {
     const total = filtered.length
@@ -23,10 +25,10 @@ export async function searchNiconicoByIds(...ids: string[]) {
 }
 
 export interface SearchNiconicoOptions {
-  sort?: SettingItems['settings:searchOptions:sort']
-  dateRange?: SettingItems['settings:searchOptions:dateRange']
-  genre?: SettingItems['settings:searchOptions:genre']
-  lengthRange?: SettingItems['settings:searchOptions:lengthRange']
+  sort?: SettingItems['searchOptions:sort']
+  dateRange?: SettingItems['searchOptions:dateRange']
+  genre?: SettingItems['searchOptions:genre']
+  lengthRange?: SettingItems['searchOptions:lengthRange']
 }
 
 export async function searchNiconicoByKeyword(
@@ -47,13 +49,13 @@ export async function searchNiconicoByKeyword(
             ? current
                 .add(options.dateRange[0])
                 .toString()
-                .replace(/\[.+\]$/, '')
+                .replace(TIMEZONE_SUFFIX_REGEXP, '')
             : undefined,
           lte: options.dateRange[1]
             ? current
                 .add(options.dateRange[1])
                 .toString()
-                .replace(/\[.+\]$/, '')
+                .replace(TIMEZONE_SUFFIX_REGEXP, '')
             : undefined,
         }
       : undefined,

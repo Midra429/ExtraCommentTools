@@ -2,10 +2,9 @@ import type { Slot } from '@/core/slots'
 
 import { useEffect, useState } from 'react'
 
-import { storage } from '@/utils/storage/extension'
-
 import { SlotsManager } from '@/core/slots'
-import { sendExtMessage } from '@/core/messaging'
+import { storage } from '@/utils/storage/extension'
+import { sendExtensionMessage } from '@/messaging/extension'
 
 let _slotsManager: SlotsManager | null = null
 
@@ -17,7 +16,7 @@ export function useSlotsManager(tabId?: number) {
   useEffect(() => {
     if (_slotsManager) return
 
-    sendExtMessage('getVideoId', null, tabId).then((videoId) => {
+    sendExtensionMessage('content:getVideoId', null, tabId).then((videoId) => {
       _slotsManager = videoId ? new SlotsManager(videoId, storage) : null
 
       setSlotsManager(_slotsManager)

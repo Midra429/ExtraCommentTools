@@ -2,10 +2,10 @@ import type { Slot } from '@/core/slots'
 
 import { Image, cn } from '@heroui/react'
 
-import { SourceBadge } from './SourceBadge'
+import { Duration } from './Duration'
 import { ManualLoadedBadge } from './ManualLoadedBadge'
 import { Offset } from './Offset'
-import { Duration } from './Duration'
+import { SourceBadge } from './SourceBadge'
 
 export interface ThumbnailProps {
   type: Slot['type']

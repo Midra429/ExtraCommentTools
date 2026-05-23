@@ -3,19 +3,18 @@ import { ncoApi } from '@midra/nco-utils/api'
 import { ncoSearch } from '@midra/nco-utils/search'
 
 import { GITHUB_URL } from '@/constants'
-
 import { logger } from '@/utils/logger'
 import { webext } from '@/utils/webext'
-import { getFormsUrl } from '@/utils/getFormsUrl'
-import { setBadge } from '@/utils/extension/setBadge'
-import { settings } from '@/utils/settings/extension'
-import { registerProxy } from '@/utils/proxy-service/register'
-import { onMessage } from '@/utils/proxy-service/messaging/extension'
 import { extractVideoId } from '@/utils/api/extractVideoId'
+import { getFormsUrl } from '@/utils/extension/getFormsUrl'
+import { setBadge } from '@/utils/extension/setBadge'
+import { onMessage } from '@/utils/proxy-service/messaging/extension'
+import { registerProxy } from '@/utils/proxy-service/register'
+import { settings } from '@/utils/settings/extension'
 
 import migration from './migration'
+import registerMessaging from './registerMessaging'
 import requestPermissions from './requestPermissions'
-import registerUtilsMessage from './registerUtilsMessage'
 
 export default defineBackground({
   type: 'module',
@@ -27,7 +26,7 @@ function main() {
 
   registerProxy('ncoApi', ncoApi, onMessage)
   registerProxy('ncoSearch', ncoSearch, onMessage)
-  registerUtilsMessage()
+  registerMessaging()
 
   // 権限をリクエスト
   requestPermissions()
@@ -50,10 +49,7 @@ function main() {
       case 'update':
         await migration()
 
-        if (
-          import.meta.env.PROD &&
-          (await settings.get('settings:showChangelog'))
-        ) {
+        if (import.meta.env.PROD && (await settings.get('showChangelog'))) {
           // リリースノート
           webext.tabs.create({
             url: `${GITHUB_URL}/releases/tag/v${version}`,

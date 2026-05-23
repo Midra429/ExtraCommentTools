@@ -1,21 +1,25 @@
 import type { ModalProps as HeroUIModalProps } from '@heroui/react'
 
+import { useEffect } from 'react'
 import {
   Button,
   Modal as HeroUIModal,
-  ModalContent as HeroUIModalContent,
-  ModalHeader as HeroUIModalHeader,
   ModalBody as HeroUIModalBody,
+  ModalContent as HeroUIModalContent,
   ModalFooter as HeroUIModalFooter,
+  ModalHeader as HeroUIModalHeader,
 } from '@heroui/react'
 import { XIcon } from 'lucide-react'
 
 export interface ModalProps {
   fullWidth?: boolean
+  disableAnimation?: boolean
 
-  isOpen: HeroUIModalProps['isOpen']
-  onOpenChange: HeroUIModalProps['onOpenChange']
-  onClose?: HeroUIModalProps['onClose']
+  isOpen?: HeroUIModalProps['isOpen']
+  defaultOpen?: HeroUIModalProps['defaultOpen']
+  onOpenChange?: HeroUIModalProps['onOpenChange']
+  onOpen?: () => void
+  onClose?: () => void
 
   okText?: string
   okIcon?: React.ReactNode
@@ -35,11 +39,17 @@ export interface ModalProps {
 }
 
 export function Modal(props: ModalProps) {
+  useEffect(() => {
+    if (props.isOpen || props.defaultOpen) {
+      props.onOpen?.()
+    }
+  }, [props.isOpen])
+
   return (
     <HeroUIModal
       classNames={{
         wrapper: 'justify-end',
-        base: !props.fullWidth && 'max-w-[370px]',
+        base: !props.fullWidth && 'max-w-93',
         header: 'border-foreground-200 border-b-1 p-2 text-medium',
         body: 'p-0',
         footer: 'border-foreground-200 border-t-1 p-2',
@@ -47,8 +57,16 @@ export function Modal(props: ModalProps) {
       size="full"
       hideCloseButton
       isKeyboardDismissDisabled={true}
+      disableAnimation={props.disableAnimation}
       isOpen={props.isOpen}
-      onOpenChange={props.onOpenChange}
+      defaultOpen={props.defaultOpen}
+      onOpenChange={(isOpen) => {
+        props.onOpenChange?.(isOpen)
+
+        if (isOpen) {
+          props.onOpen?.()
+        }
+      }}
       onClose={props.onClose}
     >
       <HeroUIModalContent>

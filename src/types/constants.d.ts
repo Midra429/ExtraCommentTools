@@ -1,5 +1,5 @@
-import type { SettingsKey } from '@/types/storage'
 import type { SettingsInputProps } from '@/components/SettingsInput'
+import type { SettingsKey } from '@/types/storage'
 
 export interface SettingsInitItem {
   id: string

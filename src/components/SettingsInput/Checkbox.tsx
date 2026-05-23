@@ -1,42 +1,40 @@
-import type { StorageItems, SettingsKey } from '@/types/storage'
+import type { SettingItems, SettingsKey } from '@/types/storage'
 import type { SettingsInputBaseProps } from '.'
 
-import { CheckboxGroup, Checkbox } from '@heroui/react'
+import { useEffect, useState } from 'react'
+import { Checkbox, CheckboxGroup } from '@heroui/react'
 import { CircleHelpIcon } from 'lucide-react'
 
 import { useSettings } from '@/hooks/useSettings'
 
 import { Tooltip } from '@/components/Tooltip'
 
+import { initConditional } from '.'
+
 export type Key = {
-  [key in SettingsKey]: StorageItems[key] extends (string | number)[]
-    ? key
-    : never
+  [P in SettingsKey]: SettingItems[P] extends (string | number)[] ? P : never
 }[SettingsKey]
 
 export interface Props<K extends Key = Key>
   extends SettingsInputBaseProps<K, 'checkbox'> {
   options: {
     label: string
-    value: StorageItems[K][number]
+    value: SettingItems[K][number]
   }[]
 }
 
-export function Input(props: Props) {
+export function Input(props: Omit<Props, 'inputType'>) {
   const [value, setValue] = useSettings(props.settingsKey)
+  const [isDisabled, setIsDisabled] = useState(false)
 
-  const [showExtra] = useSettings('settings:comment:showExtra')
-
-  const isDisabled =
-    (props.settingsKey === 'settings:autoLoad:searchTargets' && !showExtra) ||
-    false
+  useEffect(() => initConditional(props.disable, setIsDisabled), [])
 
   return (
     <CheckboxGroup
       classNames={{
         base: 'gap-2 py-2',
         label: 'text-foreground text-small',
-        wrapper: 'gap-x-[5px] gap-y-1.5',
+        wrapper: 'gap-x-1.25 gap-y-1.5',
       }}
       size="sm"
       orientation="horizontal"
@@ -58,13 +56,13 @@ export function Input(props: Props) {
       value={value}
       onChange={setValue as any}
     >
-      {props.options.map(({ label, value }, idx) => (
+      {props.options.map(({ label, value }) => (
         <Checkbox
-          key={idx}
+          key={value}
           classNames={{
             base: [
               'flex-1',
-              'min-w-fit max-w-none',
+              'min-w-fit max-w-[55%]',
               'm-0 px-1.5 py-1',
               'bg-default-100 hover:bg-default-200',
               'data-[selected=true]:bg-primary/15 dark:data-[selected=true]:bg-primary/20',
@@ -85,7 +83,7 @@ export function Input(props: Props) {
         >
           <div className="w-full min-w-2" />
           <span className="line-clamp-1 max-w-full shrink-0">{label}</span>
-          <div className="w-full min-w-1" />
+          <div className="w-full min-w-2" />
         </Checkbox>
       ))}
     </CheckboxGroup>

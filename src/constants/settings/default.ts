@@ -1,33 +1,33 @@
-import type { SettingsKey, SettingItems } from '@/types/storage'
+import type { SettingItems, SettingsKey } from '@/types/storage'
 
 /** 設定のデフォルト値 */
 export const SETTINGS_DEFAULT: SettingItems = {
   // 全般
-  'settings:theme': 'auto',
-  'settings:showChangelog': true,
-  'settings:showKawaiiPct': false,
+  theme: 'auto',
+  showChangelog: true,
+  showKawaiiPct: false,
 
   // コメント
-  'settings:comment:showExtra': true,
-  'settings:comment:mergeExtra': true,
-  'settings:comment:translucentExtra': false,
-  'settings:comment:extraColor': '#FFFFFF',
-  'settings:comment:forceExtraColor': false,
-  'settings:comment:showEasy': true,
-  'settings:comment:hideAssistedComments': false,
+  'comment:showExtra': true,
+  'comment:mergeExtra': true,
+  'comment:translucentExtra': false,
+  'comment:extraColor': '#FFFFFF',
+  'comment:forceExtraColor': false,
+  'comment:showEasy': true,
+  'comment:hideAssistedComments': false,
 
   // 自動引用
-  'settings:autoLoad:searchTargets': ['official', 'danime'],
+  'autoLoad:searchTargets': ['official', 'danime'],
 
   // キャプチャー
-  'settings:capture:method': 'window',
-  'settings:capture:format': 'jpeg',
+  'capture:method': 'window',
+  'capture:format': 'jpeg',
 
   // 検索 (設定には非表示)
-  'settings:searchOptions:sort': '-startTime',
-  'settings:searchOptions:dateRange': [null, null],
-  'settings:searchOptions:genre': 'アニメ',
-  'settings:searchOptions:lengthRange': [null, null],
+  'searchOptions:sort': '-startTime',
+  'searchOptions:dateRange': [null, null],
+  'searchOptions:genre': 'アニメ',
+  'searchOptions:lengthRange': [null, null],
 }
 
 export const SETTINGS_DEFAULT_KEYS = Object.keys(

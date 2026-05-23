@@ -1,0 +1,43 @@
+import { useEffect, useState } from 'react'
+import { Divider } from '@heroui/react'
+
+import { filesize } from '@/utils/filesize'
+import { webext } from '@/utils/webext'
+import { settings } from '@/utils/settings/extension'
+import { storage } from '@/utils/storage/extension'
+
+export function StorageSizes() {
+  const [storageBytes, setStorageBytes] = useState<number>(0)
+  const [settingsBytes, setSettingsBytes] = useState<number>(0)
+
+  useEffect(() => {
+    function updateStorageSizes() {
+      storage.getBytesInUse().then(setStorageBytes)
+      settings.getBytesInUse().then(setSettingsBytes)
+    }
+
+    updateStorageSizes()
+
+    webext.storage.local.onChanged.addListener(updateStorageSizes)
+
+    return () => {
+      webext.storage.local.onChanged.removeListener(updateStorageSizes)
+    }
+  }, [])
+
+  return (
+    <div className="flex flex-row items-center justify-evenly py-1.5">
+      <span className="text-tiny">全体: {filesize(storageBytes)}</span>
+
+      <Divider className="h-4" orientation="vertical" />
+
+      <span className="text-tiny">設定: {filesize(settingsBytes)}</span>
+
+      <Divider className="h-4" orientation="vertical" />
+
+      <span className="text-tiny">
+        その他: {filesize(storageBytes - settingsBytes)}
+      </span>
+    </div>
+  )
+}

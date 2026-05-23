@@ -1,9 +1,9 @@
-import type { StorageItems, SettingsKey } from '@/types/storage'
+import type { SettingsKey } from '@/types/storage'
 
 import { SETTINGS_DEFAULT } from '@/constants/settings/default'
 
 import { useStorage } from './useStorage'
 
-export function useSettings<Key extends SettingsKey>(key: Key) {
-  return useStorage(key, SETTINGS_DEFAULT[key] as StorageItems[Key])
+export function useSettings<K extends SettingsKey>(key: K) {
+  return useStorage(`settings:${key}`, SETTINGS_DEFAULT[key] as any)
 }
