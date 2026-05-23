@@ -1,6 +1,7 @@
 import type { UserManifest } from 'wxt'
 
 import { defineConfig } from 'wxt'
+import babel from '@rolldown/plugin-babel'
 import { uid } from '@midra/nco-utils/common/uid'
 
 import { GITHUB_URL } from './src/constants'
@@ -69,6 +70,11 @@ export default defineConfig({
     ssr: {
       noExternal: ['@webext-core/messaging'],
     },
+    plugins: [
+      babel({
+        plugins: ['babel-plugin-react-compiler'],
+      }),
+    ],
   }),
-  modules: ['@wxt-dev/auto-icons', './module-react.ts'],
+  modules: ['@wxt-dev/auto-icons', '@wxt-dev/module-react'],
 })

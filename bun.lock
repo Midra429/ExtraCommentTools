@@ -31,8 +31,8 @@
         "@types/react": "^19.2.15",
         "@types/react-dom": "^19.2.3",
         "@types/webextension-polyfill": "^0.12.5",
-        "@vitejs/plugin-react": "^6.0.2",
         "@wxt-dev/auto-icons": "^1.1.1",
+        "@wxt-dev/module-react": "^1.2.2",
         "@xpadev-net/niconicomments": "^0.2.78",
         "babel-plugin-react-compiler": "^1.0.0",
         "concurrently": "^9.2.1",
@@ -718,6 +718,8 @@
     "@wxt-dev/browser": ["@wxt-dev/browser@0.1.42", "", { "dependencies": { "@types/filesystem": "*", "@types/har-format": "*" } }, "sha512-BSb0H09i4+0WlqFnN7LnZW0M6uCPH9KndciGx7mwOFKRVjNCorqwPk3hiVB58yQ+cyJNpDvYWL6IoPBxvP8qEA=="],
 
     "@wxt-dev/is-background": ["@wxt-dev/is-background@1.0.0", "", { "dependencies": { "@wxt-dev/browser": "^0.1.37" } }, "sha512-EW60gDS+aETJP9m7TrM0kb9TNvOmBAFRX6bwj9BE4MAwJ5VstI8nN6I7bMRVH5xzSkw3nPJyLxiquxH7Io+CsQ=="],
+
+    "@wxt-dev/module-react": ["@wxt-dev/module-react@1.2.2", "", { "dependencies": { "@vitejs/plugin-react": "^4.4.1 || ^5.0.0 || ^6.0.0" }, "peerDependencies": { "vite": "^5.4.19 || ^6.3.4 || ^7.0.0 || ^8.0.0-0", "wxt": ">=0.19.16" } }, "sha512-+lRLi1r9dAXpLySWSIWHLJ1h/nFzR20iQnx3RNrKyA6oJg4+ClOluVXozHjfPg9Okfy/umtffiOopGayASrg6w=="],
 
     "@wxt-dev/storage": ["@wxt-dev/storage@1.2.8", "", { "dependencies": { "@wxt-dev/browser": "^0.1.37", "async-mutex": "^0.5.0", "dequal": "^2.0.3" } }, "sha512-GWCFKgF5+d7eslOxUDFC70ypA9njupmJb1nQM8uZoX0J3sWT2BO5xJLzb1sYahWAfID9p2BMtnUBN1lkWxPsbQ=="],
 
