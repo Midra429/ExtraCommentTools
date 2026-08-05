@@ -51,6 +51,7 @@
     "@xpadev-net/niconicomments": "^0.3.1",
     "babel-plugin-react-compiler": "^1.0.0",
     "postcss": "^8.5.25",
+    "publish-browser-extension": "^6.0.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
     "utility-types": "^3.11.0",
