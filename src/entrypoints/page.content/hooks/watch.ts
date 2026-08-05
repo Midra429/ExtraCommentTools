@@ -143,7 +143,7 @@ export const hookWatch = async (
       }
 
       // 引用レイヤーを半透明化
-      comment.layers[extraLayerIdx].isTranslucent = translucentExtra
+      comment.layers[extraLayerIdx]!.isTranslucent = translucentExtra
 
       // タイトルを解析
       const parsed = parse(video.title)
@@ -250,7 +250,7 @@ export const hookWatch = async (
 
             comment.threads.push(...mainThread.threads)
 
-            comment.layers[extraLayerIdx].threadIds.push(
+            comment.layers[extraLayerIdx]!.threadIds.push(
               ...mainThread.threads.map<ThreadId>((val) => {
                 return {
                   id: val.id,
@@ -275,8 +275,8 @@ export const hookWatch = async (
 
         // 引用コメントのレイヤーをメインに統合
         if (mergeExtra) {
-          comment.layers[mainLayerIdx].threadIds.push(
-            ...comment.layers[extraLayerIdx].threadIds
+          comment.layers[mainLayerIdx]!.threadIds.push(
+            ...comment.layers[extraLayerIdx]!.threadIds
           )
 
           delete comment.layers[extraLayerIdx]
