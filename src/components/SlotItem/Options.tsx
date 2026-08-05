@@ -1,10 +1,8 @@
-import type { Variants } from 'framer-motion'
 import type { Slot } from '@/core/slots'
 
 import { useEffect, useState } from 'react'
-import { TRANSITION_VARIANTS } from '@heroui/framer-utils'
 import { Button } from '@heroui/react'
-import { SlidersHorizontalIcon, XIcon } from 'lucide-react'
+import { Settings2Icon, XIcon } from 'lucide-react'
 import {
   AnimatePresence,
   LazyMotion,
@@ -13,14 +11,10 @@ import {
   useWillChange,
 } from 'framer-motion'
 
+import { TRANSITION_VARIANTS_ACCORDION } from '@/constants/framer-motion'
 import { useSlotsManager } from '@/hooks/useSlots'
 
 import { OffsetControl } from '@/components/OffsetControl'
-
-const transitionVariants: Variants = {
-  exit: { ...TRANSITION_VARIANTS.collapse.exit, overflowY: 'hidden' },
-  enter: { ...TRANSITION_VARIANTS.collapse.enter, overflowY: 'unset' },
-}
 
 export interface OptionsButtonProps {
   isOpen: boolean
@@ -35,15 +29,14 @@ export function OptionsButton({ isOpen, onPress }: OptionsButtonProps) {
       radius="full"
       variant="flat"
       isIconOnly
-      startContent={
-        isOpen ? (
-          <XIcon className="size-3.5" />
-        ) : (
-          <SlidersHorizontalIcon className="size-3.5" />
-        )
-      }
       onPress={onPress}
-    />
+    >
+      {isOpen ? (
+        <XIcon className="size-3.5" />
+      ) : (
+        <Settings2Icon className="size-3.5" />
+      )}
+    </Button>
   )
 }
 
@@ -116,8 +109,7 @@ export function Options({
             initial="exit"
             animate="enter"
             exit="exit"
-            variants={transitionVariants}
-            onKeyDown={(e) => e.stopPropagation()}
+            variants={TRANSITION_VARIANTS_ACCORDION}
           >
             <div className="border-foreground-200 border-t-1 p-2">
               <SlotOffsetControl
