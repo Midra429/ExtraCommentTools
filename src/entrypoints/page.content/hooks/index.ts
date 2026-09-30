@@ -1,9 +1,9 @@
-import type { VideoData } from '@midra/nco-utils/types/api/niconico/video'
+import type { WatchV4Data } from '@midra/nco-utils/types/api/niconico/video'
 
 import { SlotsManager } from '@/core/slots'
 import { storage } from '@/utils/storage/page'
 
-export interface ExtraVideoData extends VideoData {
+export interface ExtraVideoData extends WatchV4Data {
   _ect: {
     isStock: boolean
     isAuto: boolean
@@ -13,7 +13,7 @@ export interface ExtraVideoData extends VideoData {
 
 export const shared = new (class Shared {
   #videoId: string | null = null
-  #targetVideoData: VideoData | null = null
+  #targetVideoData: WatchV4Data | null = null
   #extraVideoDataList: ExtraVideoData[] = []
   #slotsManager: SlotsManager | null = null
 
@@ -47,7 +47,7 @@ export const shared = new (class Shared {
     this.#slotsManager = null
   }
 
-  setTargetVideoData(videoData: VideoData) {
+  setTargetVideoData(videoData: WatchV4Data) {
     this.#targetVideoData = videoData
   }
 

@@ -1,7 +1,8 @@
 import type {
-  ThreadId,
-  VideoData,
+  Component,
   VideoResponse,
+  VideoResponseData,
+  WatchV4Data,
 } from '@midra/nco-utils/types/api/niconico/video'
 import type { SearchTarget } from '@midra/nco-utils/types/search'
 import type { FetchProxyApplyArguments } from '..'
@@ -19,13 +20,13 @@ import { ncoSearchProxy } from '@/proxy/nco-utils/search/page'
 
 import { shared } from '.'
 
-function filterEasyComment({ comment }: VideoData) {
+function filterEasyComment({ comment }: WatchV4Data) {
   comment.threads = comment.threads.filter((val) => {
     return val.forkLabel !== 'easy'
   })
 
   for (const layer of comment.layers) {
-    layer.threadIds = layer.threadIds.filter((val) => {
+    layer.components = layer.components.filter((val) => {
       return val.forkLabel !== 'easy'
     })
   }
@@ -61,8 +62,8 @@ export const hookWatch = async (
     logger.log(apiLogName, json)
 
     if (json.meta.status === 200) {
-      const videoData = json.data.response as VideoData
-      const { channel, comment, video } = videoData
+      const videoData = (json.data as VideoResponseData).response.$watchV4.data
+      const { comment, video, metadata, genre } = videoData
 
       // URLのIDを動画情報のIDに置き換える
       const videoId = url.pathname.match(NICONICO_WATCH_PATH_REGEXP)![0]
@@ -109,8 +110,8 @@ export const hookWatch = async (
 
       // メインレイヤー
       let mainLayerIdx = comment.layers.findIndex((layer) => {
-        return layer.threadIds.some((val) => {
-          return mainThread.forkIds.includes(`${val.forkLabel}:${val.id}`)
+        return layer.components.some((val) => {
+          return mainThread.forkIds.includes(`${val.forkLabel}:${val.threadId}`)
         })
       })
 
@@ -120,14 +121,16 @@ export const hookWatch = async (
         comment.layers.push({
           index: mainLayerIdx,
           isTranslucent: true,
-          threadIds: [],
+          components: [],
         })
       }
 
       // 引用レイヤー
       let extraLayerIdx = comment.layers.findIndex((layer) => {
-        return layer.threadIds.some((val) => {
-          return extraThread.forkIds.includes(`${val.forkLabel}:${val.id}`)
+        return layer.components.some((val) => {
+          return extraThread.forkIds.includes(
+            `${val.forkLabel}:${val.threadId}`
+          )
         })
       })
 
@@ -138,7 +141,7 @@ export const hookWatch = async (
         comment.layers.push({
           index: extraLayerIdx,
           isTranslucent: true,
-          threadIds: [],
+          components: [],
         })
       }
 
@@ -157,8 +160,11 @@ export const hookWatch = async (
         const slots = await shared.slotsManager?.get()
         const manualVideoIds = new Set(slots?.map((slot) => slot.id))
 
-        const isDAnime = channel?.id === `ch${DANIME_CHANNEL_ID}`
-        const isOfficial = !isDAnime && !!channel?.isOfficialAnime
+        const isDAnime = metadata.jsonLd.owner.id === `ch${DANIME_CHANNEL_ID}`
+        const isOfficial =
+          !isDAnime &&
+          metadata.jsonLd.owner.type === 'channel' &&
+          (genre.key === 'anime' || genre.label === 'アニメ')
 
         const searchedVideoIds = new Set<string>()
 
@@ -243,17 +249,16 @@ export const hookWatch = async (
               if (!thread.label.startsWith('extra-')) {
                 thread.label = `extra-${thread.label}` as any
               }
-              thread.isDefaultPostTarget = false
-              thread.isEasyCommentPostTarget = false
-              thread.postkeyStatus = 0
+              thread.isPostTarget = false
+              thread.postNgReason = null
             }
 
             comment.threads.push(...mainThread.threads)
 
-            comment.layers[extraLayerIdx]!.threadIds.push(
-              ...mainThread.threads.map<ThreadId>((val) => {
+            comment.layers[extraLayerIdx]!.components.push(
+              ...mainThread.threads.map<Component>((val) => {
                 return {
-                  id: val.id,
+                  threadId: val.id,
                   fork: val.fork,
                   forkLabel: val.forkLabel,
                 }
@@ -275,8 +280,8 @@ export const hookWatch = async (
 
         // 引用コメントのレイヤーをメインに統合
         if (mergeExtra) {
-          comment.layers[mainLayerIdx]!.threadIds.push(
-            ...comment.layers[extraLayerIdx]!.threadIds
+          comment.layers[mainLayerIdx]!.components.push(
+            ...comment.layers[extraLayerIdx]!.components
           )
 
           delete comment.layers[extraLayerIdx]
@@ -299,8 +304,10 @@ export const hookWatch = async (
         })
 
         for (const layer of comment.layers) {
-          layer.threadIds = layer.threadIds.filter((val) => {
-            return !extraThread.forkIds.includes(`${val.forkLabel}:${val.id}`)
+          layer.components = layer.components.filter((val) => {
+            return !extraThread.forkIds.includes(
+              `${val.forkLabel}:${val.threadId}`
+            )
           })
         }
 
@@ -312,7 +319,7 @@ export const hookWatch = async (
 
       // 空のレイヤーを削除 & 一応並び替え
       comment.layers = comment.layers
-        .filter((v) => v.threadIds.length)
+        .filter((v) => v.components.length)
         .sort((a, b) => a.index - b.index)
 
       shared.setTargetVideoData(videoData)

@@ -1,12 +1,12 @@
 import type {
   Thread,
-  VideoData,
+  WatchV4Data,
 } from '@midra/nco-utils/types/api/niconico/video'
 
 function filterMainThreads(threads: Thread[]) {
-  return threads.filter((val) => {
-    return val.isDefaultPostTarget || val.isEasyCommentPostTarget
-  })
+  const postTarget = threads.find((val) => val.isPostTarget)
+
+  return threads.filter((val) => val.id === postTarget?.id)
 }
 
 function filterExtraThreads(threads: Thread[]) {
@@ -15,7 +15,10 @@ function filterExtraThreads(threads: Thread[]) {
   })
 }
 
-export function extractThread(target: 'main' | 'extra', videoData: VideoData) {
+export function extractThread(
+  target: 'main' | 'extra',
+  videoData: WatchV4Data
+) {
   const threads =
     target === 'main'
       ? filterMainThreads(videoData.comment.threads)
