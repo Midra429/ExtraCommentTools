@@ -1,4 +1,4 @@
-import type { SearchQueryFilters } from '@midra/nco-utils/types/api/niconico/search'
+import type * as SnapshotV2 from '@midra/nco-utils/types/api/niconico/snapshot/v2'
 import type { SettingItems } from '@/types/storage'
 
 import { getLocalTimeZone, now } from '@internationalized/date'
@@ -6,17 +6,19 @@ import { getLocalTimeZone, now } from '@internationalized/date'
 import { ncoApiProxy } from '@/proxy/nco-utils/api/extension'
 
 import { searchDataToSlot } from './searchDataToSlot'
-import { videoDataToSlot } from './videoDataToSlot'
+import { watchResponseToSlot } from './watchResponseToSlot'
 
 const TIMEZONE_SUFFIX_REGEXP = /\[.+\]$/
 
 export async function searchNiconicoByIds(...ids: string[]) {
-  const data = await ncoApiProxy.niconico.multipleVideo(ids)
-  const filtered = data.filter((v) => v !== null)
+  const watchResponses = await Promise.all(
+    ids.map((id) => ncoApiProxy.niconico.watch(id))
+  )
+  const filtered = watchResponses.filter((v) => v !== null)
 
   if (filtered.length) {
     const total = filtered.length
-    const slots = filtered.map((v) => videoDataToSlot(v))
+    const slots = filtered.map((v) => watchResponseToSlot(v))
 
     return { total, slots }
   }
@@ -41,8 +43,14 @@ export async function searchNiconicoByKeyword(
 
   const current = now(getLocalTimeZone())
 
-  const filters: SearchQueryFilters = {
+  const filters: SnapshotV2.QueryFilters = {
     commentCounter: { gt: 0 },
+    lengthSeconds: options?.lengthRange
+      ? {
+          gte: options.lengthRange[0] ?? undefined,
+          lte: options.lengthRange[1] ?? undefined,
+        }
+      : undefined,
     startTime: options?.dateRange
       ? {
           gte: options.dateRange[0]
@@ -63,15 +71,10 @@ export async function searchNiconicoByKeyword(
       options?.genre && options.genre !== '未指定'
         ? [options.genre]
         : undefined,
-    lengthSeconds: options?.lengthRange
-      ? {
-          gte: options.lengthRange[0] ?? undefined,
-          lte: options.lengthRange[1] ?? undefined,
-        }
-      : undefined,
+    contentType: ['long'],
   }
 
-  const response = await ncoApiProxy.niconico.search({
+  const response = await ncoApiProxy.niconico.snapshotV2({
     q: keyword,
     targets: ['title', 'description'],
     fields: [

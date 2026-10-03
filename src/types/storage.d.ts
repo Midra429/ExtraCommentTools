@@ -1,7 +1,7 @@
 import type { DateTimeDuration } from '@internationalized/date'
 import type { ParsedResult } from '@midra/nco-utils/parse'
 import type { NiconicoGenre } from '@midra/nco-utils/types/api/constants'
-import type { SearchQuerySort } from '@midra/nco-utils/types/api/niconico/search'
+import type * as SnapshotV2 from '@midra/nco-utils/types/api/niconico/snapshot/v2'
 import type { Slot } from '@/core/slots'
 
 export interface InternalItems {
@@ -96,7 +96,7 @@ export interface SettingItems {
    * 検索オプション: ソート順
    * @default '-startTime'
    */
-  'searchOptions:sort': SearchQuerySort
+  'searchOptions:sort': SnapshotV2.QuerySort
 
   /**
    * 検索オプション: 投稿日時

@@ -1,15 +1,12 @@
-import type { ThreadsRequestBody } from '@midra/nco-utils/api/services/niconico/v1'
-import type {
-  V1Threads,
-  V1ThreadsOk,
-} from '@midra/nco-utils/types/api/niconico/v1/threads'
+import type { ThreadsV1RequestBody } from '@midra/nco-utils/api/services/niconico/threads/v1'
+import type * as ThreadsV1 from '@midra/nco-utils/types/api/niconico/threads/v1'
 import type { FetchProxyApplyArguments } from '..'
 
 import { COLOR_CODE_REGEXP, NICONICO_COLOR_COMMANDS } from '@/constants'
 import { SETTINGS_DEFAULT } from '@/constants/settings/default'
 import { logger } from '@/utils/logger'
 import { findAssistedCommentIds } from '@/utils/api/findAssistedCommentIds'
-import { videoDataToSlot } from '@/utils/api/videoDataToSlot'
+import { watchResponseToSlot } from '@/utils/api/watchResponseToSlot'
 import { settings } from '@/utils/settings/page'
 import { sendPageMessage } from '@/messaging/page'
 import { ncoApiProxy } from '@/proxy/nco-utils/api/page'
@@ -18,16 +15,16 @@ import { shared } from '.'
 
 const JSON_REGEXP = /^{.*}$/
 
-function isResponseOk(json: V1Threads): json is V1ThreadsOk {
+function isResponseOk(json: ThreadsV1.Response): json is ThreadsV1.ResponseOk {
   return json.meta.status === 200
 }
 
 export async function hookThreads(
   args: FetchProxyApplyArguments<true>
 ): Promise<Response | null> {
-  const { targetVideoData, extraVideoDataList, slotsManager } = shared
+  const { targetWatchResponse, extraWatchResponseList, slotsManager } = shared
 
-  if (!targetVideoData || !slotsManager) {
+  if (!targetWatchResponse || !slotsManager) {
     return null
   }
 
@@ -36,14 +33,14 @@ export async function hookThreads(
   const [url, init] = args[2]
   const apiLogName = `${init.method} ${url.pathname}`
 
-  const body: ThreadsRequestBody | null =
+  const body: ThreadsV1RequestBody | null =
     typeof init?.body === 'string' && JSON_REGEXP.test(init.body)
       ? JSON.parse(init.body)
       : null
 
   try {
     const res = await Reflect.apply(...args)
-    const json: V1Threads = await res.json()
+    const json: ThreadsV1.Response = await res.json()
 
     logger.log(apiLogName, json)
 
@@ -63,21 +60,22 @@ export async function hookThreads(
       const slots = await slotsManager?.get()
 
       // 追加された動画情報
-      const addedVideoDataList = extraVideoDataList.filter(
-        (v) => !v._ect.isStock
+      const addedWatchResponseList = extraWatchResponseList.filter(
+        (res) => !res._ect.isStock
       )
 
       // コメント取得 (引用)
-      const threadsDataList = await ncoApiProxy.niconico.v1.multipleThreads(
-        addedVideoDataList.map((v) => v.comment),
-        body?.additionals
+      const threadsDataList = await Promise.all(
+        addedWatchResponseList.map((res) => {
+          return ncoApiProxy.niconico.threads(res, body?.additionals)
+        })
       )
 
-      for (const data of threadsDataList) {
-        if (!data) continue
+      for (const threadsData of threadsDataList) {
+        if (!threadsData) continue
 
-        globalComments.push(...data.globalComments)
-        threads.push(...data.threads)
+        globalComments.push(...threadsData.globalComments)
+        threads.push(...threadsData.threads)
       }
 
       let cmtCnt = 0
@@ -86,16 +84,27 @@ export async function hookThreads(
       // オフセット・コマンド適用
       for (const thread of threads) {
         const forkId = `${thread.fork}:${thread.id}`
-        const videoId = targetVideoData.comment.threads.find(
-          (v) => `${v.forkLabel}:${v.id}` === forkId
-        )?.videoId
+        let videoId: string | undefined
 
-        const slot = slots?.find((v) => v.id === videoId)
+        switch (targetWatchResponse.type) {
+          case 'v3':
+          case 'v4': {
+            videoId = targetWatchResponse.rawData.comment.threads.find(
+              (thread) => {
+                return `${thread.forkLabel}:${thread.id}` === forkId
+              }
+            )?.videoId
+          }
+        }
+
+        const slot = slots?.find((slot) => slot.id === videoId)
 
         const offsetMs = slot?.offsetMs ?? 0
         const commands = slot?.commands ?? []
 
-        const isExtra = extraVideoDataList.some((v) => v.video.id === videoId)
+        const isExtra = extraWatchResponseList.some(
+          (res) => res.data.video.id === videoId
+        )
         let hasCustomColor = false
 
         // 統合済みだと半透明レイヤーじゃないので
@@ -176,18 +185,29 @@ export async function hookThreads(
       }
 
       // 読み込み済みの動画情報
-      const loadedThreadForkIds = threads.map((v) => `${v.fork}:${v.id}`)
+      const loadedThreadForkIds = threads.map(
+        (thread) => `${thread.fork}:${thread.id}`
+      )
 
-      const loadedVideoDataList = extraVideoDataList.filter(({ comment }) => {
-        return comment.threads.some((val) => {
-          return loadedThreadForkIds.includes(`${val.forkLabel}:${val.id}`)
-        })
-      })
+      const loadedWatchResponseList = extraWatchResponseList.filter(
+        ({ type, rawData }) => {
+          switch (type) {
+            case 'v3':
+            case 'v4': {
+              return rawData.comment.threads.some((thread) => {
+                return loadedThreadForkIds.includes(
+                  `${thread.forkLabel}:${thread.id}`
+                )
+              })
+            }
+          }
+        }
+      )
 
       // スロットに追加
-      for (const data of loadedVideoDataList) {
-        const newSlot = videoDataToSlot(data)
-        const oldSlot = slots?.find((v) => v.id === newSlot.id)
+      for (const res of loadedWatchResponseList) {
+        const newSlot = watchResponseToSlot(res)
+        const oldSlot = slots?.find((slot) => slot.id === newSlot.id)
 
         if (oldSlot) {
           await slotsManager.update({
@@ -200,7 +220,7 @@ export async function hookThreads(
       }
 
       // バッジを設定
-      const count = loadedVideoDataList.length
+      const count = loadedWatchResponseList.length
 
       await sendPageMessage('content:setBadge', {
         text: count ? count.toString() : null,

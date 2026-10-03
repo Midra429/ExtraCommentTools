@@ -1,11 +1,11 @@
-import type { SearchData } from '@midra/nco-utils/types/api/niconico/search'
+import type * as SnapshotV2 from '@midra/nco-utils/types/api/niconico/snapshot/v2'
 import type { Slot } from '@/core/slots'
 
 import { TAG_ANIME_REGEXP } from '@midra/nco-utils/api/constants'
 import { DANIME_CHANNEL_ID } from '@midra/nco-utils/search/constants'
 
 export function searchDataToSlot(
-  data: SearchData<
+  data: SnapshotV2.Data<
     | 'contentId'
     | 'title'
     | 'userId'

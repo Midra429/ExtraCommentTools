@@ -1,6 +1,6 @@
-import type { V1Comment } from '@midra/nco-utils/types/api/niconico/v1/threads'
+import type * as ThreadsV1 from '@midra/nco-utils/types/api/niconico/threads/v1'
 
-interface V1CommentSorted extends V1Comment {
+interface V1CommentSorted extends ThreadsV1.Comment {
   _postedAtTime: number
 }
 
@@ -45,14 +45,16 @@ function isAssistedComment(
 }
 
 export interface AssistedCommentResult {
-  id: V1Comment['id']
+  id: ThreadsV1.Comment['id']
   score: number
 }
 
 /**
  * アシストコメントを探す
  */
-export function findAssistedCommentIds(comments: V1Comment[]): string[] {
+export function findAssistedCommentIds(
+  comments: ThreadsV1.Comment[]
+): string[] {
   if (comments.length <= 3) {
     return []
   }

@@ -67,7 +67,7 @@ export function SearchInput({ isDisabled, onSearch, ref }: SearchInputProps) {
                 'shadow-none',
               ],
               input: 'pr-5',
-              clearButton: 'end-1 mr-0 p-1',
+              clearButton: 'inset-e-1 mr-0 p-1',
             }}
             size="sm"
             label="検索欄"

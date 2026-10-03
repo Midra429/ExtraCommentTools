@@ -1,9 +1,9 @@
-import type { WatchV4Data } from '@midra/nco-utils/types/api/niconico/video'
+import type { WatchResponse } from '@midra/nco-utils/api/services/niconico/watch'
 
 import { SlotsManager } from '@/core/slots'
 import { storage } from '@/utils/storage/page'
 
-export interface ExtraVideoData extends WatchV4Data {
+export type ExtraWatchResponse = WatchResponse & {
   _ect: {
     isStock: boolean
     isAuto: boolean
@@ -13,18 +13,18 @@ export interface ExtraVideoData extends WatchV4Data {
 
 export const shared = new (class Shared {
   #videoId: string | null = null
-  #targetVideoData: WatchV4Data | null = null
-  #extraVideoDataList: ExtraVideoData[] = []
+  #targetWatchResponse: WatchResponse | null = null
+  #extraWatchResponseList: ExtraWatchResponse[] = []
   #slotsManager: SlotsManager | null = null
 
   get videoId() {
     return this.#videoId
   }
-  get targetVideoData() {
-    return this.#targetVideoData
+  get targetWatchResponse() {
+    return this.#targetWatchResponse
   }
-  get extraVideoDataList() {
-    return this.#extraVideoDataList
+  get extraWatchResponseList() {
+    return this.#extraWatchResponseList
   }
   get slotsManager() {
     return this.#slotsManager
@@ -42,16 +42,16 @@ export const shared = new (class Shared {
 
   clear() {
     this.#videoId = null
-    this.#targetVideoData = null
-    this.#extraVideoDataList = []
+    this.#targetWatchResponse = null
+    this.#extraWatchResponseList = []
     this.#slotsManager = null
   }
 
-  setTargetVideoData(videoData: WatchV4Data) {
-    this.#targetVideoData = videoData
+  setTargetVideoData(watchResponse: WatchResponse) {
+    this.#targetWatchResponse = watchResponse
   }
 
-  addExtraVideoData(...data: ExtraVideoData[]) {
-    this.#extraVideoDataList.push(...data)
+  addExtraWatchResponse(...responses: ExtraWatchResponse[]) {
+    this.#extraWatchResponseList.push(...responses)
   }
 })()
